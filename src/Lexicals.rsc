@@ -17,15 +17,8 @@ lexical CharContent = EscapeSeq
   					|  single: SingleChar 
   					;
 
-lexical StringChars = FooStringChars;
 
 lexical DeciNumeral = [1-9] [0-9]* | "0";
-
-lexical OctaEscape 
-  = "\\" [0-3] [0-7]+ !>> [0-7] 
-  | "\\" [0-7] !>> [0-7] 
-  | "\\" [4-7] [0-7] 
-  ;
 
 lexical EscChar = "\\";
 
@@ -36,17 +29,34 @@ lexical HexaSignificand =
   | [0] [X x] [0-9 A-F a-f]+ 
   ;
 
-lexical OctaNumeral =
-  [0] [0-7]+ 
-  ;
+lexical OctaNumeral = [0] [0-7]+;
 
-lexical HexaNumeral =
-  [0] [X x] [0-9 A-F a-f]+ 
-  ;
+lexical HexaNumeral = [0] [X x] [0-9 A-F a-f]+;
   
-lexical LEX[StringLiteral] =
-   string: "\"" StringPart* "\"" 
-  ;
+lexical StringLiteral = string: "\"" StringPart* "\"" ;
+
+lexical StringPart 
+	 = UnicodeEscape 
+     | EscapeSeq 
+	 | chars: StringChars !>> ![\n \a0D \" \\]  !>> [\a00]
+  	 ;
+
+lexical UnicodeEscape = unicodeEscape: "\\" [u]+ [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f];
+
+lexical EscapeSeq 
+	 =  NamedEscape 
+  	 |  OctaEscape 
+  	 ;
+  	 
+lexical NamedEscape = namedEscape: "\\" [\" \' \\ b f n r t];
+
+lexical OctaEscape 
+	 = "\\" [0-3] [0-7]+ !>> [0-7] 
+	 | "\\" [0-7] !>> [0-7] 
+  	 | "\\" [4-7] [0-7] 
+  	 ;
+
+lexical StringChars = ([\a00] | ![\n \a0D \" \\])+;
 
 lexical SignedInteger = [+ \-]? [0-9]+;
 
@@ -61,17 +71,6 @@ lexical DeciFloatDigits = [0-9]+
   						;
 
 lexical DeciLiteral = DeciNumeral !>> [. 0-9 D F d f] [L l]?;
-
-lexical EscapeSeq 
-	 =  NamedEscape 
-  	 | OctaEscape 
-  	 ;
-  
-lexical StringPart =
-  UnicodeEscape 
-  | EscapeSeq 
-  |  chars: StringChars !>> ![\n \a0D \" \\]  !>> [\a00]
-  ;
 
 lexical EOLCommentChars =
   ![\n \a0D]* 
@@ -92,15 +91,7 @@ lexical DeciFloatNumeral
 	| [0-9] !<< "." [0-9]+ !>> [0-9] DeciFloatExponentPart?
   ;
 
-lexical UnicodeEscape =
-   unicodeEscape: "\\" [u]+ [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f] 
-  ;
   	
-  	
-lexical NamedEscape =
-   namedEscape: "\\" [\" \' \\ b f n r t] 
-  ;
-  
 lexical BinaryExponent =
   [P p] SignedInteger !>> [0-9] 
   ;
@@ -109,10 +100,6 @@ lexical BlockCommentChars =
   ![* \\]+ 
   ;
 
-lexical FooStringChars =
-  ([\a00] | ![\n \a0D \" \\])+ 
-  ;
-    	
   					
 layout Layout = LayoutElement* !>> [\ \t\n\r \u0009-\u000D] !>> "/*" !>> "//";
 

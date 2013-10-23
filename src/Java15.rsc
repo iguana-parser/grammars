@@ -640,10 +640,6 @@ syntax ClassLiteral =
   |  class: Type "." "class"  
   ;
 
-syntax StringLiteral =
-  LEX[StringLiteral] 
-  ;
-
 syntax AbstractMethodDec =
    abstractMethodDec: (Anno | AbstractMethodMod)* TypeParams? ResultType Id "(" {FormalParam ","}* ")" Throws? ";" 
   |  deprAbstractMethodDec: (Anno | AbstractMethodMod)* TypeParams? ResultType Id "(" {FormalParam ","}* ")" Dim+ Throws? ";" 
