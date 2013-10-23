@@ -74,7 +74,7 @@ syntax Literal
 	 | CharLiteral 
 	 | BoolLiteral 
 	 | ClassLiteral 
-	 | StringLiteral 
+	 | StringLiteral1
 	 | NullLiteral 
 	 | IntLiteral 
 	 ;

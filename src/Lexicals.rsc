@@ -33,7 +33,7 @@ lexical OctaNumeral = [0] [0-7]+;
 
 lexical HexaNumeral = [0] [X x] [0-9 A-F a-f]+;
   
-lexical StringLiteral = string: "\"" StringPart* "\"" ;
+lexical StringLiteral1 = string: "\"" StringPart* "\"" ;
 
 lexical StringPart 
 	 = UnicodeEscape 
