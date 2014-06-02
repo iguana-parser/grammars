@@ -8,10 +8,11 @@
 module Java7
 
 
-syntax QualifiedIdentifier = {Identifier "."}+;
+syntax QualifiedIdentifier 
+	 = {Identifier "."}+;
 
 syntax QualifiedIdentifierList 
-	= {QualifiedIdentifier  ","}+;
+	 = {QualifiedIdentifier  ","}+;
 
 //----------------------------------------------------------------------------------------------------------------
 
@@ -48,7 +49,7 @@ syntax InterfaceDeclaration
     ;
   
 syntax NormalClassDeclaration 
-	= "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList) ClassBody;
+	= "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
                                 
 syntax EnumDeclaration 
 	= "enum" Identifier ("implements" TypeList)? EnumBody;
@@ -85,7 +86,7 @@ syntax TypeArguments
   	;
   	  
 syntax TypeArgument 
-	=  ReferenceType
+	 = ReferenceType
        | "?" (("extends" | "super") ReferenceType)?
        ;
   
@@ -695,10 +696,13 @@ lexical Sub
 
 //----------------------------------------------------------------------------------------------------------------
 
+layout Layout 
+	= (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+
 lexical WhiteSpace 
 	= [\ ]			// the ASCII SP character, also known as "space"
     | [\t]			// the ASCII HT character, also known as "horizontal tab"
-    | [\u000C]		// the ASCII FF character, also known as "form feed"
+    | [\f]		    // the ASCII FF character, also known as "form feed"
     | LineTerminator
     ;
     
