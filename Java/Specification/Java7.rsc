@@ -718,7 +718,7 @@ lexical TraditionalComment
      ;
 
 lexical EndOfLineComment 
-	= "//" CharactersInLine?;
+	= "//" InputCharacter*;
 
 lexical CommentTail 
 	= "*" CommentTailStar
@@ -726,7 +726,7 @@ lexical CommentTail
     ;
 
 lexical CommentTailStar 
-	= "//"
+	= "/"
     | "*" CommentTailStar
     | NotStarNotSlash CommentTail
     ;
@@ -739,10 +739,6 @@ lexical NotStarNotSlash
 	= InputCharacter \ [* /]
     | LineTerminator;
 
-lexical CharactersInLine 
-	= InputCharacter
-    | CharactersInLine InputCharacter
-    ;  
     
 //----------------------------------------------------------------------------------------------------------------      
 
