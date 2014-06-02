@@ -746,7 +746,7 @@ lexical CharactersInLine =
 //----------------------------------------------------------------------------------------------------------------      
 
 lexical Identifier = 
-    IdentifierChars;// but not a Keyword or BooleanLiteral or NullLiteral
+    IdentifierChars \Keywords or BooleanLiteral or NullLiteral
     
 lexical IdentifierChars = 
     JavaLetter
@@ -756,59 +756,73 @@ lexical IdentifierChars =
 lexical JavaLetter = [A-Za-z$_];
 
 lexical JavaLetterOrDigit = [A-Za-z$_0_9];
+
 //----------------------------------------------------------------------------------------------------------------      
 
-keyword Keywords = "abstract"
-"continue"
-"for"
-"new"
-"switch"
-"assert"
-"default"
-"if"
-"package"
-"synchronized"
-"boolean"
-"do"
-"goto"
-"private"
-"this"
-"break"
-"double"
-"implements"
-"protected"
-"throw"
-"byte"
-"else"
-"import"
-"public"
-"throws"
-"case"
-"enum"
-"instanceof"
-"return"
-"transient"
-"catch"
-"extends"
-"int"
-"short"
-"try"
-"char"
-"final"
-"interface"
-"static"
-"void"
-"class"
-"finally"
-"long"
-"strictfp"
-"volatile"
-"const"
-"float"
-"native"
-"super"
-"while"
-;
+keyword Keywords = 
+				"abstract"
+				| "continue"
+				| "for"
+				| "new"
+				| "switch"
+				| "assert"
+				| "default"
+				| "if"
+				| "package"
+				| "synchronized"
+				| "boolean"
+				| "do"
+				| "goto"
+				| "private"
+				| "this"
+				| "break"
+				| "double"
+				| "implements"
+				| "protected"
+				| "throw"
+				| "byte"
+				| "else"
+				| "import"
+				| "public"
+				| "throws"
+				| "case"
+				| "enum"
+				| "instanceof"
+				| "return"
+				| "transient"
+				| "catch"
+				| "extends"
+				| "int"
+				| "short"
+				| "try"
+				| "char"
+				| "final"
+				| "interface"
+				| "static"
+				| "void"
+				| "class"
+				| "finally"
+				| "long"
+				| "strictfp"
+				| "volatile"
+				| "const"
+				| "float"
+				| "native"
+				| "super"
+				| "while"
+				;
+
+//----------------------------------------------------------------------------------------------------------------
+
+lexical Literal = 
+    IntegerLiteral
+    | FloatingPointLiteral
+    | BooleanLiteral
+    | CharacterLiteral
+    | StringLiteral
+    | NullLiteral
+          
+//----------------------------------------------------------------------------------------------------------------
 
 lexical IntegerLiteral =
     DecimalIntegerLiteral
@@ -838,4 +852,216 @@ lexical IntegerTypeSuffix =
     
 //----------------------------------------------------------------------------------------------------------------
     
+lexical DecimalNumeral = 
+    [0]
+    | NonZeroDigit Digits?
+    | NonZeroDigit [_]* Digits
+    ; 
+
+lexical Digits = 
+    Digit
+    | Digit DigitOrUnderscore* Digit
+    ; 
+
+lexical Digit = 
+	    [0]
+	    | NonZeroDigit
+	    ;
+
+lexical NonZeroDigit = [1-9];
+
+lexical DigitOrUnderscore =
+    Digit
+    | [_]
+    ;
+
+//----------------------------------------------------------------------------------------------------------------
+
+lexical HexNumeral =
+      [0] [x] HexDigits
+    | [0] [X] HexDigits
+    ;
+
+lexical HexDigits = 
+    HexDigit
+    HexDigit HexDigitsAndUnderscore* HexDigit 
+
+lexical HexDigit= [0-9 a-f A-F];
+
+lexical HexDigitOrUnderscore = 
+    HexDigit
+    | [_]
+    ;
+    
+//----------------------------------------------------------------------------------------------------------------    
+    
+lexical OctalNumeral 
+	= [0] OctalDigits
+    | [0] Underscores OctalDigits
+    ;
+
+lexical OctalDigits 
+	= OctalDigit
+    | OctalDigit OctalDigitsAndUnderscore* OctalDigit 
+    ;
+
+lexical OctalDigit = [0-7];
+
+lexical OctalDigitOrUnderscore 
+	= OctalDigit
+    | [_]
+    ;
+    
+//----------------------------------------------------------------------------------------------------------------        
+    
+lexical BinaryNumeral 
+	= [0] [b] BinaryDigits 
+    | [0] [B] BinaryDigits
+    ;
+
+lexical BinaryDigits 
+	= BinaryDigit 
+	| BinaryDigit BinaryDigitsAndUnderscore* BinaryDigit
+	;
+
+lexical BinaryDigit = [0-1]; 
+
+BinaryDigitOrUnderscore
+    = BinaryDigit
+    | [_]
+    ;
+    
+//----------------------------------------------------------------------------------------------------------------        
+
+lexical FloatingPointLiteral 
+	= DecimalFloatingPointLiteral
+    | HexadecimalFloatingPointLiteral
+    ;
+
+lexical DecimalFloatingPointLiteral 
+	= Digits [.] Digitsopt ExponentPart? FloatTypeSuffix?
+    | [.] Digits ExponentPart? FloatTypeSuffix?
+    | Digits ExponentPart FloatTypeSuffix?
+    | Digits ExponentPart? FloatTypeSuffix
+    ;
+
+lexical ExponentPart 
+	= ExponentIndicator SignedInteger
+    ;
+
+lexical ExponentIndicator = [e E];
+
+lexical SignedInteger = Sign? Digits
+
+lexical Sign = [+ -]
+
+leixcal FloatTypeSuffix = [f F d D]     
+    
+//----------------------------------------------------------------------------------------------------------------
+
+lexical HexadecimalFloatingPointLiteral 
+	  =  HexSignificand BinaryExponent FloatTypeSuffixopt;
+
+lexical HexSignificand 
+	= HexNumeral
+    | HexNumeral [.]
+    | [0] [x] HexDigits? [.] HexDigits
+    | [0] [X] HexDigits? [.] HexDigits
+    ;
+
+lexical BinaryExponent 
+	= BinaryExponentIndicator SignedInteger;
+
+lexical BinaryExponentIndicator = [p P]
+
+//----------------------------------------------------------------------------------------------------------------
+
+lexical BooleanLiteral 
+     = "true" 
+	 | "false"
+	 ;
+
+lexical CharacterLiteral 
+	= ['] SingleCharacter [']
+    | ['] EscapeSequence [']
+    ;
+
+lexical SingleCharacter 
+	  = InputCharacter \ [' \\]
+      ;
+
+lexical StringLiteral 
+	= ["] StringCharacter* ["]
+    ;
+
+lexical StringCharacter 
+	= InputCharacter \ [" \\]
+    | EscapeSequence
+    ;
+        
+lexical EscapeSequence 
+	= [\\] [b] 				/* \u0008: backspace BS */
+    | [\\] [t]			    /* \u0009: horizontal tab HT */
+    | [\\] [n]   			/* \u000a: linefeed LF */
+    | [\\] [f]    			/* \u000c: form feed FF */
+    | [\\] [r]    			/* \u000d: carriage return CR */
+    | [\\] ["]    			/* \u0022: double quote " */
+    | [\\] [\']   			/* \u0027: single quote ' */
+    | [\\] [\\]             /* \u005c: backslash \ */
+    | OctalEscape        	/* \u0000 to \u00ff: from octal value */
+    ;
+
+lexical OctalEscape 
+	= [\\] OctalDigit
+    | [\\] OctalDigit OctalDigit
+    | [\\] ZeroToThree OctalDigit OctalDigit
+    ;
+
+lexical OctalDigit = [0-7];
+
+lexical ZeroToThree = [0-3];
+    
+lexical NullLiteral = "null";
+
+lexical Separator = [( ) { } [ ] ; , .];
+   
+lexical Operator 
+	 = "=" 
+	 | ">" 
+	 | "<" 
+	 | "!" 
+	 | "~" 
+	 | "?" 
+	 | ":" 
+	 | "==" 
+	 | "<=" 
+	 | ">=" 
+	 | "!=" 
+	 | "&&" 
+	 | "||" 
+	 | "++" 
+	 | "--" 
+	 | "+" 
+	 | "-" 
+	 | "*" 
+	 | "/" 
+	 | "&" 
+	 | "|" 
+	 | "^" 
+	 | "%" 
+	 | "<<" 
+	 | ">>" 
+	 | ">>>" 
+	 | "+=" 
+	 | "-=" 
+	 | "*=" 
+	 | "/=" 
+	 | "&=" 
+	 | "|=" 
+	 | "^=" 
+	 | "%=" 
+	 | "<<=" 
+	 | ">>=" 
+	 | ">>>="
+     ;
     
