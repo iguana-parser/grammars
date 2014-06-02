@@ -8,67 +8,66 @@
 module Java7
 
 
-syntax Identifier =
-   [$ A-Z _ a-z] !<< ID \ IDKeywords !>> [$ 0-9 A-Z _ a-z] 
-  ;
+syntax QualifiedIdentifier = {Identifier "."}+;
 
-syntax QualifiedIdentifier =
-  		     {Identifier "."}+ 
-  	     ;
+syntax QualifiedIdentifierList 
+	= {QualifiedIdentifier  ","}+;
 
 //----------------------------------------------------------------------------------------------------------------
 
-start syntax CompilationUnit =
-   PackageDeclaration? ImportDeclaration* TypeDeclaration*
-  ;
+start syntax CompilationUnit 
+	= PackageDeclaration? ImportDeclaration* TypeDeclaration*
+  	;
   
   
-syntax PackageDeclaration =
-   Annotation* "package"  QualifiedIdentifier ";" 
-  ;  
+syntax PackageDeclaration 
+	= Annotation* "package"  QualifiedIdentifier ";" 
+  	;  
   
 syntax ImportDeclaration 
-  = "import"  "static"?  {Identifier "."}+ ("." "*")? ";" 
-  ;
+    = "import"  "static"?  {Identifier "."}+ ("." "*")? ";" 
+	;
   
-syntax TypeDeclaration =
-	  ClassOrInterfaceDeclaration ";" 
-  ;  
+syntax TypeDeclaration 
+	= ClassOrInterfaceDeclaration ";" 
+  	;  
   
-syntax ClassOrInterfaceDeclaration = 
-	   Modifier* (InterfaceDeclaration | ClassDeclaration); 
+syntax ClassOrInterfaceDeclaration 
+	= Modifier* (InterfaceDeclaration | ClassDeclaration)
+	; 
+	
+	
+syntax ClassDeclaration 
+	 = NormalClassDeclaration
+     | EnumDeclaration
+     ;
   
-syntax ClassDeclaration =
-  ClassDecHead ClassBody
-  | EnumDeclaration 
-  ;
+syntax InterfaceDeclaration 
+	= NormalInterfaceDeclaration
+    | AnnotationTypeDeclaration
+    ;
   
-syntax InterfaceDeclaration = 
-         NormalInterfaceDeclaration
-       | AnnotationTypeDeclaration;
-  
-  
-syntax NormalClassDeclaration =
-     "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList) ClassBody;
+syntax NormalClassDeclaration 
+	= "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList) ClassBody;
                                 
-syntax EnumDeclaration =
-    "enum" Identifier ("implements" TypeList)? EnumBody;
+syntax EnumDeclaration 
+	= "enum" Identifier ("implements" TypeList)? EnumBody;
                                 
-syntax NormalInterfaceDeclaration = 
-    "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody;
+syntax NormalInterfaceDeclaration 
+	= "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody;
 
-syntax AnnotationTypeDeclaration =
-    "@" "interface" Identifier AnnotationTypeBody;
+syntax AnnotationTypeDeclaration 
+	= "@" "interface" Identifier AnnotationTypeBody;
   
 //----------------------------------------------------------------------------------------------------------------  
   
-syntax Type =
-       BasicType ("[" "]")* 
-  	     | ReferenceType ("[" "]")*
-  	     ;
+syntax Type 
+	= BasicType ("[" "]")* 
+	| ReferenceType ("[" "]")*
+  	;
 
-syntax BasicType =
-		    "byte"
+syntax BasicType 
+	= "byte"
     | "short"
     | "char"
     | "int"
@@ -78,269 +77,270 @@ syntax BasicType =
     | "boolean"
     ;
   
-syntax ReferenceType =
-    Identifier TypeArguments? ( "." Identifier TypeArguments? )*;
+syntax ReferenceType 
+	= Identifier TypeArguments? ( "." Identifier TypeArguments? )*;
   
-syntax TypeArguments =
-   "\<" {TypeArgument ","}+ "\>" 
-  	  ;
+syntax TypeArguments 
+	= "\<" {TypeArgument ","}+ "\>" 
+  	;
   	  
-syntax TypeArgument =  
-       ReferenceType
+syntax TypeArgument 
+	=  ReferenceType
        | "?" (("extends" | "super") ReferenceType)?
        ;
   
 //----------------------------------------------------------------------------------------------------------------    
   
-syntax NonWildcardTypeArguments =
-    "\<" TypeList "\>"
+syntax NonWildcardTypeArguments 
+	= "\<" TypeList "\>"
     ;
 
-syntax TypeList =  
-    ReferenceType ("," ReferenceType)*
+syntax TypeList 
+	=  {ReferenceType ","}+
     ;
 
 
-syntax TypeArgumentsOrDiamond =
-    "\<" "\>" 
+syntax TypeArgumentsOrDiamond 
+	= "\<" "\>" 
     | TypeArguments
     ;
 
-syntax NonWildcardTypeArgumentsOrDiamond =
-    "\<" "\>" 
+syntax NonWildcardTypeArgumentsOrDiamond 
+	="\<" "\>" 
     | NonWildcardTypeArguments
     ;
 
-syntax TypeParameters =
-    "\<" {TypeParameter ","}+ "\>"
+syntax TypeParameters 
+	= "\<" {TypeParameter ","}+ "\>"
     ;
 
-syntax TypeParameter =
-    Identifier ("extends" Bound)?
+syntax TypeParameter 
+	= Identifier ("extends" Bound)?
     ;
 
-syntax Bound =  
-    {ReferenceType "&"}+
+syntax Bound 
+	= {ReferenceType "&"}+
     ;  
     
 //----------------------------------------------------------------------------------------------------------------    
 
-syntax Modifier =
-  "final"
-  | "strictfp" 
-  | "private" 
-  | "synchronized" 
-  | "volatile" 
-  | "protected" 
-  | "transient" 
-  | "abstract" 
-  | "native" 
-  | "static" 
-  | "public" 
-  ;
+syntax Modifier 
+ 	= "final"
+  	| "strictfp" 
+  	| "private" 
+  	| "synchronized" 
+	| "volatile" 
+  	| "protected" 
+  	| "transient" 
+  	| "abstract" 
+  	| "native" 
+  	| "static" 
+  	| "public" 
+  	;
 
   
-syntax Annotation =
-   "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
-  ;
+syntax Annotation 
+	= "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
+  	;
 
-syntax AnnotationElement =
-       ElementValuePairs
-       | ElementValue
-       ;
+syntax AnnotationElement 
+	= ElementValuePairs
+      | ElementValue
+      ;
 
-syntax ElementValuePairs =
-    {ElementValuePair ","}+
+syntax ElementValuePairs 
+	= {ElementValuePair ","}+
     ;
 
-syntax ElementValuePair =
-    Identifier "=" ElementValue;
+syntax ElementValuePair 
+	= Identifier "=" ElementValue
+	;
 
 
-syntax ElementValue =
-        Annotation
-        | Expression1
-        | ElementValueArrayInitializer
-        ;
+syntax ElementValue 
+	= Annotation
+    | Expression1
+    | ElementValueArrayInitializer
+    ;
 
-syntax   ElementValueArrayInitializer =
-        "{" ElementValues? ","? "}"
-        ;
+syntax ElementValueArrayInitializer 
+	= "{" ElementValues? ","? "}"
+    ;
 
-syntax 	ElementValues =
-       {ElementValue ","}+
-       ;
+syntax ElementValues 
+	= {ElementValue ","}+
+    ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax ClassBody = 
-    "{" ClassBodyDeclaration* "}"
+syntax ClassBody 
+	= "{" ClassBodyDeclaration* "}"
    	 ;
 
-syntax ClassBodyDeclaration = 
-    ";" 
+syntax ClassBodyDeclaration 
+	=  ";" 
     | Modifier* MemberDecl
     | "static"? Block
     ;
 
-syntax MemberDecl = 
-    MethodOrFieldDecl
+syntax MemberDecl 
+	= MethodOrFieldDecl
     | "void" Identifier VoidMethodDeclaratorRest
     | Identifier ConstructorDeclaratorRest
     | GenericMethodOrConstructorDecl
     | ClassDeclaration
     | InterfaceDeclaration
     ;
-    
 
-syntax MethodOrFieldDecl =
-    Type Identifier MethodOrFieldRest
+syntax MethodOrFieldDecl 
+	= Type Identifier MethodOrFieldRest
     ;
 
-syntax MethodOrFieldRest =  
-    FieldDeclaratorsRest ";"
+syntax MethodOrFieldRest 
+	=  FieldDeclaratorsRest ";"
     | MethodDeclaratorRest
     ;
 
-syntax FieldDeclaratorsRest =  
-    VariableDeclaratorRest ("," VariableDeclarator)*
+syntax FieldDeclaratorsRest 
+	=  VariableDeclaratorRest ("," VariableDeclarator)*
     ;
 
-syntax MethodDeclaratorRest =
-    FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? (Block | ";")
+syntax MethodDeclaratorRest 
+	= FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? (Block | ";")
     ;
 
-syntax VoidMethodDeclaratorRest =
-    FormalParameters ("throws" QualifiedIdentifierList)? (Block | ";")
+syntax VoidMethodDeclaratorRest 
+	= FormalParameters ("throws" QualifiedIdentifierList)? (Block | ";")
     ;
 
-syntax ConstructorDeclaratorRest =
-    FormalParameters ("throws" QualifiedIdentifierList)? Block
+syntax ConstructorDeclaratorRest 
+	= FormalParameters ("throws" QualifiedIdentifierList)? Block
     ;
 
-syntax GenericMethodOrConstructorDecl = 
-    TypeParameters GenericMethodOrConstructorRest;
+syntax GenericMethodOrConstructorDecl 
+	= TypeParameters GenericMethodOrConstructorRest
+	;
 
-syntax GenericMethodOrConstructorRest =
-    (Type | "void") Identifier MethodDeclaratorRest
-    Identifier ConstructorDeclaratorRest
+syntax GenericMethodOrConstructorRest 
+	= (Type | "void") Identifier MethodDeclaratorRest
+    | Identifier ConstructorDeclaratorRest
     ;
     
 //----------------------------------------------------------------------------------------------------------------
 
-syntax InterfaceBody =  
-    "{" InterfaceBodyDeclaration* "}"
+syntax InterfaceBody 
+	= "{" InterfaceBodyDeclaration* "}"
     ;
 
-syntax InterfaceBodyDeclaration =
-    ";" 
+syntax InterfaceBodyDeclaration 
+	= ";" 
     | Modifier* InterfaceMemberDecl
     ;
 
-syntax InterfaceMemberDecl =
-    InterfaceMethodOrFieldDecl
+syntax InterfaceMemberDecl 
+	= InterfaceMethodOrFieldDecl
     | "void" Identifier VoidInterfaceMethodDeclaratorRest
     | InterfaceGenericMethodDecl
     | ClassDeclaration
     | InterfaceDeclaration
     ;
 
-syntax InterfaceMethodOrFieldDecl =
-    Type Identifier InterfaceMethodOrFieldRest
+syntax InterfaceMethodOrFieldDecl 
+	= Type Identifier InterfaceMethodOrFieldRest
     ;
 
-syntax InterfaceMethodOrFieldRest =
-    ConstantDeclaratorsRest ";"
+syntax InterfaceMethodOrFieldRest 
+	= ConstantDeclaratorsRest ";"
     | InterfaceMethodDeclaratorRest
     ;
 
-syntax ConstantDeclaratorsRest = 
-    ConstantDeclaratorRest ("," ConstantDeclarator)*
+syntax ConstantDeclaratorsRest 
+	= ConstantDeclaratorRest ("," ConstantDeclarator)*
     ;
 
-syntax ConstantDeclaratorRest =  
-    ("[""]")* "=" VariableInitializer
+syntax ConstantDeclaratorRest 
+	= ("[""]")* "=" VariableInitializer
     ;
 
-syntax ConstantDeclarator = 
-    Identifier ConstantDeclaratorRest
+syntax ConstantDeclarator 
+	= Identifier ConstantDeclaratorRest
     ;
 
-syntax InterfaceMethodDeclaratorRest =
-    FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? ";"
+syntax InterfaceMethodDeclaratorRest 
+	= FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? ";"
     ; 
 
-syntax VoidInterfaceMethodDeclaratorRest = 
-    FormalParameters ("throws" QualifiedIdentifierList)? ";"
+syntax VoidInterfaceMethodDeclaratorRest 
+	= FormalParameters ("throws" QualifiedIdentifierList)? ";"
     ;  
 
-syntax InterfaceGenericMethodDecl = 
-    TypeParameters (Type | "void") Identifier InterfaceMethodDeclaratorRest
+syntax InterfaceGenericMethodDecl 
+	= TypeParameters (Type | "void") Identifier InterfaceMethodDeclaratorRest
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax FormalParameters = 
-    "(" FormalParameterDecls? ")"
+syntax FormalParameters 
+	= "(" FormalParameterDecls? ")"
     ;
 
-syntax FormalParameterDecls = 
-    VariableModifier*  Type FormalParameterDeclsRest
+syntax FormalParameterDecls 
+	= VariableModifier*  Type FormalParameterDeclsRest
     ;
 
-syntax VariableModifier = 
-    "final"
+syntax VariableModifier 
+	= "final"
     | Annotation
     ;
 
-syntax FormalParameterDeclsRest =  
-    VariableDeclaratorId ("," FormalParameterDecls)?
+syntax FormalParameterDeclsRest 
+	= VariableDeclaratorId ("," FormalParameterDecls)?
     | "..." VariableDeclaratorId
     ;
 
-syntax VariableDeclaratorId = 
-    Identifier ("[""]")*
+syntax VariableDeclaratorId 
+	= Identifier ("[""]")*
     ;
 
-syntax VariableDeclarators =
-    {VariableDeclarator ","}+
+syntax VariableDeclarators 
+	= {VariableDeclarator ","}+
     ;
 
-syntax VariableDeclarator =
-    Identifier VariableDeclaratorRest
+syntax VariableDeclarator 
+	= Identifier VariableDeclaratorRest
     ;
 
-syntax VariableDeclaratorRest = 
-    ("[" "]")* ( "=" VariableInitializer)?
+syntax VariableDeclaratorRest 
+	= ("[" "]")* ( "=" VariableInitializer)?
     ;
 
-syntax VariableInitializer = 
-    ArrayInitializer
+syntax VariableInitializer 
+	= ArrayInitializer
     | Expression
     ;
 
-syntax ArrayInitializer = 
-    "{" ({VariableInitializer ","}+ ","? )? "}"
+syntax ArrayInitializer 
+	= "{" ({VariableInitializer ","}+ ","? )? "}"
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax Block = 
-    "{" BlockStatement* "}"
+syntax Block 
+	= "{" BlockStatement* "}"
     ;
 
-syntax BlockStatement = 
-    LocalVariableDeclarationStatement
+syntax BlockStatement 
+	= LocalVariableDeclarationStatement
     | ClassOrInterfaceDeclaration
     | (Identifier ":")? Statement
     ;
 
-syntax LocalVariableDeclarationStatement = 
-    VariableModifier*  Type VariableDeclarators ";"
+syntax LocalVariableDeclarationStatement 
+	= VariableModifier*  Type VariableDeclarators ";"
     ;
 
-syntax Statement =
-    Block
+syntax Statement 
+	= Block
     | ";"
     | Identifier ":" Statement
     | StatementExpression ";"
@@ -355,91 +355,91 @@ syntax Statement =
     | "return" [Expression] ";"
     | "throw" Expression ";"
     | "synchronized" ParExpression Block
-    | "try" Block (CatcheClause+ | (CatchClause* Finally))
-    | "try" ResourceSpecification Block CatcheClause* Finally?
+    | "try" Block (CatchClause+ | (CatchClause* Finally))
+    | "try" ResourceSpecification Block CatchClause* Finally?
     ;
 
-syntax StatementExpression =  
-    Expression
+syntax StatementExpression 
+	=  Expression
     ;
     
 //----------------------------------------------------------------------------------------------------------------
 
-syntax CatchClause =   
-    "catch" "(" VariableModifier* CatchType Identifier ")" Block
+syntax CatchClause 
+	= "catch" "(" VariableModifier* CatchType Identifier ")" Block
     ;
 
-syntax CatchType  = 
-    {QualifiedIdentifier "|"}+
+syntax CatchType  
+	=  {QualifiedIdentifier "|"}+
     ;
 
-syntax Finally = 
-    "finally" Block
+syntax Finally 
+	= "finally" Block
     ;
 
-syntax ResourceSpecification = 
-    "(" Resources ";"? ")"
+syntax ResourceSpecification 
+	= "(" Resources ";"? ")"
     ;
 
-syntax Resources = 
-    {Resource ";"}+
+syntax Resources 
+	= {Resource ";"}+
     ;
 
-syntax Resource = 
-    VariableModifier* ReferenceType VariableDeclaratorId "=" Expression
+syntax Resource 
+	= VariableModifier* ReferenceType VariableDeclaratorId "=" Expression
     ; 
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax SwitchBlockStatementGroups =  
-    "{" SwitchBlockStatementGroup "}"
+syntax SwitchBlockStatementGroups 
+	= "{" SwitchBlockStatementGroup "}"
     ;
 
 syntax SwitchBlockStatementGroup =  
-    SwitchLabel+ BlockStatements
+    SwitchLabel+ BlockStatement*
     ;
 
-syntax SwitchLabel =  
-    "case" Expression ":"
+syntax SwitchLabel 
+	= "case" Expression ":"
     | "case" EnumConstantName ":"
     | "default" ":"
     ;
 
-syntax EnumConstantName = 
-    Identifier
+syntax EnumConstantName 
+	= Identifier
     ;
 
-syntax ForControl = 
-    ForVarControl
+syntax ForControl 
+	= ForVarControl
     | ForInit ";" Expression? ";" ForUpdate?
     ;
 
-syntax ForVarControl = 
-    VariableModifier* Type VariableDeclaratorId  ForVarControlRest
+syntax ForVarControl 
+	= VariableModifier* Type VariableDeclaratorId  ForVarControlRest
     ;
 
-syntax ForVarControlRest = 
-    ForVariableDeclaratorsRest ";" Expression? ";" ForUpdate?
+syntax ForVarControlRest 
+	= ForVariableDeclaratorsRest ";" Expression? ";" ForUpdate?
     | ":" Expression
     ;
 
-syntax ForVariableDeclaratorsRest =
-    ("=" VariableInitializer)? ( "," VariableDeclarator)*
+syntax ForVariableDeclaratorsRest 
+	= ("=" VariableInitializer)? ( "," VariableDeclarator)*
     ;
 
 syntax ForInit = ;
 
-syntax ForUpdate = 
-    {StatementExpression ","}+
+syntax ForUpdate 
+	= {StatementExpression ","}+
     ;    
 
 //----------------------------------------------------------------------------------------------------------------
-syntax Expression =  
-    Expression1 (AssignmentOperator Expression1)?
+syntax Expression 
+	= Expression1 (AssignmentOperator Expression1)?
     ;
 
-syntax AssignmentOperator =  
-    "=" 
+syntax AssignmentOperator 
+	= "=" 
     | "+="
     | "-=" 
     | "*="
@@ -453,27 +453,27 @@ syntax AssignmentOperator =
     | "\>\>\>="
     ;
 
-syntax Expression1 = 
-    Expression2 Expression1Rest?
+syntax Expression1 
+	= Expression2 Expression1Rest?
     ;
 
-syntax Expression1Rest = 
-    "?" Expression ":" Expression1
+syntax Expression1Rest 
+	= "?" Expression ":" Expression1
     ;
 
-syntax Expression2 =
-    Expression3 Expression2Rest?
+syntax Expression2 
+	= Expression3 Expression2Rest?
     ;
 
-syntax Expression2Rest =
-    (InfixOp Expression3)*
+syntax Expression2Rest 
+	= (InfixOp Expression3)*
     | "instanceof" Type
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax InfixOp = 
-    "||" 
+syntax InfixOp 
+	= "||" 
     | "&&"
     | "|"
     | "^"
@@ -494,14 +494,14 @@ syntax InfixOp =
     | "%"
     ;
 
-syntax Expression3 = 
-    PrefixOp Expression3
+syntax Expression3 
+	= PrefixOp Expression3
     | "(" (Expression | Type) ")" Expression3
     | Primary Selector* PostfixOp*
     ;
 
-syntax PrefixOp = 
-    "++"
+syntax PrefixOp 
+	= "++"
     | "--"
     | "!"
     | "~"
@@ -509,15 +509,15 @@ syntax PrefixOp =
     | "-"
     ;
 
-syntax PostfixOp =  
-    "++"
+syntax PostfixOp 
+	= "++"
     | "--"
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax Primary =  
-    Literal
+syntax Primary 
+	= Literal
     | ParExpression
     | "this" Arguments?
     | "super" SuperSuffix
@@ -529,8 +529,8 @@ syntax Primary =
     ;
 
 
-syntax Literal = 
-    IntegerLiteral
+syntax Literal 
+	= IntegerLiteral
     | FloatingPointLiteral
     | CharacterLiteral 	
     | StringLiteral 	
@@ -538,61 +538,60 @@ syntax Literal =
     | NullLiteral
     ;
 
-syntax ParExpression =  
-    "(" Expression ")"
+syntax ParExpression 
+	=  "(" Expression ")"
     ;
 
-syntax Arguments =
-    "(" {Expression ","}* ")"
+syntax Arguments 
+	="(" {Expression ","}* ")"
     ;
 
-syntax SuperSuffix =  
-    Arguments 
+syntax SuperSuffix 
+	=  Arguments 
     | "." Identifier Arguments?
     ;
 
-syntax ExplicitGenericInvocationSuffix =  
-    "super" SuperSuffix
+syntax ExplicitGenericInvocationSuffix 
+	= "super" SuperSuffix
     | Identifier Arguments
     ;
     
 //----------------------------------------------------------------------------------------------------------------
 
-syntax Creator =  
-    NonWildcardTypeArguments CreatedName ClassCreatorRest
-    CreatedName (ClassCreatorRest | ArrayCreatorRest)
+syntax Creator 
+	= NonWildcardTypeArguments CreatedName ClassCreatorRest
+    | CreatedName (ClassCreatorRest | ArrayCreatorRest)
     ;
 
-syntax CreatedName =   
-    Identifier TypeArgumentsOrDiamond? ("." Identifier TypeArgumentsOrDiamond?)*
+syntax CreatedName 
+	= Identifier TypeArgumentsOrDiamond? ("." Identifier TypeArgumentsOrDiamond?)*
     ;
 
-syntax ClassCreatorRest = 
-    Arguments ClassBody?
+syntax ClassCreatorRest 
+	= Arguments ClassBody?
     ;
 
-syntax ArrayCreatorRest =
-		     "[" ( ("]" ("[""]")* ArrayInitializer)  |  (Expression "]" ("[" Expression "]")* ("[" "]")*) )
-		    ;
+syntax ArrayCreatorRest 
+	= "[" ( ("]" ("[""]")* ArrayInitializer)  |  (Expression "]" ("[" Expression "]")* ("[" "]")*) )
+	;
 
 
-syntax IdentifierSuffix = 
-    "[" ((("[""]")* "." "class") | Expression) "]"
+syntax IdentifierSuffix 
+	= "[" ((("[""]")* "." "class") | Expression) "]"
     | Arguments 
-    | "." ("class" | ExplicitGenericInvocation | "this" | ("super" Arguments) |
-                                ("new" NonWildcardTypeArguments? InnerCreator))
-		      ;
+    | "." ("class" | ExplicitGenericInvocation | "this" | ("super" Arguments) |("new" NonWildcardTypeArguments? InnerCreator))
+	;
 
-syntax ExplicitGenericInvocation = 
-    NonWildcardTypeArguments ExplicitGenericInvocationSuffix
+syntax ExplicitGenericInvocation 
+	= NonWildcardTypeArguments ExplicitGenericInvocationSuffix
     ;
 
-syntax InnerCreator =  
-    Identifier NonWildcardTypeArgumentsOrDiamond? ClassCreatorRest
+syntax InnerCreator 
+	=  Identifier NonWildcardTypeArgumentsOrDiamond? ClassCreatorRest
     ;
 
-syntax Selector = 
-    "." Identifier Arguments?
+syntax Selector 
+	= "." Identifier Arguments?
     | "." ExplicitGenericInvocation
     | "." "this"
     | "." "super" SuperSuffix
@@ -601,65 +600,64 @@ syntax Selector =
     ;
 
 //----------------------------------------------------------------------------------------------------------------
-syntax EnumBody = 
-    "{" {EnumConstant ","}* ","? EnumBodyDeclarations? "}"
+syntax EnumBody 
+	= "{" {EnumConstant ","}* ","? EnumBodyDeclarations? "}"
     ;
 
-syntax EnumConstant =
-    Annotation* Identifier Arguments? ClassBody?;
+syntax EnumConstant 
+	= Annotation* Identifier Arguments? ClassBody?;
 
-syntax EnumBodyDeclarations = 
-    ";" ClassBodyDeclaration*
+syntax EnumBodyDeclarations 
+	= ";" ClassBodyDeclaration*
     ;
 
-syntax AnnotationTypeBody = 
-    "{" AnnotationTypeElementDeclaration+ "}"
+syntax AnnotationTypeBody 
+	= "{" AnnotationTypeElementDeclaration+ "}"
     ;
 
 
-syntax AnnotationTypeElementDeclaration = 
-    Modifier* AnnotationTypeElementRest
+syntax AnnotationTypeElementDeclaration 
+	= Modifier* AnnotationTypeElementRest
     ;
 
-syntax AnnotationTypeElementRest = 
-    Type Identifier AnnotationMethodOrConstantRest ";"
+syntax AnnotationTypeElementRest 
+	= Type Identifier AnnotationMethodOrConstantRest ";"
     | ClassDeclaration
     | InterfaceDeclaration
     | EnumDeclaration  
     | AnnotationTypeDeclaration
     ;
 
-syntax AnnotationMethodOrConstantRest = 
-    AnnotationMethodRest
+syntax AnnotationMethodOrConstantRest 
+	= AnnotationMethodRest
     | ConstantDeclaratorsRest
     ;  
 
-syntax AnnotationMethodRest = 
-    "(" ")" ("[""]")? ("default" ElementValue)?
+syntax AnnotationMethodRest 
+	= "(" ")" ("[""]")? ("default" ElementValue)?
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
 //----------------------------------------------------------------------------------------------------------------
 
-lexical UnicodeInputCharacter =
-      UnicodeEscape
+lexical UnicodeInputCharacter 
+	= UnicodeEscape
     | RawInputCharacter
     ;
 
-lexical UnicodeEscape = 
-    [\\] UnicodeMarker HexDigit HexDigit HexDigit HexDigit
+lexical UnicodeEscape 
+	= [\\] UnicodeMarker HexDigit HexDigit HexDigit HexDigit
     ;
 
-lexical UnicodeMarker = 
-    [u]
+lexical UnicodeMarker 
+	= [u]
     | UnicodeMarker [u]
     ;
 
 lexical RawInputCharacter = [0-0x10FFFF];
 
-lexical HexDigit =
-    [0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F];
+lexical HexDigit = [0-9 a-f A-F];
 
 //----------------------------------------------------------------------------------------------------------------
 lexical LineTerminator =
@@ -673,82 +671,81 @@ lexical InputCharacter =
     ;
 //----------------------------------------------------------------------------------------------------------------
 
-lexical Input =
-    InputElement* Sub?
+lexical Input 
+	= InputElement* Sub?
     ;
 
-
-lexical InputElement = 
-    WhiteSpace
+lexical InputElement 
+	= WhiteSpace
     | Comment
     | Token
     ;
 
-lexical Token = 
-    Identifier
+lexical Token 
+	= Identifier
     | Keyword
     | Literal
     | Separator
     | Operator
     ;
 
-lexical Sub = 
-    [\u001A]		//the ASCII SUB character, also known as "control-Z"
+lexical Sub 
+	= [\u001A]		//the ASCII SUB character, also known as "control-Z"
     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
-lexical WhiteSpace = 
-    [\ ]			// the ASCII SP character, also known as "space"
-    [\t]			// the ASCII HT character, also known as "horizontal tab"
-    [\u000C]		// the ASCII FF character, also known as "form feed"
-    LineTerminator
+lexical WhiteSpace 
+	= [\ ]			// the ASCII SP character, also known as "space"
+    | [\t]			// the ASCII HT character, also known as "horizontal tab"
+    | [\u000C]		// the ASCII FF character, also known as "form feed"
+    | LineTerminator
     ;
     
 //----------------------------------------------------------------------------------------------------------------
     
-lexical Comment = 
-    TraditionalComment
+lexical Comment 
+	= TraditionalComment
     | EndOfLineComment
     ;
 
-lexical TraditionalComment = 
-    "/*" CommentTail
-    ;
+lexical TraditionalComment 
+	 = "/*" CommentTail
+     ;
 
-lexical EndOfLineComment = 
-    "//"" CharactersInLine?;
+lexical EndOfLineComment 
+	= "//" CharactersInLine?;
 
-lexical CommentTail = 
-    "*" CommentTailStar
+lexical CommentTail 
+	= "*" CommentTailStar
     | NotStar CommentTail
     ;
 
-lexical CommentTailStar = 
-    "//"
+lexical CommentTailStar 
+	= "//"
     | "*" CommentTailStar
     | NotStarNotSlash CommentTail
     ;
 
-lexical NotStar = 
-    //InputCharacter but not *
-    LineTerminator;
+lexical NotStar 
+	= InputCharacter \ [*]
+    | LineTerminator;
 
-lexical NotStarNotSlash = 
-    //InputCharacter but not * or /
-    LineTerminator;
+lexical NotStarNotSlash 
+	= InputCharacter \ [* /]
+    | LineTerminator;
 
-lexical CharactersInLine =
-    InputCharacter
+lexical CharactersInLine 
+	= InputCharacter
     | CharactersInLine InputCharacter
     ;  
     
 //----------------------------------------------------------------------------------------------------------------      
 
-lexical Identifier = IdentifierChars \Keywords \BooleanLiteral \NullLiteral;
-    
-lexical IdentifierChars = 
-    JavaLetter
+lexical Identifier = [$ A-Z _ a-z] !<< IdentifierChars \Keyword \BooleanLiteral \NullLiteral !>> [$ 0-9 A-Z _ a-z];
+
+lexical IdentifierChars 
+	= JavaLetter
     | IdentifierChars JavaLetterOrDigit
     ;
 
@@ -758,8 +755,8 @@ lexical JavaLetterOrDigit = [A-Za-z$_0_9];
 
 //----------------------------------------------------------------------------------------------------------------      
 
-keyword Keywords = 
-				"abstract"
+keyword Keyword 
+				= "abstract"
 				| "continue"
 				| "for"
 				| "new"
@@ -813,8 +810,8 @@ keyword Keywords =
 
 //----------------------------------------------------------------------------------------------------------------
 
-lexical Literal = 
-    IntegerLiteral
+lexical Literal 
+	= IntegerLiteral
     | FloatingPointLiteral
     | BooleanLiteral
     | CharacterLiteral
@@ -824,54 +821,54 @@ lexical Literal =
           
 //----------------------------------------------------------------------------------------------------------------
 
-lexical IntegerLiteral =
-    DecimalIntegerLiteral
+lexical IntegerLiteral 
+	= DecimalIntegerLiteral
     | HexIntegerLiteral	
     | OctalIntegerLiteral
     | BinaryIntegerLiteral
     ; 
 
-lexical DecimalIntegerLiteral = 
-    DecimalNumeral IntegerTypeSuffixopt
+lexical DecimalIntegerLiteral 
+	= DecimalNumeral IntegerTypeSuffix
     ;
 
-lexical HexIntegerLiteral = 
-    HexNumeral IntegerTypeSuffixopt
+lexical HexIntegerLiteral 
+	= HexNumeral IntegerTypeSuffix
     ;
 
-lexical OctalIntegerLiteral = 	
-    OctalNumeral IntegerTypeSuffixopt
+lexical OctalIntegerLiteral 
+	= OctalNumeral IntegerTypeSuffix
     ;
 
-lexical BinaryIntegerLiteral = 
-    BinaryNumeral IntegerTypeSuffixopt
+lexical BinaryIntegerLiteral 
+	= BinaryNumeral IntegerTypeSuffix
     ;
 
-lexical IntegerTypeSuffix = 
-    [l] | [L];
+lexical IntegerTypeSuffix 
+	= [l] | [L];
     
 //----------------------------------------------------------------------------------------------------------------
     
-lexical DecimalNumeral = 
-    [0]
+lexical DecimalNumeral 
+	= [0]
     | NonZeroDigit Digits?
     | NonZeroDigit [_]* Digits
     ; 
 
-lexical Digits = 
-    Digit
+lexical Digits 
+	= Digit
     | Digit DigitOrUnderscore* Digit
     ; 
 
-lexical Digit = 
-	    [0]
+lexical Digit 
+		= [0]
 	    | NonZeroDigit
 	    ;
 
 lexical NonZeroDigit = [1-9];
 
-lexical DigitOrUnderscore =
-    Digit
+lexical DigitOrUnderscore 
+	= Digit
     | [_]
     ;
 
@@ -884,7 +881,7 @@ lexical HexNumeral
 
 lexical HexDigits 
 	= HexDigit
-    | HexDigit HexDigitsAndUnderscore* HexDigit; 
+    | HexDigit HexDigitOrUnderscore* HexDigit; 
 
 lexical HexDigit = [0-9 a-f A-F];
 
@@ -897,12 +894,12 @@ lexical HexDigitOrUnderscore =
     
 lexical OctalNumeral 
 	= [0] OctalDigits
-    | [0] Underscores OctalDigits
+    | [0] [_]+ OctalDigits
     ;
 
 lexical OctalDigits 
 	= OctalDigit
-    | OctalDigit OctalDigitsAndUnderscore* OctalDigit 
+    | OctalDigit OctalDigitOrUnderscore* OctalDigit 
     ;
 
 lexical OctalDigit = [0-7];
@@ -921,7 +918,7 @@ lexical BinaryNumeral
 
 lexical BinaryDigits 
 	= BinaryDigit 
-	| BinaryDigit BinaryDigitsAndUnderscore* BinaryDigit
+	| BinaryDigit BinaryDigitOrUnderscore* BinaryDigit
 	;
 
 lexical BinaryDigit = [0-1]; 
@@ -939,7 +936,7 @@ lexical FloatingPointLiteral
     ;
 
 lexical DecimalFloatingPointLiteral 
-	= Digits [.] Digitsopt ExponentPart? FloatTypeSuffix?
+	= Digits [.] Digits ExponentPart? FloatTypeSuffix?
     | [.] Digits ExponentPart? FloatTypeSuffix?
     | Digits ExponentPart FloatTypeSuffix?
     | Digits ExponentPart? FloatTypeSuffix
@@ -960,7 +957,7 @@ lexical FloatTypeSuffix = [f F d D];
 //----------------------------------------------------------------------------------------------------------------
 
 lexical HexadecimalFloatingPointLiteral 
-	  =  HexSignificand BinaryExponent FloatTypeSuffixopt;
+	  =  HexSignificand BinaryExponent FloatTypeSuffix;
 
 lexical HexSignificand 
 	= HexNumeral
