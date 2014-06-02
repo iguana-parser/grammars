@@ -30,7 +30,8 @@ syntax ImportDeclaration
 	;
   
 syntax TypeDeclaration 
-	= ClassOrInterfaceDeclaration ";" 
+	= ClassOrInterfaceDeclaration 
+	| ";" 
   	;  
   
 syntax ClassOrInterfaceDeclaration 
@@ -146,8 +147,8 @@ syntax Annotation
 
 syntax AnnotationElement 
 	= ElementValuePairs
-      | ElementValue
-      ;
+    | ElementValue
+    ;
 
 syntax ElementValuePairs 
 	= {ElementValuePair ","}+
@@ -156,7 +157,6 @@ syntax ElementValuePairs
 syntax ElementValuePair 
 	= Identifier "=" ElementValue
 	;
-
 
 syntax ElementValue 
 	= Annotation
@@ -199,7 +199,7 @@ syntax MethodOrFieldDecl
 
 syntax MethodOrFieldRest 
 	=  FieldDeclaratorsRest ";"
-    | MethodDeclaratorRest
+    |  MethodDeclaratorRest
     ;
 
 syntax FieldDeclaratorsRest 
