@@ -745,8 +745,7 @@ lexical CharactersInLine =
     
 //----------------------------------------------------------------------------------------------------------------      
 
-lexical Identifier = 
-    IdentifierChars \Keywords or BooleanLiteral or NullLiteral
+lexical Identifier = IdentifierChars \Keywords \BooleanLiteral \NullLiteral;
     
 lexical IdentifierChars = 
     JavaLetter
@@ -821,6 +820,7 @@ lexical Literal =
     | CharacterLiteral
     | StringLiteral
     | NullLiteral
+    ;
           
 //----------------------------------------------------------------------------------------------------------------
 
@@ -877,16 +877,16 @@ lexical DigitOrUnderscore =
 
 //----------------------------------------------------------------------------------------------------------------
 
-lexical HexNumeral =
-      [0] [x] HexDigits
+lexical HexNumeral 
+	= [0] [x] HexDigits
     | [0] [X] HexDigits
     ;
 
-lexical HexDigits = 
-    HexDigit
-    HexDigit HexDigitsAndUnderscore* HexDigit 
+lexical HexDigits 
+	= HexDigit
+    | HexDigit HexDigitsAndUnderscore* HexDigit; 
 
-lexical HexDigit= [0-9 a-f A-F];
+lexical HexDigit = [0-9 a-f A-F];
 
 lexical HexDigitOrUnderscore = 
     HexDigit
@@ -926,7 +926,7 @@ lexical BinaryDigits
 
 lexical BinaryDigit = [0-1]; 
 
-BinaryDigitOrUnderscore
+lexical BinaryDigitOrUnderscore
     = BinaryDigit
     | [_]
     ;
@@ -951,11 +951,11 @@ lexical ExponentPart
 
 lexical ExponentIndicator = [e E];
 
-lexical SignedInteger = Sign? Digits
+lexical SignedInteger = Sign? Digits;
 
-lexical Sign = [+ -]
+lexical Sign = [+ \-];
 
-leixcal FloatTypeSuffix = [f F d D]     
+lexical FloatTypeSuffix = [f F d D];     
     
 //----------------------------------------------------------------------------------------------------------------
 
@@ -972,7 +972,7 @@ lexical HexSignificand
 lexical BinaryExponent 
 	= BinaryExponentIndicator SignedInteger;
 
-lexical BinaryExponentIndicator = [p P]
+lexical BinaryExponentIndicator = [p P];
 
 //----------------------------------------------------------------------------------------------------------------
 
@@ -982,20 +982,20 @@ lexical BooleanLiteral
 	 ;
 
 lexical CharacterLiteral 
-	= ['] SingleCharacter [']
-    | ['] EscapeSequence [']
+	= [\'] SingleCharacter [\']
+    | [\'] EscapeSequence [\']
     ;
 
 lexical SingleCharacter 
-	  = InputCharacter \ [' \\]
+	  = InputCharacter \ [\' \\]
       ;
 
 lexical StringLiteral 
-	= ["] StringCharacter* ["]
+	= [\"] StringCharacter* [\"]
     ;
 
 lexical StringCharacter 
-	= InputCharacter \ [" \\]
+	= InputCharacter \ [\" \\]
     | EscapeSequence
     ;
         
@@ -1005,7 +1005,7 @@ lexical EscapeSequence
     | [\\] [n]   			/* \u000a: linefeed LF */
     | [\\] [f]    			/* \u000c: form feed FF */
     | [\\] [r]    			/* \u000d: carriage return CR */
-    | [\\] ["]    			/* \u0022: double quote " */
+    | [\\] [\"]    			/* \u0022: double quote " */
     | [\\] [\']   			/* \u0027: single quote ' */
     | [\\] [\\]             /* \u005c: backslash \ */
     | OctalEscape        	/* \u0000 to \u00ff: from octal value */
@@ -1023,19 +1023,19 @@ lexical ZeroToThree = [0-3];
     
 lexical NullLiteral = "null";
 
-lexical Separator = [( ) { } [ ] ; , .];
+lexical Separator = [( ) { } \[ \] ; , .];
    
 lexical Operator 
 	 = "=" 
-	 | ">" 
-	 | "<" 
+	 | "\>" 
+	 | "\<" 
 	 | "!" 
 	 | "~" 
 	 | "?" 
 	 | ":" 
 	 | "==" 
-	 | "<=" 
-	 | ">=" 
+	 | "\<=" 
+	 | "\>=" 
 	 | "!=" 
 	 | "&&" 
 	 | "||" 
@@ -1049,9 +1049,9 @@ lexical Operator
 	 | "|" 
 	 | "^" 
 	 | "%" 
-	 | "<<" 
-	 | ">>" 
-	 | ">>>" 
+	 | "\<\<" 
+	 | "\>\>" 
+	 | "\>\>\>" 
 	 | "+=" 
 	 | "-=" 
 	 | "*=" 
@@ -1060,8 +1060,8 @@ lexical Operator
 	 | "|=" 
 	 | "^=" 
 	 | "%=" 
-	 | "<<=" 
-	 | ">>=" 
-	 | ">>>="
+	 | "\<\<=" 
+	 | "\>\>=" 
+	 | "\>\>\>="
      ;
     
