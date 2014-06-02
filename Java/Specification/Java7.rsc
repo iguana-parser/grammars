@@ -24,7 +24,7 @@ start syntax CompilationUnit =
   
   
 syntax PackageDeclaration =
-   Annotations* "package"  QualifiedIdentifier ";" 
+   Annotation* "package"  QualifiedIdentifier ";" 
   ;  
   
 syntax ImportDeclaration 
@@ -606,7 +606,7 @@ syntax EnumBody =
     ;
 
 syntax EnumConstant =
-    Annotations? Identifier Arguments? ClassBody?;
+    Annotation* Identifier Arguments? ClassBody?;
 
 syntax EnumBodyDeclarations = 
     ";" ClassBodyDeclaration*
@@ -639,280 +639,203 @@ syntax AnnotationMethodRest =
     ;
 
 //----------------------------------------------------------------------------------------------------------------
+// Lexical Definititions
+//----------------------------------------------------------------------------------------------------------------
 
+lexical UnicodeInputCharacter =
+      UnicodeEscape
+    | RawInputCharacter
+    ;
 
-lexical SignedInteger =
-  [+ \-]? [0-9]+ 
-  ;
+lexical UnicodeEscape = 
+    [\\] UnicodeMarker HexDigit HexDigit HexDigit HexDigit
+    ;
 
-lexical LEX[StringLiteral] =
-   "\"" StringPart* "\"" 
-  ;
+lexical UnicodeMarker = 
+    [u]
+    | UnicodeMarker [u]
+    ;
 
-lexical HexaSignificand =
-  [0] [X x] [0-9 A-F a-f]* "." [0-9 A-F a-f]* 
-  | [0] [X x] [0-9 A-F a-f]+ 
-  ;
+lexical RawInputCharacter = [0-0x10FFFF];
 
-lexical OctaNumeral =
-  [0] [0-7]+ 
-  ;
+lexical HexDigit =
+    [0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F];
 
-lexical HexaNumeral =
-  [0] [X x] [0-9 A-F a-f]+ 
-  ;
-
-lexical LEX[CharLiteral] =
-  "\'" CharContent "\'" 
-  ;
-
-lexical EscChar =
-  "\\" 
-  ;
-
-lexical OctaEscape 
-  = "\\" [0-3] [0-7]+ !>> [0-7] 
-  | "\\" [0-7] !>> [0-7] 
-  | "\\" [4-7] [0-7] 
-  ;
-
-
-lexical EscEscChar =
-  "\\\\" 
-  ;
-
-lexical DeciNumeral =
-  [1-9] [0-9]* 
-  | "0" 
-  ;
-
-keyword HexaSignificandKeywords =
-  [0] [X x] "." 
-  ;
-
-lexical StringChars =
-  FooStringChars 
-  ;
-
-lexical LAYOUT =
-  [\t-\n \a0C-\a0D \ ] 
-  | Comment 
-  ;
-
-
-lexical CharContent =
-  EscapeSeq 
-  | UnicodeEscape 
-  | SingleChar 
-  ;
-
-lexical Comment =
-  "/**/" 
-  | "//" EOLCommentChars !>> ![\n \a0D] LineTerminator 
-  | "/*" !>> [*] CommentPart* "*/" 
-  | "/**" !>> [/] CommentPart* "*/" 
-  ;
-
-lexical OctaLiteral =
-  OctaNumeral !>> [0-7] [L l]? 
-  ;
-
-lexical HexaFloatNumeral =
-  HexaSignificand \ HexaSignificandKeywords !>> [0-9 A-F a-f] BinaryExponent 
-  ;
-
-lexical HexaLiteral =
-  HexaNumeral !>> [0-9 A-F a-f] [L l]? 
-  ;
-
-lexical DeciFloatLiteral =
-  DeciFloatNumeral [D F d f]? 
-  ;
-
-lexical ID =
-  [$ A-Z _ a-z] [$ 0-9 A-Z _ a-z]* 
-  ;
-  
-lexical DeciFloatDigits =
-  [0-9]+ 
-  | [0-9]* "." [0-9]* 
-  ;
-
-lexical DeciLiteral =
-  DeciNumeral !>> [. 0-9 D F d f] [L l]? 
-  ;
-
-lexical EscapeSeq =
-  NamedEscape 
-  | OctaEscape 
-  ;
-
-layout LAYOUTLIST  =
-  LAYOUT* !>> [\t-\n \a0C-\a0D \ ] !>> (  [/]  [*]  ) !>> (  [/]  [/]  ) !>> "/*" !>> "//"
-  ;
-
-
-lexical NamedEscape =
-   "\\" [\" \' \\ b f n r t] 
-  ;
-
-lexical BinaryExponent =
-  [P p] SignedInteger !>> [0-9] 
-  ;
-
-lexical BlockCommentChars =
-  ![* \\]+ 
-  ;
-
-
-keyword Keyword =
-  "continue" 
-  | "package" 
-  | "short" 
-  | "boolean" 
-  | "for" 
-  | "extends" 
-  | "do" 
-  | "strictfp" 
-  | "if" 
-  | "enum" 
-  | "synchronized" 
-  | "else" 
-  | "interface" 
-  | "return" 
-  | "private" 
-  | "volatile" 
-  | "default" 
-  | "throws" 
-  | "static" 
-  | "long" 
-  | "throw" 
-  | "this" 
-  | "catch" 
-  | "super" 
-  | "const" 
-  | "switch" 
-  | "int" 
-  | "implements" 
-  | "native" 
-  | "abstract" 
-  | "break" 
-  | "goto" 
-  | "final" 
-  | "class" 
-  | "byte" 
-  | "instanceof" 
-  | "void" 
-  | "finally" 
-  | "try" 
-  | "new" 
-  | "float" 
-  | "public" 
-  | "transient" 
-  | "char" 
-  | "assert" 
-  | "case" 
-  | "while" 
-  | "double" 
-  | "protected" 
-  | "import" 
-  ;
-
-lexical FooStringChars =
-  ([\a00] | ![\n \a0D \" \\])+ 
-  ;
-
-lexical StringPart =
-  UnicodeEscape 
-  | EscapeSeq 
-  | StringChars !>> ![\n \a0D \" \\]  !>> [\a00]
-  ;
-
-
-keyword FieldAccessKeywords =
-  ExprName "." Identifier 
-  ;
-
-lexical EOLCommentChars =
-  ![\n \a0D]* 
-  ;
-
-lexical SingleChar =
-  ![\n \a0D \' \\] 
-  ;
-
-keyword ElemValKeywords =
-  LHS "=" Expr 
-  ;
-
-lexical CommentPart =
-  UnicodeEscape 
-  | BlockCommentChars !>> ![* \\] 
-  | EscChar !>> [\\ u] 
-  | Asterisk !>> [/] 
-  | EscEscChar 
-  ;
-
-keyword ArrayAccessKeywords =
-  ArrayCreationExpr ArraySubscript 
-  ;
-
-
-
-lexical DeciFloatExponentPart =
-  [E e] SignedInteger !>> [0-9] 
-  ;
-
-lexical EndOfFile =
-  
-  ;
-
-keyword DeciFloatLiteralKeywords =
-  [0-9]+ 
-  ;
-
-keyword DeciFloatDigitsKeywords =
-  "." 
-  ;
-
-syntax InstanceInit =
-   Block 
-  ;
-
-keyword IDKeywords =
-  "null" 
-  | Keyword 
-  | "true" 
-  | "false" 
-  ;
-
-
-lexical DeciFloatNumeral
-	= [0-9] !<< [0-9]+ DeciFloatExponentPart
-	| [0-9] !<< [0-9]+ >> [D F d f]
-	| [0-9] !<< [0-9]+ "." [0-9]* !>> [0-9] DeciFloatExponentPart?
-	| [0-9] !<< "." [0-9]+ !>> [0-9] DeciFloatExponentPart?
-  ;
-
-lexical CarriageReturn =
-  [\a0D] 
-  ;
-
-lexical UnicodeEscape =
-   "\\" [u]+ [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f] [0-9 A-F a-f] 
-  ;
-
+//----------------------------------------------------------------------------------------------------------------
 lexical LineTerminator =
-  [\n] 
-  | EndOfFile !>> ![] 
-  | [\a0D] [\n] 
-  | CarriageReturn !>> [\n] 
-  ;
+    [\n] 		// the ASCII LF character, also known as "newline"
+    | [\r] 		//the ASCII CR character, also known as "return"
+    | [\r][\n]  //the ASCII CR character followed by the ASCII LF character
+    ;
 
-lexical HexaFloatLiteral =
-  HexaFloatNumeral [D F d f]? 
-  ;
+lexical InputCharacter =
+    ![\n \r]   //UnicodeInputCharacter but not CR or LF
+    ;
+//----------------------------------------------------------------------------------------------------------------
 
-lexical Asterisk =
-  "*" 
-  ;
+lexical Input =
+    InputElement* Sub?
+    ;
+
+
+lexical InputElement = 
+    WhiteSpace
+    | Comment
+    | Token
+    ;
+
+lexical Token = 
+    Identifier
+    | Keyword
+    | Literal
+    | Separator
+    | Operator
+    ;
+
+lexical Sub = 
+    [\u001A]		//the ASCII SUB character, also known as "control-Z"
+    ;
+
+//----------------------------------------------------------------------------------------------------------------
+
+lexical WhiteSpace = 
+    [\ ]			// the ASCII SP character, also known as "space"
+    [\t]			// the ASCII HT character, also known as "horizontal tab"
+    [\u000C]		// the ASCII FF character, also known as "form feed"
+    LineTerminator
+    ;
+    
+//----------------------------------------------------------------------------------------------------------------
+    
+lexical Comment = 
+    TraditionalComment
+    | EndOfLineComment
+    ;
+
+lexical TraditionalComment = 
+    "/*" CommentTail
+    ;
+
+lexical EndOfLineComment = 
+    "//"" CharactersInLine?;
+
+lexical CommentTail = 
+    "*" CommentTailStar
+    | NotStar CommentTail
+    ;
+
+lexical CommentTailStar = 
+    "//"
+    | "*" CommentTailStar
+    | NotStarNotSlash CommentTail
+    ;
+
+lexical NotStar = 
+    //InputCharacter but not *
+    LineTerminator;
+
+lexical NotStarNotSlash = 
+    //InputCharacter but not * or /
+    LineTerminator;
+
+lexical CharactersInLine =
+    InputCharacter
+    | CharactersInLine InputCharacter
+    ;  
+    
+//----------------------------------------------------------------------------------------------------------------      
+
+lexical Identifier = 
+    IdentifierChars;// but not a Keyword or BooleanLiteral or NullLiteral
+    
+lexical IdentifierChars = 
+    JavaLetter
+    | IdentifierChars JavaLetterOrDigit
+    ;
+
+lexical JavaLetter = [A-Za-z$_];
+
+lexical JavaLetterOrDigit = [A-Za-z$_0_9];
+//----------------------------------------------------------------------------------------------------------------      
+
+keyword Keywords = "abstract"
+"continue"
+"for"
+"new"
+"switch"
+"assert"
+"default"
+"if"
+"package"
+"synchronized"
+"boolean"
+"do"
+"goto"
+"private"
+"this"
+"break"
+"double"
+"implements"
+"protected"
+"throw"
+"byte"
+"else"
+"import"
+"public"
+"throws"
+"case"
+"enum"
+"instanceof"
+"return"
+"transient"
+"catch"
+"extends"
+"int"
+"short"
+"try"
+"char"
+"final"
+"interface"
+"static"
+"void"
+"class"
+"finally"
+"long"
+"strictfp"
+"volatile"
+"const"
+"float"
+"native"
+"super"
+"while"
+;
+
+lexical IntegerLiteral =
+    DecimalIntegerLiteral
+    | HexIntegerLiteral	
+    | OctalIntegerLiteral
+    | BinaryIntegerLiteral
+    ; 
+
+lexical DecimalIntegerLiteral = 
+    DecimalNumeral IntegerTypeSuffixopt
+    ;
+
+lexical HexIntegerLiteral = 
+    HexNumeral IntegerTypeSuffixopt
+    ;
+
+lexical OctalIntegerLiteral = 	
+    OctalNumeral IntegerTypeSuffixopt
+    ;
+
+lexical BinaryIntegerLiteral = 
+    BinaryNumeral IntegerTypeSuffixopt
+    ;
+
+lexical IntegerTypeSuffix = 
+    [l] | [L];
+    
+//----------------------------------------------------------------------------------------------------------------
+    
+    
