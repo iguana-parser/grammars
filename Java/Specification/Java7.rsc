@@ -88,19 +88,18 @@ syntax TypeArguments
   	  
 syntax TypeArgument 
 	 = ReferenceType
-       | "?" (("extends" | "super") ReferenceType)?
-       ;
+     | "?" (("extends" | "super") ReferenceType)?
+     ;
   
 //----------------------------------------------------------------------------------------------------------------    
   
 syntax NonWildcardTypeArguments 
-	= "\<" TypeList "\>"
-    ;
+	 = "\<" TypeList "\>"
+     ;
 
 syntax TypeList 
-	=  {ReferenceType ","}+
-    ;
-
+	 = {ReferenceType ","}+
+     ;
 
 syntax TypeArgumentsOrDiamond 
 	= "\<" "\>" 
@@ -752,62 +751,62 @@ lexical IdentifierChars
 
 lexical JavaLetter = [A-Za-z$_];
 
-lexical JavaLetterOrDigit = [A-Za-z$_0_9];
+lexical JavaLetterOrDigit = [A-Za-z$_0-9];
 
 //----------------------------------------------------------------------------------------------------------------      
 
 keyword Keyword 
-				= "abstract"
-				| "continue"
-				| "for"
-				| "new"
-				| "switch"
-				| "assert"
-				| "default"
-				| "if"
-				| "package"
-				| "synchronized"
-				| "boolean"
-				| "do"
-				| "goto"
-				| "private"
-				| "this"
-				| "break"
-				| "double"
-				| "implements"
-				| "protected"
-				| "throw"
-				| "byte"
-				| "else"
-				| "import"
-				| "public"
-				| "throws"
-				| "case"
-				| "enum"
-				| "instanceof"
-				| "return"
-				| "transient"
-				| "catch"
-				| "extends"
-				| "int"
-				| "short"
-				| "try"
-				| "char"
-				| "final"
-				| "interface"
-				| "static"
-				| "void"
-				| "class"
-				| "finally"
-				| "long"
-				| "strictfp"
-				| "volatile"
-				| "const"
-				| "float"
-				| "native"
-				| "super"
-				| "while"
-				;
+	  = "abstract"
+	  | "continue"
+	  | "for"
+	  | "new"
+	  | "switch"
+	  | "assert"
+	  | "default"
+	  | "if"
+	  | "package"
+	  | "synchronized"
+	  | "boolean"
+	  | "do"
+	  | "goto"
+	  | "private"
+	  | "this"
+	  | "break"
+	  | "double"
+	  | "implements"
+	  | "protected"
+	  | "throw"
+	  | "byte"
+	  | "else"
+	  | "import"
+	  | "public"
+	  | "throws"
+	  | "case"
+	  | "enum"
+	  | "instanceof"
+	  | "return"
+	  | "transient"
+	  | "catch"
+	  | "extends"
+	  | "int"
+	  | "short"
+	  | "try"
+	  | "char"
+	  | "final"
+	  | "interface"
+	  | "static"
+	  | "void"
+	  | "class"
+	  | "finally"
+	  | "long"
+	  | "strictfp"
+	  | "volatile"
+      | "const"
+	  | "float"
+	  | "native"
+	  | "super"
+	  | "while"
+	  ;
 
 //----------------------------------------------------------------------------------------------------------------
 
@@ -830,19 +829,19 @@ lexical IntegerLiteral
     ; 
 
 lexical DecimalIntegerLiteral 
-	= DecimalNumeral IntegerTypeSuffix
+	= DecimalNumeral IntegerTypeSuffix?
     ;
 
 lexical HexIntegerLiteral 
-	= HexNumeral IntegerTypeSuffix
+	= HexNumeral IntegerTypeSuffix?
     ;
 
 lexical OctalIntegerLiteral 
-	= OctalNumeral IntegerTypeSuffix
+	= OctalNumeral IntegerTypeSuffix?
     ;
 
 lexical BinaryIntegerLiteral 
-	= BinaryNumeral IntegerTypeSuffix
+	= BinaryNumeral IntegerTypeSuffix?
     ;
 
 lexical IntegerTypeSuffix 
@@ -862,9 +861,9 @@ lexical Digits
     ; 
 
 lexical Digit 
-		= [0]
-	    | NonZeroDigit
-	    ;
+     = [0]
+     | NonZeroDigit
+     ;
 
 lexical NonZeroDigit = [1-9];
 
@@ -886,8 +885,8 @@ lexical HexDigits
 
 lexical HexDigit = [0-9 a-f A-F];
 
-lexical HexDigitOrUnderscore = 
-    HexDigit
+lexical HexDigitOrUnderscore 
+	= HexDigit
     | [_]
     ;
     
