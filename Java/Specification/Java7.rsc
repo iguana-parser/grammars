@@ -80,7 +80,7 @@ syntax BasicType
     ;
   
 syntax ReferenceType 
-	= Identifier TypeArguments? ( "." Identifier TypeArguments? )*;
+	= Identifier TypeArguments? ("." Identifier TypeArguments? )*;
   
 syntax TypeArguments 
 	= "\<" {TypeArgument ","}+ "\>" 
@@ -127,7 +127,8 @@ syntax Bound
 //----------------------------------------------------------------------------------------------------------------    
 
 syntax Modifier 
- 	= "final"
+ 	= Annotation
+ 	| "final"
   	| "strictfp" 
   	| "private" 
   	| "synchronized" 
@@ -207,7 +208,7 @@ syntax FieldDeclaratorsRest
     ;
 
 syntax MethodDeclaratorRest 
-	= FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? (Block | ";")
+	= FormalParameters ("[" "]")* ("throws" QualifiedIdentifierList)? (Block | ";")
     ;
 
 syntax VoidMethodDeclaratorRest 
@@ -260,7 +261,7 @@ syntax ConstantDeclaratorsRest
     ;
 
 syntax ConstantDeclaratorRest 
-	= ("[""]")* "=" VariableInitializer
+	= ("[" "]")* "=" VariableInitializer
     ;
 
 syntax ConstantDeclarator 
@@ -268,7 +269,7 @@ syntax ConstantDeclarator
     ;
 
 syntax InterfaceMethodDeclaratorRest 
-	= FormalParameters ("[""]")* ("throws" QualifiedIdentifierList)? ";"
+	= FormalParameters ("[" "]")* ("throws" QualifiedIdentifierList)? ";"
     ; 
 
 syntax VoidInterfaceMethodDeclaratorRest 
@@ -300,7 +301,7 @@ syntax FormalParameterDeclsRest
     ;
 
 syntax VariableDeclaratorId 
-	= Identifier ("[""]")*
+	= Identifier ("[" "]")*
     ;
 
 syntax VariableDeclarators 
@@ -312,7 +313,7 @@ syntax VariableDeclarator
     ;
 
 syntax VariableDeclaratorRest 
-	= ("[" "]")* ( "=" VariableInitializer)?
+	= ("[" "]")* ("=" VariableInitializer)?
     ;
 
 syntax VariableInitializer 
@@ -353,7 +354,7 @@ syntax Statement
     | "for" "(" ForControl ")" Statement
     | "break" Identifier? ";"
     | "continue" Identifier? ";"
-    | "return" [Expression] ";"
+    | "return" Expression? ";"
     | "throw" Expression ";"
     | "synchronized" ParExpression Block
     | "try" Block (CatchClause+ | (CatchClause* Finally))
@@ -393,7 +394,7 @@ syntax Resource
 //----------------------------------------------------------------------------------------------------------------
 
 syntax SwitchBlockStatementGroups 
-	= "{" SwitchBlockStatementGroup "}"
+	= SwitchBlockStatementGroup*
     ;
 
 syntax SwitchBlockStatementGroup =  
@@ -524,7 +525,7 @@ syntax Primary
     | "super" SuperSuffix
     | "new" Creator
     | NonWildcardTypeArguments (ExplicitGenericInvocationSuffix | ("this" Arguments))
-    | Identifier ( "." Identifier) IdentifierSuffix?
+    | {Identifier "."}+ IdentifierSuffix?
     | BasicType ("[" "]")* "." "class"
     | "void" "." "class"
     ;
@@ -573,7 +574,7 @@ syntax ClassCreatorRest
     ;
 
 syntax ArrayCreatorRest 
-	= "[" ( ("]" ("[""]")* ArrayInitializer)  |  (Expression "]" ("[" Expression "]")* ("[" "]")*) )
+	= "[" ( ("]" ("[" "]")* ArrayInitializer)  |  (Expression "]" ("[" Expression "]")* ("[" "]")*) )
 	;
 
 
