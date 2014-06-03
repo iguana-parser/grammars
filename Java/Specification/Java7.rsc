@@ -126,19 +126,19 @@ syntax Bound
 //----------------------------------------------------------------------------------------------------------------    
 
 syntax Modifier 
- 	= Annotation
- 	| "final"
-  	| "strictfp" 
-  	| "private" 
-  	| "synchronized" 
-	| "volatile" 
-  	| "protected" 
-  	| "transient" 
-  	| "abstract" 
-  	| "native" 
-  	| "static" 
-  	| "public" 
-  	;
+     	= Annotation
+ 	    | "final"
+  	   | "strictfp" 
+  	   | "private" 
+  	   | "synchronized" 
+  	   | "volatile" 
+  	   | "protected" 
+  	   | "transient" 
+  	   | "abstract" 
+  	   | "native" 
+  	   | "static" 
+  	   | "public" 
+  	   ;
 
   
 syntax Annotation 
@@ -411,7 +411,7 @@ syntax EnumConstantName
     ;
 
 syntax ForControl 
-	= ForVarControl
+			    = ForVarControl
     | ForInit ";" Expression? ";" ForUpdate?
     ;
 
@@ -428,11 +428,12 @@ syntax ForVariableDeclaratorsRest
 	= ("=" VariableInitializer)? ( "," VariableDeclarator)*
     ;
 
-syntax ForInit = ;
+syntax ForInit 
+     = {StatementExpression ","}+;
 
 syntax ForUpdate 
-	= {StatementExpression ","}+
-    ;    
+     = {StatementExpression ","}+
+     ;    
 
 //----------------------------------------------------------------------------------------------------------------
 syntax Expression 
@@ -467,100 +468,98 @@ syntax Expression2
     ;
 
 syntax Expression2Rest 
-	= (InfixOp Expression3)*
-    | "instanceof" Type
-    ;
+     = ((InfixOp Expression3) | ("instanceof" Type))*
+     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
 syntax InfixOp 
-	= "||" 
-    | "&&"
-    | "|"
-    | "^"
-    | "&"
-    | "=="
-    | "!="
-    | "\<"
-    | "\>"
-    | "\<="
-    | "\>="
-    | "\<\<"
-    | "\>\>"
-    | "\>\>\>"
-    | "+"
-    | "-"
-    | "*"
-    | "/"
-    | "%"
-    ;
+     = "||" 
+     | "&&"
+     | "|"
+     | "^"
+     | "&"
+     | "=="
+     | "!="
+     | "\<"
+     | "\>"
+     | "\<="
+     | "\>="
+     | "\<\<"
+     | "\>\>"
+     | "\>\>\>"
+     | "+"
+     | "-"
+     | "*"
+     | "/"
+     | "%"
+     ;
 
 syntax Expression3 
-	= PrefixOp Expression3
-    | "(" (Expression | Type) ")" Expression3
-    | Primary Selector* PostfixOp*
-    ;
+     = PrefixOp Expression3
+     | "(" (Expression | Type) ")" Expression3
+     | Primary Selector* PostfixOp*
+     ;
 
 syntax PrefixOp 
-	= "++"
-    | "--"
-    | "!"
-    | "~"
-    | "+"
-    | "-"
-    ;
+     = "++"
+     | "--"
+     | "!"
+     | "~"
+     | "+"
+     | "-"
+     ;
 
 syntax PostfixOp 
-	= "++"
-    | "--"
-    ;
+     = "++"
+     | "--"
+     ;
 
 //----------------------------------------------------------------------------------------------------------------
 
 syntax Primary 
-	= Literal
-    | ParExpression
-    | "this" Arguments?
-    | "super" SuperSuffix
-    | "new" Creator
-    | NonWildcardTypeArguments (ExplicitGenericInvocationSuffix | ("this" Arguments))
-    | {Identifier "."}+ IdentifierSuffix?
-    | BasicType ("[" "]")* "." "class"
-    | "void" "." "class"
-    ;
-
+     = Literal
+     | ParExpression
+     | "this" Arguments?
+     | "super" SuperSuffix
+     | "new" Creator
+     | NonWildcardTypeArguments (ExplicitGenericInvocationSuffix | ("this" Arguments))
+     | {Identifier "."}+ IdentifierSuffix?
+     | BasicType ("[" "]")* "." "class"
+     | "void" "." "class"
+     ;
 
 syntax Literal 
-	= IntegerLiteral
-    | FloatingPointLiteral
-    | CharacterLiteral 	
-    | StringLiteral 	
-    | BooleanLiteral
-    | NullLiteral
-    ;
+     = IntegerLiteral
+     | FloatingPointLiteral
+     | CharacterLiteral 	
+     | StringLiteral 	
+     | BooleanLiteral
+     | NullLiteral
+     ;
 
 syntax ParExpression 
-	=  "(" Expression ")"
-    ;
+     =  "(" Expression ")"
+     ;
 
 syntax Arguments 
-	="(" {Expression ","}* ")"
-    ;
+     = "(" {Expression ","}* ")"
+     ;
 
 syntax SuperSuffix 
-	=  Arguments 
-    | "." Identifier Arguments?
-    ;
+     =  Arguments 
+     | "." Identifier Arguments?
+     ;
 
 syntax ExplicitGenericInvocationSuffix 
-	= "super" SuperSuffix
-    | Identifier Arguments
-    ;
+     = "super" SuperSuffix
+     | Identifier Arguments
+     ;
     
 //----------------------------------------------------------------------------------------------------------------
 
 syntax Creator 
-	= NonWildcardTypeArguments CreatedName ClassCreatorRest
+    = NonWildcardTypeArguments CreatedName ClassCreatorRest
     | CreatedName (ClassCreatorRest | ArrayCreatorRest)
     ;
 
