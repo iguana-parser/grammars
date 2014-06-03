@@ -1,7 +1,8 @@
 /**
  *  Derived from http://docs.oracle.com/javase/specs/jls/se7/html/jls-18.html
  *
- *
+ *  There are some problems with this grammar that I found solutions for in this
+ *  blog post: http://www.daniberg.com/2014/02/java-7-grammar.html
  *
  *  author: Ali Afroozeh
  */
@@ -86,21 +87,21 @@ syntax TypeArguments
 	= "\<" {TypeArgument ","}+ "\>" 
   	;
   	  
-syntax TypeArgument 
-	 = ReferenceType
-     | "?" (("extends" | "super") ReferenceType)?
+syntax TypeArgument  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] > 
+	 = Type
+     | "?" (("extends" | "super") Type)?  
      ;
   
 //----------------------------------------------------------------------------------------------------------------    
   
 syntax NonWildcardTypeArguments 
-	 = "\<" TypeList "\>"
+	 =  "\<" {Type ","}+ "\>"  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] >  
      ;
 
-syntax TypeList 
-	 = {ReferenceType ","}+
-     ;
-
+syntax TypeList
+	 = {ReferenceType ","}+    
+	 ;
+    
 syntax TypeArgumentsOrDiamond 
 	= "\<" "\>" 
     | TypeArguments
@@ -411,8 +412,8 @@ syntax EnumConstantName
     ;
 
 syntax ForControl 
-			    = ForVarControl
-    | ForInit ";" Expression? ";" ForUpdate?
+    = ForVarControl
+    | ForInit? ";" Expression? ";" ForUpdate?  // fix: ForInit changed to ForInit? to deal with for (;;;)
     ;
 
 syntax ForVarControl 
@@ -437,7 +438,7 @@ syntax ForUpdate
 
 //----------------------------------------------------------------------------------------------------------------
 syntax Expression 
-	= Expression1 (AssignmentOperator Expression1)?
+	= Expression1 (AssignmentOperator Expression)?  // fix: Expression1 changed to Expression to support nested assignments such as a = b = c = 1; 
     ;
 
 syntax AssignmentOperator 
@@ -561,6 +562,7 @@ syntax ExplicitGenericInvocationSuffix
 syntax Creator 
     = NonWildcardTypeArguments CreatedName ClassCreatorRest
     | CreatedName (ClassCreatorRest | ArrayCreatorRest)
+    | BasicType ArrayCreatorRest   // fix: to deal with primitive array types such as new int[1]
     ;
 
 syntax CreatedName 
@@ -577,7 +579,7 @@ syntax ArrayCreatorRest
 
 
 syntax IdentifierSuffix 
-	= "[" ((("[""]")* "." "class") | Expression) "]"
+	= "[" ( ("]"  ("[" "]")* "." "class") | Expression) "]"  // fix: added the second "]"
     | Arguments 
     | "." ("class" | ExplicitGenericInvocation | "this" | ("super" Arguments) |("new" NonWildcardTypeArguments? InnerCreator))
 	;
