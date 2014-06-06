@@ -449,19 +449,27 @@ syntax PrimaryNoNewArray
      | "void" "." "class"
      | "this" 
      | ClassName "." "this"   
-     | "(" Expression ")" ClassInstanceCreationExpression FieldAccess
-     | MethodInvocation ArrayAccess
+     | "(" Expression ")" 
+     | ClassInstanceCreationExpression 
+     | FieldAccess
+     | MethodInvocation 
+     | ArrayAccess
      ;
+
+syntax ClassInstanceCreationExpression
+     = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
+     | Primary "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     ;
+     
+syntax ArgumentList
+     = {Expression ","}+
+     ;     
 
 syntax ArrayCreationExpression
-	 = "new" BasicType DimExprs Dims?
-	 | "new" ReferenceType DimExprs Dims? "new" BasicType Dims ArrayInitializer
+	 = "new" BasicType DimExpr+ Dims?
+	 | "new" ReferenceType DimExpr+ Dims? 
+	 | "new" BasicType Dims ArrayInitializer
      | "new" ReferenceType Dims ArrayInitializer
-     ;
-
-syntax DimExprs
-     = DimExpr
-     | DimExprs DimExpr 
      ;
      
 syntax DimExpr
@@ -469,7 +477,7 @@ syntax DimExpr
      ;
      
 syntax Dims
-	 = "[" "]" Dims "[""]"
+	 = ("[" "]")+
 	 ;
 
 
@@ -491,12 +499,9 @@ syntax NonWildTypeArguments
      = {ReferenceType ","}+
      ;     
      
-syntax ArgumentList
-     = {Expression ","}+
-     ;     
-     
 syntax ArrayAccess
-     = ExpressionName "[" Expression "]" PrimaryNoNewArray "[" Expression "]"
+     = ExpressionName "[" Expression "]" 
+     | PrimaryNoNewArray "[" Expression "]"
      ;
  
 syntax PostfixExpression
@@ -613,7 +618,8 @@ syntax ConditionalExpression
      ;
      
 syntax AssignmentExpression
-     = ConditionalExpression Assignment
+     = ConditionalExpression 
+     | Assignment
      ;
      
      
@@ -622,7 +628,9 @@ syntax Assignment
      ;
      
 syntax LeftHandSide
-     = ExpressionName FieldAccess ArrayAccess
+     = ExpressionName 
+     | FieldAccess 
+     | ArrayAccess
      ;
 
 syntax AssignmentOperator 
@@ -676,11 +684,6 @@ syntax Arguments
      = "(" {Expression ","}* ")"
      ;
 
-syntax ClassInstanceCreationExpression
-     = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?
-     | "(" ArgumentList? ")" ClassBody? Primary "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond?
-     ;
-     
 syntax TypeDeclSpecifier
      = TypeName
      | ReferenceType "." Identifier
