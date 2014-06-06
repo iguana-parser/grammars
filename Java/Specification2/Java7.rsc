@@ -861,7 +861,7 @@ lexical TraditionalComment
      ;
 
 lexical EndOfLineComment 
-    = "//" InputCharacter*;
+    = "//" InputCharacter* !>> ![\n \r];
 
 lexical CommentTail 
     = "*" CommentTailStar
