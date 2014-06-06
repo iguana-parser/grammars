@@ -332,8 +332,8 @@ syntax Block
 
 syntax BlockStatement 
     = LocalVariableDeclarationStatement
-    | ClassOrInterfaceDeclaration
-    | (Identifier ":")? Statement
+    | ClassDeclaration
+    | Statement
     ;
 
 syntax LocalVariableDeclarationStatement 
