@@ -340,28 +340,52 @@ syntax LocalVariableDeclarationStatement
     = VariableModifier*  Type VariableDeclarators ";"
     ;
 
-syntax Statement 
-    = Block
-    | ";"
-    | Identifier ":" Statement
-    | StatementExpression ";"
-    | "if" ParExpression Statement ("else" Statement)? 
-    | "assert" Expression (":" Expression)? ";"
-    | "switch" ParExpression "{" SwitchBlockStatementGroups "}" 
-    | "while" ParExpression Statement
-    | "do" Statement "while" ParExpression ";"
-    | "for" "(" ForControl ")" Statement
-    | "break" Identifier? ";"
-    | "continue" Identifier? ";"
-    | "return" Expression? ";"
-    | "throw" Expression ";"
-    | "synchronized" ParExpression Block
-    | "try" Block (CatchClause+ | (CatchClause* Finally))
-    | "try" ResourceSpecification Block CatchClause* Finally?
-    ;
+syntax Statement
+     = StatementWithoutTrailingSubstatement 
+     | Identifier ":" Statement
+     | "if" "(" Expression ")" Statement
+     | "if" "(" Expression ")" StatementNoShortIf "else" Statement
+     | "while" "(" Expression ")" Statement
+     | ForStatement
+     ;
 
-syntax StatementExpression 
-    =  Expression
+syntax StatementWithoutTrailingSubstatement
+     = Block
+     | ";" 
+     | StatementExpression 
+     | "assert" Expression (":" Expression)? ";" 
+     | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* "}" 
+     | "do" Statement "while" "(" Expression ")" ";" 
+     | "break" Identifier? ";" 
+     | "continue" Identifier? ";" 
+     | "return" Expression? ";" 
+     | "synchronized" ParExpression Block 
+     | "throw" Expression ";" 
+     | "try" Block (CatchClause+ | (CatchClause* Finally))
+     | "try" ResourceSpecification Block CatchClause* Finally?
+     ;
+     
+syntax StatementNoShortIf
+     = StatementWithoutTrailingSubstatement
+     | Identifier ":" StatementNoShortIf
+     |  "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
+     | "while" "(" Expression ")" StatementNoShortIf
+     | "for" "(" ForInit ";" Expression ";" ForUpdate ")" StatementNoShortIf
+     ;
+     
+syntax ForStatement
+     = "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement 
+     | "for" "(" ForVarControl ":" Expression ")" Statement
+     ;
+
+syntax StatementExpression
+     = Assignment 
+     | PreIncrementExpression 
+     | PreDecrementExpression 
+     | PostIncrementExpression 
+     | PostDecrementExpression 
+     | MethodInvocation 
+     | ClassInstanceCreationExpression
     ;
     
 //----------------------------------------------------------------------------------------------------------------
@@ -392,10 +416,6 @@ syntax Resource
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax SwitchBlockStatementGroups 
-    = SwitchBlockStatementGroup*
-    ;
-
 syntax SwitchBlockStatementGroup =  
     SwitchLabel+ BlockStatement*
     ;
@@ -412,7 +432,7 @@ syntax EnumConstantName
 
 syntax ForControl 
     = ForVarControl
-    | ForInit? ";" Expression? ";" ForUpdate?  // fix: ForInit changed to ForInit? to deal with for (;;;)
+    | ForInit? ";" Expression? ";" ForUpdate? 
     ;
 
 syntax ForVarControl 
