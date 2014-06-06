@@ -1,21 +1,97 @@
 /**
- *  Derived from http://docs.oracle.com/javase/specs/jls/se7/html/jls-18.html
- *
- *  There are some problems with this grammar that I found solutions for in this
- *  blog post: http://www.daniberg.com/2014/02/java-7-grammar.html
+ *  Derived from  the main text of the Java Language Specification
  *
  *  author: Ali Afroozeh
  */
 module Java7
 
 
+/************************************************************************************************************************
+ * Types, Values, and Variables
+ ***********************************************************************************************************************/
+
+syntax Type 
+     = PrimitiveType 
+     | ReferenceType
+     ;
+
+syntax PrimitiveType 
+     = "byte"
+     | "short"
+     | "char"
+     | "int"
+     | "long"
+     | "float"
+     | "double"
+     | "boolean"
+     ;
+ 
+syntax ReferenceType
+     = ClassOrInterfaceType
+     | TypeVariable 
+     | ArrayType
+     ;
+     
+syntax ClassOrInterfaceType
+     = TypeDeclSpecifier TypeArguments?
+     ;
+     
+syntax TypeDeclSpecifier
+     = TypeName
+     | ClassOrInterfaceType "." Identifier
+     ;
+     
+syntax TypeName
+     = QualifiedIdentifier
+     ;
+     
+syntax TypeVariable
+     = Identifier
+     ;
+     
+syntax TypeParameters 
+     = "\<" {TypeParameter ","}+ "\>"
+     ;
+
+syntax TypeParameter 
+     = TypeVariable TypeBound?
+     ;     
+     
+syntax TypeBound 
+     = "extends" TypeVariable
+     | "extends" ClassOrInterfaceType ("&" InterfaceType)+
+     ;  
+       
+syntax ReferenceType 
+     = Identifier TypeArguments? ("." Identifier TypeArguments? )*;
+  
+syntax TypeArguments 
+     = "\<" {TypeArgument ","}+ "\>" 
+     ;
+        
+syntax TypeArgument 
+     = ReferenceType
+     | Wildcard  
+     ;
+     
+syntax Wildcard
+     = "?" WildcardBounds?
+     ;
+
+syntax WildcardBounds
+     = "extends" ReferenceType 
+     | "super" ReferenceType
+     ;     
+     
 syntax QualifiedIdentifier 
      = {Identifier "."}+;
 
 syntax QualifiedIdentifierList 
      = {QualifiedIdentifier  ","}+;
 
-//----------------------------------------------------------------------------------------------------------------
+/************************************************************************************************************************
+ * Top level
+ ***********************************************************************************************************************/
 
 start syntax CompilationUnit 
     = PackageDeclaration? ImportDeclaration* TypeDeclaration*
@@ -34,30 +110,191 @@ syntax TypeDeclaration
     | InterfaceDeclaration 
     | ";" 
     ;  
+    
+ /************************************************************************************************************************
+ * Classes
+ ***********************************************************************************************************************/
   
 syntax ClassDeclaration 
      = NormalClassDeclaration
      | EnumDeclaration
      ;
-  
-syntax InterfaceDeclaration 
-    = NormalInterfaceDeclaration
-    | AnnotationTypeDeclaration
-    ;  
-  
+    
 syntax NormalClassDeclaration 
-    = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
-                                
+    = ClassModifier* "class" Identifier TypeParameters? Super? Interfaces? ClassBody;
+
+syntax ClassModifier
+     = Annotation
+     | "public"
+     | "protected" 
+     | "private"
+     | "abstract" 
+     | "static" 
+     | "final" 
+     | "strictfp"
+     ;
+     
+syntax Super
+     = "extends" ClassType
+     ;
+     
+syntax Interfaces
+	 = "implements" {InterfaceType ","}+
+	 ;     
+     
+syntax ClassType
+     = TypeDeclSpecifier TypeArguments?
+     ;
+       
+syntax ClassBody 
+    = "{" ClassBodyDeclaration* "}"
+    ;
+
+syntax ClassBodyDeclaration
+     = ClassMemberDeclaration
+     | InstanceInitializer
+     | StaticInitializer 
+     | ConstructorDeclaration
+     ;
+     
+syntax InstanceInitializer
+     = Block
+     ;
+     
+syntax StaticInitializer
+     = "static" Block
+     ;
+
+syntax ConstructorDeclaration
+     = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
+     ;
+
+syntax ConstructorModifier
+     = Annotation 
+     | "public"
+     | "protected"
+     | "private"
+     ;
+     
+syntax ConstructorDeclarator
+     = TypeParameters? SimpleTypeName "(" FormalParameterList? ")"
+     ;
+     
+syntax ConstructorBody
+     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+     ;
+     
+syntax ExplicitConstructorInvocation
+     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
+     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
+     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList ")" ";"
+     ;          
+
+syntax NonWildTypeArguments
+     = "\<" { ReferenceType ","}+ "\>"
+     ;
+
+syntax ClassMemberDeclaration
+     = FieldDeclaration 
+     | MethodDeclaration 
+     | ClassDeclaration 
+     | InterfaceDeclaration
+     | ";"
+	 ;
+	 
+/************************************************************************************************************************
+ * Interfaces
+ ***********************************************************************************************************************/	 
+
+syntax InterfaceDeclaration 
+     = NormalInterfaceDeclaration
+     | AnnotationTypeDeclaration
+     ;  
+	 
+	 
 syntax NormalInterfaceDeclaration 
-    = "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody;
+     = InterfaceModifier* "interface" Identifier TypeParameters? ExtendsInterfaces? InterfaceBody
+     ;
+     
+     
+syntax InterfaceModifier
+     = Annotation
+     | "public"
+     | "protected"
+     | "private"
+     | "abstract"
+     | "static"
+     | "strictfp"
+     ;
+     
+syntax ExtendsInterfaces
+     = "extends" (InterfaceType ",")+
+     ;
+
+syntax InterfaceType
+     = TypeDeclSpecifier TypeArguments?
+     ;
+     
+syntax InterfaceBody
+     = "{" InterfaceMemberDeclaration* "}"
+     ;
+syntax InterfaceMemberDeclaration
+     = ConstantDeclaration 
+     | AbstractMethodDeclaration 
+     | ClassDeclaration 
+     | InterfaceDeclaration
+     ;
+     
+syntax ConstantDeclaration
+     = ConstantModifier* Type VariableDeclarators ";"
+     ;
+     
+syntax ConstantModifier
+     = "public"
+     | "static"
+     | "final"
+     ;
+     
+syntax AbstractMethodDeclaration
+     = AbstractMethodModifier* TypeParameters? Result MethodDeclarator Throws? ";"
+     ;
+     
+syntax AbstractMethodModifier
+     = "public"
+     | "abstract"
+     ;          
+       
+       
 
 syntax AnnotationTypeDeclaration 
-    = "@" "interface" Identifier AnnotationTypeBody;
+     = InterfaceModifier* "@" "interface" Identifier AnnotationTypeBody
+     ;
+     
+syntax AnnotationTypeBody
+     = "{" AnnotationTypeElementDeclaration* "}"
+     ;
 
+syntax AnnotationTypeElementDeclaration 
+     = AbstractMethodModifier* Type Identifier "(" ")" Dims? DefaultValue? ";" ConstantDeclaration
+     | ClassDeclaration
+     | InterfaceDeclaration
+     | EnumDeclaration
+     | AnnotationTypeDeclaration
+     ;
+     
+syntax DefaultValue
+     = "default" ElementValue
+     ;
+       
+	 
+/************************************************************************************************************************
+ * Fields
+ ***********************************************************************************************************************/
+	 
 syntax FieldDeclaration
      = FieldModifier* Type VariableDeclarators ";"
      ;
-     
+
 syntax FieldModifier
      = Annotation 
      | "public" 
@@ -68,34 +305,92 @@ syntax FieldModifier
      | "transient"
      | "volatile"
      ;
-//---------------------------------------------------------------------------------------------------------------- 
-  
-syntax Type 
-     = BasicType ("[" "]")* 
-     | ReferenceType ("[" "]")*
+
+syntax VariableDeclarators 
+    = {VariableDeclarator ","}+
+    ;
+
+syntax VariableDeclarator
+     = VariableDeclaratorId ("=" VariableInitializer)?
+     ;
+     
+syntax VariableDeclaratorId 
+    = Identifier ("[" "]")*
+    ;
+
+syntax VariableInitializer 
+    = ArrayInitializer
+    | Expression
+    ;
+    
+/************************************************************************************************************************
+ * Methods
+ ***********************************************************************************************************************/
+
+syntax MethodDeclaration
+     = MethodHeader MethodBody
+     ;
+     
+syntax MethodHeader 
+     = MethodModifier* TypeParameter* Result MethodDeclarator Throws*
+     ;
+     
+syntax MethodDeclarator
+     = Identifier "(" FormalParameterList? ")"
+     | MethodDeclarator "[" "]"
+     ;
+     
+syntax FormalParameterList
+     = (FormalParameter+ ",")? LastFormalParameter
+     ;
+     
+syntax FormalParameter
+     = VariableModifier* Type VariableDeclaratorId
+     ;         
+
+syntax FormalParameterDecls 
+    = VariableModifier*  Type FormalParameterDeclsRest
+    ;
+    
+syntax VariableModifier 
+    = "final"
+    | Annotation
+    ;
+
+syntax LastFormalParameter
+     = VariableModifiersopt Type "..." VariableDeclaratorId FormalParameter
+     ;
+     
+syntax MethodModifier 
+     = Annotation
+     | "public" 
+     | "protected"
+     | "private"
+     | "abstract" 
+     | "static"
+     | "final"
+     | "synchronized"
+     | "native"
+     | "strictfp"
+     ;
+     
+syntax Result
+     = Type
+     | "void"
      ;
 
-syntax BasicType 
-     = "byte"
-     | "short"
-     | "char"
-     | "int"
-     | "long"
-     | "float"
-     | "double"
-     | "boolean"
+syntax Throws
+     = "throws" {ExceptionType ","}+
      ;
-  
-syntax ReferenceType 
-     = Identifier TypeArguments? ("." Identifier TypeArguments? )*;
-  
-syntax TypeArguments 
-     = "\<" {TypeArgument ","}+ "\>" 
-     ;
-        
-syntax TypeArgument  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] > 
-     = Type
-     | "?" (("extends" | "super") Type)?  
+     
+syntax ExceptionType
+     = TypeName
+     | TypeVariable
+     ;    
+            
+syntax MethodBody
+     = Block
+     | ";"
      ;
   
 //----------------------------------------------------------------------------------------------------------------    
@@ -118,35 +413,10 @@ syntax NonWildcardTypeArgumentsOrDiamond
      | NonWildcardTypeArguments
      ;
 
-syntax TypeParameters 
-     = "\<" {TypeParameter ","}+ "\>"
-     ;
-
-syntax TypeParameter 
-     = Identifier ("extends" Bound)?
-     ;
-
-syntax Bound 
-     = {ReferenceType "&"}+
-     ;  
     
-//----------------------------------------------------------------------------------------------------------------    
-
-syntax Modifier 
-     = Annotation
-     | "final"
-     | "strictfp" 
-     | "private" 
-     | "synchronized" 
-     | "volatile" 
-     | "protected" 
-     | "transient" 
-     | "abstract" 
-     | "native" 
-     | "static" 
-     | "public" 
-     ;
-
+/************************************************************************************************************************
+ * Annotations
+ ***********************************************************************************************************************/
   
 syntax Annotation 
     = "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
@@ -179,104 +449,21 @@ syntax ElementValues
     = {ElementValue ","}+
     ;
 
-//----------------------------------------------------------------------------------------------------------------
-
-syntax ClassBody 
-    = "{" ClassBodyDeclaration* "}"
-    ;
-
-syntax ClassBodyDeclaration 
-    =  ";" 
-    | Modifier* MemberDecl
-    | "static"? Block
-    ;
-
-syntax MethodDeclaration
-     = MethodHeader MethodBody
-     ;
-     
-syntax MethodHeader 
-     = MethodModifier* TypeParameter* Result MethodDeclarator Throws*
-     ;
-
-syntax MethodBody
-     = Block
-     ;    
-     
-syntax MethodDeclarator
-     = Identifier "(" FormalParameterList? ")"
-     | MethodDeclarator "[" "]"
-     ;
-     
-syntax MethodModifier 
-     = Annotation
-     | "public" 
-     | "protected"
-     | "private"
-     | "abstract" 
-     | "static"
-     | "final"
-     | "synchronized"
-     | "native"
-     | "strictfp"
-     ;
-     
-syntax Result
-     = Type
-     | "void"
-     ;
-
-syntax Throws
-     = "throws" {ExceptionType ","}+
-     ;
-     
-syntax ExceptionType
-     = TypeName TypeVariable
-     ;     
-
-syntax MethodOrFieldRest 
-    =  FieldDeclaratorsRest ";"
-    |  MethodDeclaratorRest
-    ;
-
-
-syntax ConstructorDeclaration
-     = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
-     ;
-     
-syntax ConstructorDeclarator
-     = TypeParameters? SimpleTypeName "(" FormalParameterList? ")"
-     ;
-     
-syntax ConstructorModifier
-     = Annotation 
-     | "public"
-     | "protected"
-     | "private"
-     ;
-     
-syntax ConstructorBody
-     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
-     ;
-     
-syntax ExplicitConstructorInvocation
-     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
-     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList ")" ";"
-     ;
-     
-syntax NonWildTypeArguments
-     = "\<" { ReferenceType ","}+ "\>"
-     ;
+/************************************************************************************************************************
+ * Enums
+ ***********************************************************************************************************************/
      
 syntax EnumDeclaration
      = ClassModifier* "enum" Identifier Interfaces? EnumBody
      ;
-     
-syntax Interfaces
-     = "implements" {InterfaceType ","}+
+
+syntax EnumBody
+     = "{" {EnumConstant ","}* ","opt EnumBodyDeclaration* "}"
      ;     
      
+syntax EnumConstant
+     = Annotation* Identifier Argument? ClassBody?
+     ;
      
 syntax Arguments
      = "(" ArgumentList? ")"
@@ -286,74 +473,7 @@ syntax EnumBodyDeclarations
      = ";" ClassBodyDeclaration*
      ;
      
-     
-//----------------------------------------------------------------------------------------------------------------
 
-syntax InterfaceBody 
-    = "{" InterfaceBodyDeclaration* "}"
-    ;
-
-syntax InterfaceBodyDeclaration 
-    = ";" 
-    | Modifier* InterfaceMemberDecl
-    ;
-
-syntax ConstantDeclarator 
-    = Identifier ConstantDeclaratorRest
-    ;
-
-syntax InterfaceMethodDeclaratorRest 
-    = FormalParameters ("[" "]")* ("throws" QualifiedIdentifierList)? ";"
-    ; 
-
-syntax VoidInterfaceMethodDeclaratorRest 
-    = FormalParameters ("throws" QualifiedIdentifierList)? ";"
-    ;  
-
-syntax InterfaceGenericMethodDecl 
-    = TypeParameters (Type | "void") Identifier InterfaceMethodDeclaratorRest
-    ;
-
-//----------------------------------------------------------------------------------------------------------------
-
-syntax FormalParameterList
-     = (FormalParameter+ ",")? LastFormalParameter
-     ;
-     
-syntax FormalParameter
-     = VariableModifier* Type VariableDeclaratorId
-     ;         
-
-syntax FormalParameterDecls 
-    = VariableModifier*  Type FormalParameterDeclsRest
-    ;
-
-syntax VariableModifier 
-    = "final"
-    | Annotation
-    ;
-
-syntax FormalParameterDeclsRest 
-    = VariableDeclaratorId ("," FormalParameterDecls)?
-    | "..." VariableDeclaratorId
-    ;
-
-syntax VariableDeclaratorId 
-    = Identifier ("[" "]")*
-    ;
-
-syntax VariableDeclarators 
-    = {VariableDeclarator ","}+
-    ;
-
-syntax VariableDeclarator
-     = VariableDeclaratorId ("=" VariableInitializer)?
-     ;
-     
-syntax VariableInitializer 
-    = ArrayInitializer
-    | Expression
-    ;
 
 syntax ArrayInitializer 
     = "{" ({VariableInitializer ","}+ ","? )? "}"
@@ -509,9 +629,9 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	 = "new" BasicType DimExpr+ Dims?
+	 = "new" PrimitiveType DimExpr+ Dims?
 	 | "new" ReferenceType DimExpr+ Dims? 
-	 | "new" BasicType Dims ArrayInitializer
+	 | "new" PrimitiveType Dims ArrayInitializer
      | "new" ReferenceType Dims ArrayInitializer
      ;
      
@@ -588,7 +708,7 @@ syntax UnaryExpressionNotPlusMinus
      ;
 
 syntax CastExpression
-     = "(" BasicType ")" UnaryExpression
+     = "(" PrimitiveType ")" UnaryExpression
      | "(" ReferenceType ")" UnaryExpressionNotPlusMinus
      ;
      
@@ -703,14 +823,6 @@ syntax ClassName
 	 = QualifiedIdentifier
 	 ;
 	 
-syntax TypeName
-     = QualifiedIdentifier
-     ;
-     
-syntax TypeVariable
-     = Identifier
-     ;     
-     
 syntax ExpressionName
      = QualifiedIdentifier
      ;
@@ -743,7 +855,7 @@ syntax ExplicitGenericInvocationSuffix
 syntax Creator 
      = NonWildcardTypeArguments CreatedName ClassCreatorRest
      | CreatedName (ClassCreatorRest | ArrayCreatorRest)
-     | BasicType ArrayCreatorRest   // fix: to deal with primitive array types such as new int[1]
+     | PrimitiveType ArrayCreatorRest   // fix: to deal with primitive array types such as new int[1]
      ;
 
 syntax CreatedName 
@@ -782,43 +894,6 @@ syntax Selector
      | "[" Expression "]"
      ;
 
-//----------------------------------------------------------------------------------------------------------------
-syntax EnumBody 
-     = "{" {EnumConstant ","}* ","? EnumBodyDeclarations? "}"
-     ;
-
-syntax EnumConstant 
-     = Annotation* Identifier Arguments? ClassBody?;
-
-syntax EnumBodyDeclarations 
-     = ";" ClassBodyDeclaration*
-     ;
-     
-syntax AnnotationTypeBody 
-     = "{" AnnotationTypeElementDeclaration+ "}"
-     ;
-
-
-syntax AnnotationTypeElementDeclaration 
-    = Modifier* AnnotationTypeElementRest
-    ;
-
-syntax AnnotationTypeElementRest 
-    = Type Identifier AnnotationMethodOrConstantRest ";"
-    | ClassDeclaration
-    | InterfaceDeclaration
-    | EnumDeclaration  
-    | AnnotationTypeDeclaration
-    ;
-
-syntax AnnotationMethodOrConstantRest 
-    = AnnotationMethodRest
-    | ConstantDeclaratorsRest
-    ;  
-
-syntax AnnotationMethodRest 
-    = "(" ")" ("[""]")? ("default" ElementValue)?
-    ;
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
