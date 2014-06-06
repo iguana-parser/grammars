@@ -49,6 +49,10 @@ syntax TypeVariable
      = Identifier
      ;
      
+syntax ArrayType
+     = Type "[" "]"
+     ;
+     
 syntax TypeParameters 
      = "\<" {TypeParameter ","}+ "\>"
      ;
@@ -177,7 +181,7 @@ syntax ConstructorModifier
      ;
      
 syntax ConstructorDeclarator
-     = TypeParameters? SimpleTypeName "(" FormalParameterList? ")"
+     = TypeParameters? Identifier "(" FormalParameterList? ")"
      ;
      
 syntax ConstructorBody
@@ -263,8 +267,6 @@ syntax AbstractMethodModifier
      = "public"
      | "abstract"
      ;          
-       
-       
 
 syntax AnnotationTypeDeclaration 
      = InterfaceModifier* "@" "interface" Identifier AnnotationTypeBody
@@ -323,6 +325,14 @@ syntax VariableInitializer
     | Expression
     ;
     
+syntax ArrayInitializer 
+    = "{" VariableInitializers ","? "}"
+    ;
+    
+syntax VariableInitializers
+     = {VariableInitializer ","}+
+     ;    
+    
 /************************************************************************************************************************
  * Methods
  ***********************************************************************************************************************/
@@ -341,24 +351,21 @@ syntax MethodDeclarator
      ;
      
 syntax FormalParameterList
-     = (FormalParameter+ ",")? LastFormalParameter
+     = {FormalParameter+ ","}* LastFormalParameter
      ;
      
 syntax FormalParameter
      = VariableModifier* Type VariableDeclaratorId
      ;         
 
-syntax FormalParameterDecls 
-    = VariableModifier*  Type FormalParameterDeclsRest
-    ;
-    
 syntax VariableModifier 
     = "final"
     | Annotation
     ;
 
 syntax LastFormalParameter
-     = VariableModifiersopt Type "..." VariableDeclaratorId FormalParameter
+     = VariableModifier* Type "..." VariableDeclaratorId
+     | FormalParameter
      ;
      
 syntax MethodModifier 
@@ -392,26 +399,6 @@ syntax MethodBody
      = Block
      | ";"
      ;
-  
-//----------------------------------------------------------------------------------------------------------------    
-  
-syntax NonWildcardTypeArguments 
-     =  "\<" {Type ","}+ "\>"  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] >  
-     ;
-
-syntax TypeList
-     = {ReferenceType ","}+    
-     ;
-    
-syntax TypeArgumentsOrDiamond 
-     = "\<" "\>" 
-     | TypeArguments
-     ;
-
-syntax NonWildcardTypeArgumentsOrDiamond 
-     = "\<" "\>" 
-     | NonWildcardTypeArguments
-     ;
 
     
 /************************************************************************************************************************
@@ -419,16 +406,8 @@ syntax NonWildcardTypeArgumentsOrDiamond
  ***********************************************************************************************************************/
   
 syntax Annotation 
-    = "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
-      ;
-
-syntax AnnotationElement 
-    = ElementValuePairs
-    | ElementValue
-    ;
-
-syntax ElementValuePairs 
-    = {ElementValuePair ","}+
+    = "@" TypeName  "(" {ElementValuePair ","}* ")"
+    | "@" Identifier ( "(" ElementValue ")" )? 
     ;
 
 syntax ElementValuePair 
@@ -436,8 +415,8 @@ syntax ElementValuePair
     ;
 
 syntax ElementValue 
-    = Annotation
-    | Expression
+    = ConditionalExpression
+    | Annotation
     | ElementValueArrayInitializer
     ;
 
@@ -458,11 +437,11 @@ syntax EnumDeclaration
      ;
 
 syntax EnumBody
-     = "{" {EnumConstant ","}* ","opt EnumBodyDeclaration* "}"
+     = "{" {EnumConstant ","}* ","? EnumBodyDeclarations? "}"
      ;     
      
 syntax EnumConstant
-     = Annotation* Identifier Argument? ClassBody?
+     = Annotation* Identifier Arguments? ClassBody?
      ;
      
 syntax Arguments
@@ -472,14 +451,10 @@ syntax Arguments
 syntax EnumBodyDeclarations
      = ";" ClassBodyDeclaration*
      ;
-     
 
-
-syntax ArrayInitializer 
-    = "{" ({VariableInitializer ","}+ ","? )? "}"
-    ;
-
-//----------------------------------------------------------------------------------------------------------------
+/************************************************************************************************************************
+ * Statements
+ ***********************************************************************************************************************/
 
 syntax Block 
     = "{" BlockStatement* "}"
@@ -543,14 +518,12 @@ syntax StatementExpression
      | ClassInstanceCreationExpression
     ;
     
-//----------------------------------------------------------------------------------------------------------------
-
 syntax CatchClause 
     = "catch" "(" VariableModifier* CatchType Identifier ")" Block
     ;
 
 syntax CatchType  
-    =  {QualifiedIdentifier "|"}+
+    =  {ClassType "|"}+
     ;
 
 syntax Finally 
@@ -568,8 +541,6 @@ syntax Resources
 syntax Resource 
     = VariableModifier* ReferenceType VariableDeclaratorId "=" Expression
     ; 
-
-//----------------------------------------------------------------------------------------------------------------
 
 syntax SwitchBlockStatementGroup =  
     SwitchLabel+ BlockStatement*
@@ -598,13 +569,14 @@ syntax ForUpdate
      = {StatementExpression ","}+
      ;    
 
-//----------------------------------------------------------------------------------------------------------------
+/************************************************************************************************************************
+ * Expressions
+ ***********************************************************************************************************************/
 
 syntax Primary
 	 =  PrimaryNoNewArray 
 	 |  ArrayCreationExpression
 	 ;
-	 
 
 syntax PrimaryNoNewArray 
      = Literal
@@ -623,6 +595,11 @@ syntax ClassInstanceCreationExpression
      = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
      | Primary "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
      ;
+     
+syntax TypeArgumentsOrDiamond 
+     = "\<" "\>" 
+     | TypeArguments
+     ;     
      
 syntax ArgumentList
      = {Expression ","}+
@@ -848,50 +825,6 @@ syntax SuperSuffix
 syntax ExplicitGenericInvocationSuffix 
      = "super" SuperSuffix
      | Identifier Arguments
-     ;
-    
-//----------------------------------------------------------------------------------------------------------------
-
-syntax Creator 
-     = NonWildcardTypeArguments CreatedName ClassCreatorRest
-     | CreatedName (ClassCreatorRest | ArrayCreatorRest)
-     | PrimitiveType ArrayCreatorRest   // fix: to deal with primitive array types such as new int[1]
-     ;
-
-syntax CreatedName 
-     = Identifier TypeArgumentsOrDiamond? ("." Identifier TypeArgumentsOrDiamond?)*
-     ;
-
-syntax ClassCreatorRest 
-     = Arguments ClassBody?
-     ;
-
-syntax ArrayCreatorRest 
-     = "[" ( ("]" ("[" "]")* ArrayInitializer)  |  (Expression "]" ("[" Expression "]")* ("[" "]")*) )
-     ;
-
-
-syntax IdentifierSuffix 
-     = "[" ( ("]"  ("[" "]")* "." "class") | Expression) "]"  // fix: added the second "]"
-     | Arguments 
-     | "." ("class" | ExplicitGenericInvocation | "this" | ("super" Arguments) |("new" NonWildcardTypeArguments? InnerCreator))
-     ;
-
-syntax ExplicitGenericInvocation 
-     = NonWildcardTypeArguments ExplicitGenericInvocationSuffix
-     ;
-
-syntax InnerCreator 
-     =  Identifier NonWildcardTypeArgumentsOrDiamond? ClassCreatorRest
-     ;
-
-syntax Selector 
-     = "." Identifier Arguments?
-     | "." ExplicitGenericInvocation
-     | "." "this"
-     | "." "super" SuperSuffix
-     | "." "new" NonWildcardTypeArguments? InnerCreator
-     | "[" Expression "]"
      ;
 
 
