@@ -21,7 +21,6 @@ start syntax CompilationUnit
     = PackageDeclaration? ImportDeclaration* TypeDeclaration*
       ;
   
-  
 syntax PackageDeclaration 
     = Annotation* "package"  QualifiedIdentifier ";" 
       ;  
@@ -31,14 +30,11 @@ syntax ImportDeclaration
     ;
   
 syntax TypeDeclaration 
-    = ClassOrInterfaceDeclaration 
+    = ClassDeclaration
+    | InterfaceDeclaration 
     | ";" 
-      ;  
+    ;  
   
-syntax ClassOrInterfaceDeclaration 
-    = Modifier* (InterfaceDeclaration | ClassDeclaration)
-    ; 
-    
 syntax ClassDeclaration 
      = NormalClassDeclaration
      | EnumDeclaration
@@ -47,21 +43,32 @@ syntax ClassDeclaration
 syntax InterfaceDeclaration 
     = NormalInterfaceDeclaration
     | AnnotationTypeDeclaration
-    ;
+    ;  
   
 syntax NormalClassDeclaration 
-    = "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
-                                
-syntax EnumDeclaration 
-    = "enum" Identifier ("implements" TypeList)? EnumBody;
+    = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
                                 
 syntax NormalInterfaceDeclaration 
     = "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody;
 
 syntax AnnotationTypeDeclaration 
     = "@" "interface" Identifier AnnotationTypeBody;
-  
-//----------------------------------------------------------------------------------------------------------------  
+
+syntax FieldDeclaration
+     = FieldModifier* Type VariableDeclarators ";"
+     ;
+     
+syntax FieldModifier
+     = Annotation 
+     | "public" 
+     | "protected" 
+     | "private"
+     | "static"
+     | "final" 
+     | "transient"
+     | "volatile"
+     ;
+//---------------------------------------------------------------------------------------------------------------- 
   
 syntax Type 
      = BasicType ("[" "]")* 
@@ -176,7 +183,7 @@ syntax ElementValues
 
 syntax ClassBody 
     = "{" ClassBodyDeclaration* "}"
-        ;
+    ;
 
 syntax ClassBodyDeclaration 
     =  ";" 
@@ -184,49 +191,102 @@ syntax ClassBodyDeclaration
     | "static"? Block
     ;
 
-syntax MemberDecl 
-    = MethodOrFieldDecl
-    | "void" Identifier VoidMethodDeclaratorRest
-    | Identifier ConstructorDeclaratorRest
-    | GenericMethodOrConstructorDecl
-    | ClassDeclaration
-    | InterfaceDeclaration
-    ;
+syntax MethodDeclaration
+     = MethodHeader MethodBody
+     ;
+     
+syntax MethodHeader 
+     = MethodModifier* TypeParameter* Result MethodDeclarator Throws*
+     ;
 
-syntax MethodOrFieldDecl 
-    = Type Identifier MethodOrFieldRest
-    ;
+syntax MethodBody
+     = Block
+     ;    
+     
+syntax MethodDeclarator
+     = Identifier "(" FormalParameterList? ")"
+     | MethodDeclarator "[" "]"
+     ;
+     
+syntax MethodModifier 
+     = Annotation
+     | "public" 
+     | "protected"
+     | "private"
+     | "abstract" 
+     | "static"
+     | "final"
+     | "synchronized"
+     | "native"
+     | "strictfp"
+     ;
+     
+syntax Result
+     = Type
+     | "void"
+     ;
+
+syntax Throws
+     = "throws" {ExceptionType ","}+
+     ;
+     
+syntax ExceptionType
+     = TypeName TypeVariable
+     ;     
 
 syntax MethodOrFieldRest 
     =  FieldDeclaratorsRest ";"
     |  MethodDeclaratorRest
     ;
 
-syntax FieldDeclaratorsRest 
-    =  VariableDeclaratorRest ("," VariableDeclarator)*
-    ;
 
-syntax MethodDeclaratorRest 
-    = FormalParameters ("[" "]")* ("throws" QualifiedIdentifierList)? (Block | ";")
-    ;
-
-syntax VoidMethodDeclaratorRest 
-    = FormalParameters ("throws" QualifiedIdentifierList)? (Block | ";")
-    ;
-
-syntax ConstructorDeclaratorRest 
-    = FormalParameters ("throws" QualifiedIdentifierList)? Block
-    ;
-
-syntax GenericMethodOrConstructorDecl 
-    = TypeParameters GenericMethodOrConstructorRest
-    ;
-
-syntax GenericMethodOrConstructorRest 
-    = (Type | "void") Identifier MethodDeclaratorRest
-    | Identifier ConstructorDeclaratorRest
-    ;
-    
+syntax ConstructorDeclaration
+     = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
+     ;
+     
+syntax ConstructorDeclarator
+     = TypeParameters? SimpleTypeName "(" FormalParameterList? ")"
+     ;
+     
+syntax ConstructorModifier
+     = Annotation 
+     | "public"
+     | "protected"
+     | "private"
+     ;
+     
+syntax ConstructorBody
+     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+     ;
+     
+syntax ExplicitConstructorInvocation
+     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
+     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
+     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList ")" ";"
+     ;
+     
+syntax NonWildTypeArguments
+     = "\<" { ReferenceType ","}+ "\>"
+     ;
+     
+syntax EnumDeclaration
+     = ClassModifier* "enum" Identifier Interfaces? EnumBody
+     ;
+     
+syntax Interfaces
+     = "implements" {InterfaceType ","}+
+     ;     
+     
+     
+syntax Arguments
+     = "(" ArgumentList? ")"
+     ;
+     
+syntax EnumBodyDeclarations
+     = ";" ClassBodyDeclaration*
+     ;
+     
+     
 //----------------------------------------------------------------------------------------------------------------
 
 syntax InterfaceBody 
@@ -236,31 +296,6 @@ syntax InterfaceBody
 syntax InterfaceBodyDeclaration 
     = ";" 
     | Modifier* InterfaceMemberDecl
-    ;
-
-syntax InterfaceMemberDecl 
-    = InterfaceMethodOrFieldDecl
-    | "void" Identifier VoidInterfaceMethodDeclaratorRest
-    | InterfaceGenericMethodDecl
-    | ClassDeclaration
-    | InterfaceDeclaration
-    ;
-
-syntax InterfaceMethodOrFieldDecl 
-    = Type Identifier InterfaceMethodOrFieldRest
-    ;
-
-syntax InterfaceMethodOrFieldRest 
-    = ConstantDeclaratorsRest ";"
-    | InterfaceMethodDeclaratorRest
-    ;
-
-syntax ConstantDeclaratorsRest 
-    = ConstantDeclaratorRest ("," ConstantDeclarator)*
-    ;
-
-syntax ConstantDeclaratorRest 
-    = ("[" "]")* "=" VariableInitializer
     ;
 
 syntax ConstantDeclarator 
@@ -281,9 +316,13 @@ syntax InterfaceGenericMethodDecl
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax FormalParameters 
-    = "(" FormalParameterDecls? ")"
-    ;
+syntax FormalParameterList
+     = (FormalParameter+ ",")? LastFormalParameter
+     ;
+     
+syntax FormalParameter
+     = VariableModifier* Type VariableDeclaratorId
+     ;         
 
 syntax FormalParameterDecls 
     = VariableModifier*  Type FormalParameterDeclsRest
@@ -307,14 +346,10 @@ syntax VariableDeclarators
     = {VariableDeclarator ","}+
     ;
 
-syntax VariableDeclarator 
-    = Identifier VariableDeclaratorRest
-    ;
-
-syntax VariableDeclaratorRest 
-    = ("[" "]")* ("=" VariableInitializer)?
-    ;
-
+syntax VariableDeclarator
+     = VariableDeclaratorId ("=" VariableInitializer)?
+     ;
+     
 syntax VariableInitializer 
     = ArrayInitializer
     | Expression
@@ -359,7 +394,7 @@ syntax StatementWithoutTrailingSubstatement
      | "break" Identifier? ";" 
      | "continue" Identifier? ";" 
      | "return" Expression? ";" 
-     | "synchronized" ParExpression Block 
+     | "synchronized" "(" Expression ")" Block 
      | "throw" Expression ";" 
      | "try" Block (CatchClause+ | (CatchClause* Finally))
      | "try" ResourceSpecification Block CatchClause* Finally?
@@ -370,12 +405,12 @@ syntax StatementNoShortIf
      | Identifier ":" StatementNoShortIf
      |  "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
      | "while" "(" Expression ")" StatementNoShortIf
-     | "for" "(" ForInit ";" Expression ";" ForUpdate ")" StatementNoShortIf
+     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" StatementNoShortIf
      ;
      
 syntax ForStatement
      = "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement 
-     | "for" "(" ForVarControl ":" Expression ")" Statement
+     | "for" "(" FormalParameter ":" Expression ")" Statement
      ;
 
 syntax StatementExpression
@@ -430,27 +465,15 @@ syntax EnumConstantName
     = Identifier
     ;
 
-syntax ForControl 
-    = ForVarControl
-    | ForInit? ";" Expression? ";" ForUpdate? 
-    ;
-
-syntax ForVarControl 
-    = VariableModifier* Type VariableDeclaratorId  ForVarControlRest
-    ;
-
-syntax ForVarControlRest 
-    = ForVariableDeclaratorsRest ";" Expression? ";" ForUpdate?
-    | ":" Expression
-    ;
-
-syntax ForVariableDeclaratorsRest 
-    = ("=" VariableInitializer)? ( "," VariableDeclarator)*
+syntax LocalVariableDeclaration 
+    = VariableModifier* Type { VariableDeclarator ","}+
     ;
 
 syntax ForInit 
-     = {StatementExpression ","}+;
-
+     = {StatementExpression ","}+
+     | LocalVariableDeclaration
+     ;
+     
 syntax ForUpdate 
      = {StatementExpression ","}+
      ;    
@@ -684,6 +707,10 @@ syntax TypeName
      = QualifiedIdentifier
      ;
      
+syntax TypeVariable
+     = Identifier
+     ;     
+     
 syntax ExpressionName
      = QualifiedIdentifier
      ;
@@ -692,14 +719,6 @@ syntax MethodName
      = QualifiedIdentifier
      ;
      
-syntax TypeName
-     = QualifiedIdentifier
-     ;     
-
-syntax ParExpression 
-     =  "(" Expression ")"
-     ;
-
 syntax Arguments 
      = "(" {Expression ","}* ")"
      ;
@@ -774,7 +793,7 @@ syntax EnumConstant
 syntax EnumBodyDeclarations 
      = ";" ClassBodyDeclaration*
      ;
-
+     
 syntax AnnotationTypeBody 
      = "{" AnnotationTypeElementDeclaration+ "}"
      ;
