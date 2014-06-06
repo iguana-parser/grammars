@@ -21,7 +21,6 @@ start syntax CompilationUnit
     = PackageDeclaration? ImportDeclaration* TypeDeclaration*
       ;
   
-  
 syntax PackageDeclaration 
     = Annotation* "package"  QualifiedIdentifier ";" 
       ;  
@@ -31,14 +30,11 @@ syntax ImportDeclaration
     ;
   
 syntax TypeDeclaration 
-    = ClassOrInterfaceDeclaration 
+    = ClassDeclaration
+    | InterfaceDeclaration 
     | ";" 
-      ;  
+    ;  
   
-syntax ClassOrInterfaceDeclaration 
-    = Modifier* (InterfaceDeclaration | ClassDeclaration)
-    ; 
-    
 syntax ClassDeclaration 
      = NormalClassDeclaration
      | EnumDeclaration
@@ -47,21 +43,32 @@ syntax ClassDeclaration
 syntax InterfaceDeclaration 
     = NormalInterfaceDeclaration
     | AnnotationTypeDeclaration
-    ;
+    ;  
   
 syntax NormalClassDeclaration 
-    = "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
-                                
-syntax EnumDeclaration 
-    = "enum" Identifier ("implements" TypeList)? EnumBody;
+    = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
                                 
 syntax NormalInterfaceDeclaration 
     = "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody;
 
 syntax AnnotationTypeDeclaration 
     = "@" "interface" Identifier AnnotationTypeBody;
-  
-//----------------------------------------------------------------------------------------------------------------  
+
+syntax FieldDeclaration
+     = FieldModifier* Type VariableDeclarators ";"
+     ;
+     
+syntax FieldModifier
+     = Annotation 
+     | "public" 
+     | "protected" 
+     | "private"
+     | "static"
+     | "final" 
+     | "transient"
+     | "volatile"
+     ;
+//---------------------------------------------------------------------------------------------------------------- 
   
 syntax Type 
      = BasicType ("[" "]")* 
@@ -160,7 +167,7 @@ syntax ElementValuePair
 
 syntax ElementValue 
     = Annotation
-    | Expression1
+    | Expression
     | ElementValueArrayInitializer
     ;
 
@@ -176,7 +183,7 @@ syntax ElementValues
 
 syntax ClassBody 
     = "{" ClassBodyDeclaration* "}"
-        ;
+    ;
 
 syntax ClassBodyDeclaration 
     =  ";" 
@@ -184,49 +191,102 @@ syntax ClassBodyDeclaration
     | "static"? Block
     ;
 
-syntax MemberDecl 
-    = MethodOrFieldDecl
-    | "void" Identifier VoidMethodDeclaratorRest
-    | Identifier ConstructorDeclaratorRest
-    | GenericMethodOrConstructorDecl
-    | ClassDeclaration
-    | InterfaceDeclaration
-    ;
+syntax MethodDeclaration
+     = MethodHeader MethodBody
+     ;
+     
+syntax MethodHeader 
+     = MethodModifier* TypeParameter* Result MethodDeclarator Throws*
+     ;
 
-syntax MethodOrFieldDecl 
-    = Type Identifier MethodOrFieldRest
-    ;
+syntax MethodBody
+     = Block
+     ;    
+     
+syntax MethodDeclarator
+     = Identifier "(" FormalParameterList? ")"
+     | MethodDeclarator "[" "]"
+     ;
+     
+syntax MethodModifier 
+     = Annotation
+     | "public" 
+     | "protected"
+     | "private"
+     | "abstract" 
+     | "static"
+     | "final"
+     | "synchronized"
+     | "native"
+     | "strictfp"
+     ;
+     
+syntax Result
+     = Type
+     | "void"
+     ;
+
+syntax Throws
+     = "throws" {ExceptionType ","}+
+     ;
+     
+syntax ExceptionType
+     = TypeName TypeVariable
+     ;     
 
 syntax MethodOrFieldRest 
     =  FieldDeclaratorsRest ";"
     |  MethodDeclaratorRest
     ;
 
-syntax FieldDeclaratorsRest 
-    =  VariableDeclaratorRest ("," VariableDeclarator)*
-    ;
 
-syntax MethodDeclaratorRest 
-    = FormalParameters ("[" "]")* ("throws" QualifiedIdentifierList)? (Block | ";")
-    ;
-
-syntax VoidMethodDeclaratorRest 
-    = FormalParameters ("throws" QualifiedIdentifierList)? (Block | ";")
-    ;
-
-syntax ConstructorDeclaratorRest 
-    = FormalParameters ("throws" QualifiedIdentifierList)? Block
-    ;
-
-syntax GenericMethodOrConstructorDecl 
-    = TypeParameters GenericMethodOrConstructorRest
-    ;
-
-syntax GenericMethodOrConstructorRest 
-    = (Type | "void") Identifier MethodDeclaratorRest
-    | Identifier ConstructorDeclaratorRest
-    ;
-    
+syntax ConstructorDeclaration
+     = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
+     ;
+     
+syntax ConstructorDeclarator
+     = TypeParameters? SimpleTypeName "(" FormalParameterList? ")"
+     ;
+     
+syntax ConstructorModifier
+     = Annotation 
+     | "public"
+     | "protected"
+     | "private"
+     ;
+     
+syntax ConstructorBody
+     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+     ;
+     
+syntax ExplicitConstructorInvocation
+     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
+     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
+     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList ")" ";"
+     ;
+     
+syntax NonWildTypeArguments
+     = "\<" { ReferenceType ","}+ "\>"
+     ;
+     
+syntax EnumDeclaration
+     = ClassModifier* "enum" Identifier Interfaces? EnumBody
+     ;
+     
+syntax Interfaces
+     = "implements" {InterfaceType ","}+
+     ;     
+     
+     
+syntax Arguments
+     = "(" ArgumentList? ")"
+     ;
+     
+syntax EnumBodyDeclarations
+     = ";" ClassBodyDeclaration*
+     ;
+     
+     
 //----------------------------------------------------------------------------------------------------------------
 
 syntax InterfaceBody 
@@ -236,31 +296,6 @@ syntax InterfaceBody
 syntax InterfaceBodyDeclaration 
     = ";" 
     | Modifier* InterfaceMemberDecl
-    ;
-
-syntax InterfaceMemberDecl 
-    = InterfaceMethodOrFieldDecl
-    | "void" Identifier VoidInterfaceMethodDeclaratorRest
-    | InterfaceGenericMethodDecl
-    | ClassDeclaration
-    | InterfaceDeclaration
-    ;
-
-syntax InterfaceMethodOrFieldDecl 
-    = Type Identifier InterfaceMethodOrFieldRest
-    ;
-
-syntax InterfaceMethodOrFieldRest 
-    = ConstantDeclaratorsRest ";"
-    | InterfaceMethodDeclaratorRest
-    ;
-
-syntax ConstantDeclaratorsRest 
-    = ConstantDeclaratorRest ("," ConstantDeclarator)*
-    ;
-
-syntax ConstantDeclaratorRest 
-    = ("[" "]")* "=" VariableInitializer
     ;
 
 syntax ConstantDeclarator 
@@ -281,9 +316,13 @@ syntax InterfaceGenericMethodDecl
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax FormalParameters 
-    = "(" FormalParameterDecls? ")"
-    ;
+syntax FormalParameterList
+     = (FormalParameter+ ",")? LastFormalParameter
+     ;
+     
+syntax FormalParameter
+     = VariableModifier* Type VariableDeclaratorId
+     ;         
 
 syntax FormalParameterDecls 
     = VariableModifier*  Type FormalParameterDeclsRest
@@ -307,14 +346,10 @@ syntax VariableDeclarators
     = {VariableDeclarator ","}+
     ;
 
-syntax VariableDeclarator 
-    = Identifier VariableDeclaratorRest
-    ;
-
-syntax VariableDeclaratorRest 
-    = ("[" "]")* ("=" VariableInitializer)?
-    ;
-
+syntax VariableDeclarator
+     = VariableDeclaratorId ("=" VariableInitializer)?
+     ;
+     
 syntax VariableInitializer 
     = ArrayInitializer
     | Expression
@@ -332,36 +367,60 @@ syntax Block
 
 syntax BlockStatement 
     = LocalVariableDeclarationStatement
-    | ClassOrInterfaceDeclaration
-    | (Identifier ":")? Statement
+    | ClassDeclaration
+    | Statement
     ;
 
 syntax LocalVariableDeclarationStatement 
     = VariableModifier*  Type VariableDeclarators ";"
     ;
 
-syntax Statement 
-    = Block
-    | ";"
-    | Identifier ":" Statement
-    | StatementExpression ";"
-    | "if" ParExpression Statement ("else" Statement)? 
-    | "assert" Expression (":" Expression)? ";"
-    | "switch" ParExpression "{" SwitchBlockStatementGroups "}" 
-    | "while" ParExpression Statement
-    | "do" Statement "while" ParExpression ";"
-    | "for" "(" ForControl ")" Statement
-    | "break" Identifier? ";"
-    | "continue" Identifier? ";"
-    | "return" Expression? ";"
-    | "throw" Expression ";"
-    | "synchronized" ParExpression Block
-    | "try" Block (CatchClause+ | (CatchClause* Finally))
-    | "try" ResourceSpecification Block CatchClause* Finally?
-    ;
+syntax Statement
+     = StatementWithoutTrailingSubstatement 
+     | Identifier ":" Statement
+     | "if" "(" Expression ")" Statement
+     | "if" "(" Expression ")" StatementNoShortIf "else" Statement
+     | "while" "(" Expression ")" Statement
+     | ForStatement
+     ;
 
-syntax StatementExpression 
-    =  Expression
+syntax StatementWithoutTrailingSubstatement
+     = Block
+     | ";" 
+     | StatementExpression 
+     | "assert" Expression (":" Expression)? ";" 
+     | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* "}" 
+     | "do" Statement "while" "(" Expression ")" ";" 
+     | "break" Identifier? ";" 
+     | "continue" Identifier? ";" 
+     | "return" Expression? ";" 
+     | "synchronized" "(" Expression ")" Block 
+     | "throw" Expression ";" 
+     | "try" Block (CatchClause+ | (CatchClause* Finally))
+     | "try" ResourceSpecification Block CatchClause* Finally?
+     ;
+     
+syntax StatementNoShortIf
+     = StatementWithoutTrailingSubstatement
+     | Identifier ":" StatementNoShortIf
+     |  "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
+     | "while" "(" Expression ")" StatementNoShortIf
+     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" StatementNoShortIf
+     ;
+     
+syntax ForStatement
+     = "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement 
+     | "for" "(" FormalParameter ":" Expression ")" Statement
+     ;
+
+syntax StatementExpression
+     = Assignment 
+     | PreIncrementExpression 
+     | PreDecrementExpression 
+     | PostIncrementExpression 
+     | PostDecrementExpression 
+     | MethodInvocation 
+     | ClassInstanceCreationExpression
     ;
     
 //----------------------------------------------------------------------------------------------------------------
@@ -392,10 +451,6 @@ syntax Resource
 
 //----------------------------------------------------------------------------------------------------------------
 
-syntax SwitchBlockStatementGroups 
-    = SwitchBlockStatementGroup*
-    ;
-
 syntax SwitchBlockStatementGroup =  
     SwitchLabel+ BlockStatement*
     ;
@@ -410,35 +465,216 @@ syntax EnumConstantName
     = Identifier
     ;
 
-syntax ForControl 
-    = ForVarControl
-    | ForInit? ";" Expression? ";" ForUpdate?  // fix: ForInit changed to ForInit? to deal with for (;;;)
-    ;
-
-syntax ForVarControl 
-    = VariableModifier* Type VariableDeclaratorId  ForVarControlRest
-    ;
-
-syntax ForVarControlRest 
-    = ForVariableDeclaratorsRest ";" Expression? ";" ForUpdate?
-    | ":" Expression
-    ;
-
-syntax ForVariableDeclaratorsRest 
-    = ("=" VariableInitializer)? ( "," VariableDeclarator)*
+syntax LocalVariableDeclaration 
+    = VariableModifier* Type { VariableDeclarator ","}+
     ;
 
 syntax ForInit 
-     = {StatementExpression ","}+;
-
+     = {StatementExpression ","}+
+     | LocalVariableDeclaration
+     ;
+     
 syntax ForUpdate 
      = {StatementExpression ","}+
      ;    
 
 //----------------------------------------------------------------------------------------------------------------
-syntax Expression 
-    = Expression1 (AssignmentOperator Expression)?  // fix: Expression1 changed to Expression to support nested assignments such as a = b = c = 1; 
-    ;
+
+syntax Primary
+	 =  PrimaryNoNewArray 
+	 |  ArrayCreationExpression
+	 ;
+	 
+
+syntax PrimaryNoNewArray 
+     = Literal
+     | Type "." "class"
+     | "void" "." "class"
+     | "this" 
+     | ClassName "." "this"   
+     | "(" Expression ")" 
+     | ClassInstanceCreationExpression 
+     | FieldAccess
+     | MethodInvocation 
+     | ArrayAccess
+     ;
+
+syntax ClassInstanceCreationExpression
+     = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
+     | Primary "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     ;
+     
+syntax ArgumentList
+     = {Expression ","}+
+     ;     
+
+syntax ArrayCreationExpression
+	 = "new" BasicType DimExpr+ Dims?
+	 | "new" ReferenceType DimExpr+ Dims? 
+	 | "new" BasicType Dims ArrayInitializer
+     | "new" ReferenceType Dims ArrayInitializer
+     ;
+     
+syntax DimExpr
+     = "[" Expression "]"
+     ;
+     
+syntax Dims
+	 = ("[" "]")+
+	 ;
+
+
+syntax FieldAccess
+     = Primary "." Identifier
+     | "super" "." Identifier
+     | ClassName "." "super" "." Identifier
+     ;
+     
+syntax MethodInvocation
+     = MethodName "(" ArgumentList? ")"
+     | Primary "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
+     | "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
+     | ClassName "." "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
+     | TypeName "." NonWildTypeArguments Identifier "(" ArgumentList? ")"
+     ;
+     
+syntax NonWildTypeArguments
+     = {ReferenceType ","}+
+     ;     
+     
+syntax ArrayAccess
+     = ExpressionName "[" Expression "]" 
+     | PrimaryNoNewArray "[" Expression "]"
+     ;
+ 
+syntax PostfixExpression
+     = Primary
+     | ExpressionName 
+     | PostIncrementExpression 
+     | PostDecrementExpression
+     ;
+
+syntax PostIncrementExpression
+     = PostfixExpression "++"
+     ;
+
+syntax PostDecrementExpression
+     = PostfixExpression "--"
+     ;
+     
+syntax UnaryExpression
+     = PreIncrementExpression 
+     | PreDecrementExpression 
+     | "+" UnaryExpression
+     | "-" UnaryExpression
+     | UnaryExpressionNotPlusMinus
+     ;
+     
+     
+syntax PreIncrementExpression
+     = "++" UnaryExpression
+     ;
+     
+     
+syntax PreDecrementExpression
+     = "--" UnaryExpression
+     ;
+     
+syntax UnaryExpressionNotPlusMinus
+     = PostfixExpression
+     | "~" UnaryExpression
+     | "!" UnaryExpression 
+     | CastExpression
+     ;
+
+syntax CastExpression
+     = "(" BasicType ")" UnaryExpression
+     | "(" ReferenceType ")" UnaryExpressionNotPlusMinus
+     ;
+     
+syntax MultiplicativeExpression
+     = UnaryExpression
+     | MultiplicativeExpression "*" UnaryExpression 
+     | MultiplicativeExpression "/" UnaryExpression
+     | MultiplicativeExpression "%" UnaryExpression
+     ;
+     
+syntax AdditiveExpression
+     = MultiplicativeExpression
+     | AdditiveExpression "+" MultiplicativeExpression
+     | AdditiveExpression "-" MultiplicativeExpression     
+     ;
+     
+syntax ShiftExpression
+     = AdditiveExpression
+     | ShiftExpression "\<\<" AdditiveExpression
+     | ShiftExpression "\>\>" AdditiveExpression
+     | ShiftExpression "\>\>\>" AdditiveExpression
+     ;
+     
+
+syntax RelationalExpression
+     = ShiftExpression
+     | RelationalExpression "\<" ShiftExpression 
+     | RelationalExpression "\>" ShiftExpression 
+     | RelationalExpression "\<=" ShiftExpression 
+     | RelationalExpression "\>=" ShiftExpression 
+     | RelationalExpression "instanceof" ReferenceType
+     ;
+
+
+syntax EqualityExpression
+     = RelationalExpression
+     | EqualityExpression "==" RelationalExpression
+     | EqualityExpression "!=" RelationalExpression
+     ;
+     
+syntax AndExpression
+     = EqualityExpression
+     | AndExpression "&" EqualityExpression
+     ;
+     
+syntax ExclusiveOrExpression
+     = AndExpression
+     | ExclusiveOrExpression "^" AndExpression
+     ;
+     
+syntax InclusiveOrExpression
+     = ExclusiveOrExpression
+     | InclusiveOrExpression "|" ExclusiveOrExpression
+     ;
+     
+syntax ConditionalAndExpression
+     = InclusiveOrExpression
+     | ConditionalAndExpression "&&" InclusiveOrExpression
+     ;
+     
+syntax ConditionalOrExpression
+     = ConditionalAndExpression
+     | ConditionalOrExpression "||" ConditionalAndExpression
+     ;
+     
+
+syntax ConditionalExpression
+     = ConditionalOrExpression
+     | ConditionalOrExpression "?" Expression ":" ConditionalExpression
+     ;
+     
+syntax AssignmentExpression
+     = ConditionalExpression 
+     | Assignment
+     ;
+     
+     
+syntax Assignment
+     = LeftHandSide AssignmentOperator AssignmentExpression
+     ;
+     
+syntax LeftHandSide
+     = ExpressionName 
+     | FieldAccess 
+     | ArrayAccess
+     ;
 
 syntax AssignmentOperator 
     = "=" 
@@ -455,88 +691,42 @@ syntax AssignmentOperator
     | "\>\>\>="
     ;
 
-syntax Expression1 
-    = Expression2 Expression1Rest?
-    ;
-
-syntax Expression1Rest 
-    = "?" Expression ":" Expression1
-    ;
-
-syntax Expression2 
-    = Expression3 Expression2Rest
-    ;
-
-syntax Expression2Rest 
-     = ((InfixOp Expression3) | ("instanceof" Type))*
+syntax Expression
+     = AssignmentExpression
      ;
-
-//----------------------------------------------------------------------------------------------------------------
-
-syntax InfixOp 
-     = "||" 
-     | "&&"
-     | "|"
-     | "^"
-     | "&"
-     | "=="
-     | "!="
-     | "\<"
-     | "\>"
-     | "\<="
-     | "\>="
-     | "\<\<"
-     | "\>\>"
-     | "\>\>\>"
-     | "+"
-     | "-"
-     | "*"
-     | "/"
-     | "%"
+     
+syntax ConstantExpression
+     = Expression
      ;
-
-syntax Expression3 
-     = PrefixOp Expression3
-     | "(" Type ")" Expression3       // Removed "(" Expression ")" from this rule to avoid ambiguity with type for inputs such as (A)
-                                      // (A) will be handled as primary
-     | Primary Selector* PostfixOp*
+     
+syntax ClassName
+	 = QualifiedIdentifier
+	 ;
+	 
+syntax TypeName
+     = QualifiedIdentifier
      ;
-
-syntax PrefixOp 
-     = "++"
-     | "--"
-     | "!"
-     | "~"
-     | "+"
-     | "-"
+     
+syntax TypeVariable
+     = Identifier
+     ;     
+     
+syntax ExpressionName
+     = QualifiedIdentifier
      ;
-
-syntax PostfixOp 
-     = "++"
-     | "--"
+     
+syntax MethodName
+     = QualifiedIdentifier
      ;
-
-//----------------------------------------------------------------------------------------------------------------
-
-syntax Primary 
-     = Literal
-     | ParExpression
-     | "this" Arguments?
-     | "super" SuperSuffix
-     | "new" Creator
-     | NonWildcardTypeArguments (ExplicitGenericInvocationSuffix | ("this" Arguments))
-     | Identifier IdentifierSuffix?  //changed { Identifier "."}+ to Identifier because of ambiguity with Expression3 = Primary Selector* PostfixOp*     
-     | BasicType ("[" "]")* "." "class"  
-     | "void" "." "class"
-     ;
-
-syntax ParExpression 
-     =  "(" Expression ")"
-     ;
-
+     
 syntax Arguments 
      = "(" {Expression ","}* ")"
      ;
+
+syntax TypeDeclSpecifier
+     = TypeName
+     | ReferenceType "." Identifier
+     ;     
 
 syntax SuperSuffix 
      =  Arguments 
@@ -603,7 +793,7 @@ syntax EnumConstant
 syntax EnumBodyDeclarations 
      = ";" ClassBodyDeclaration*
      ;
-
+     
 syntax AnnotationTypeBody 
      = "{" AnnotationTypeElementDeclaration+ "}"
      ;
@@ -710,7 +900,7 @@ lexical TraditionalComment
      ;
 
 lexical EndOfLineComment 
-    = "//" InputCharacter*;
+    = "//" InputCharacter* !>> ![\n \r];
 
 lexical CommentTail 
     = "*" CommentTailStar
