@@ -25,20 +25,10 @@ syntax PrimitiveType
      | "double"
      | "boolean"
      ;
- 
+     
 syntax ReferenceType
-     = ClassOrInterfaceType
-     | TypeVariable 
+     = Identifier TypeArguments? ("." Identifier TypeArguments? )*
      | ArrayType
-     ;
-     
-syntax ClassOrInterfaceType
-     = TypeDeclSpecifier TypeArguments?
-     ;
-     
-syntax TypeDeclSpecifier
-     = TypeName
-     | ClassOrInterfaceType "." Identifier
      ;
      
 syntax TypeName
@@ -63,30 +53,18 @@ syntax TypeParameter
      
 syntax TypeBound 
      = "extends" TypeVariable
-     | "extends" ClassOrInterfaceType ("&" InterfaceType)+
+     | "extends" ReferenceType ("&" InterfaceType)+
      ;  
        
-syntax ReferenceType 
-     = Identifier TypeArguments? ("." Identifier TypeArguments? )*;
-  
 syntax TypeArguments 
      = "\<" {TypeArgument ","}+ "\>" 
      ;
         
-syntax TypeArgument 
-     = ReferenceType
-     | Wildcard  
-     ;
-     
-syntax Wildcard
-     = "?" WildcardBounds?
+syntax TypeArgument  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] > 
+     = Type
+     | "?" (("extends" | "super") Type)?  
      ;
 
-syntax WildcardBounds
-     = "extends" ReferenceType 
-     | "super" ReferenceType
-     ;     
-     
 syntax QualifiedIdentifier 
      = {Identifier "."}+;
 
@@ -287,7 +265,6 @@ syntax AnnotationTypeElementDeclaration
 syntax DefaultValue
      = "default" ElementValue
      ;
-       
 	 
 /************************************************************************************************************************
  * Fields
@@ -342,7 +319,7 @@ syntax MethodDeclaration
      ;
      
 syntax MethodHeader 
-     = MethodModifier* TypeParameter* Result MethodDeclarator Throws*
+     = MethodModifier* TypeParameter* Result MethodDeclarator Throws?
      ;
      
 syntax MethodDeclarator
