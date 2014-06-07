@@ -351,7 +351,7 @@ syntax MethodDeclarator
      ;
      
 syntax FormalParameterList
-     = {FormalParameter+ ","}* LastFormalParameter
+     = (FormalParameter ",")* LastFormalParameter
      ;
      
 syntax FormalParameter
