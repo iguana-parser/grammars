@@ -27,9 +27,13 @@ syntax PrimitiveType
      ;
      
 syntax ReferenceType
-     = Identifier TypeArguments? ("." Identifier TypeArguments? )*
+     = TypeDeclSpecifier TypeArguments?
      | ArrayType
      ;
+     
+syntax TypeList
+     = {Type ","}+
+     ;     
      
 syntax TypeName
      = QualifiedIdentifier
@@ -53,7 +57,7 @@ syntax TypeParameter
      
 syntax TypeBound 
      = "extends" TypeVariable
-     | "extends" ReferenceType ("&" InterfaceType)+
+     | "extends" {ReferenceType "&"}+
      ;  
        
 syntax TypeArguments 
@@ -103,7 +107,7 @@ syntax ClassDeclaration
      ;
     
 syntax NormalClassDeclaration 
-    = ClassModifier* "class" Identifier TypeParameters? Super? Interfaces? ClassBody;
+    = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
 
 syntax ClassModifier
      = Annotation
@@ -116,18 +120,6 @@ syntax ClassModifier
      | "strictfp"
      ;
      
-syntax Super
-     = "extends" ClassType
-     ;
-     
-syntax Interfaces
-	 = "implements" {InterfaceType ","}+
-	 ;     
-     
-syntax ClassType
-     = TypeDeclSpecifier TypeArguments?
-     ;
-       
 syntax ClassBody 
     = "{" ClassBodyDeclaration* "}"
     ;
@@ -193,11 +185,9 @@ syntax InterfaceDeclaration
      | AnnotationTypeDeclaration
      ;  
 	 
-	 
 syntax NormalInterfaceDeclaration 
-     = InterfaceModifier* "interface" Identifier TypeParameters? ExtendsInterfaces? InterfaceBody
+     =  InterfaceModifier* "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody
      ;
-     
      
 syntax InterfaceModifier
      = Annotation
@@ -207,14 +197,6 @@ syntax InterfaceModifier
      | "abstract"
      | "static"
      | "strictfp"
-     ;
-     
-syntax ExtendsInterfaces
-     = "extends" (InterfaceType ",")+
-     ;
-
-syntax InterfaceType
-     = TypeDeclSpecifier TypeArguments?
      ;
      
 syntax InterfaceBody
@@ -402,15 +384,15 @@ syntax ElementValueArrayInitializer
     ;
 
 syntax ElementValues 
-    = {ElementValue ","}+
-    ;
+     = {ElementValue ","}+
+     ;
 
 /************************************************************************************************************************
  * Enums
  ***********************************************************************************************************************/
      
 syntax EnumDeclaration
-     = ClassModifier* "enum" Identifier Interfaces? EnumBody
+     = ClassModifier* "enum" Identifier ("implements" TypeList)? EnumBody
      ;
 
 syntax EnumBody
@@ -475,7 +457,7 @@ syntax StatementWithoutTrailingSubstatement
 syntax StatementNoShortIf
      = StatementWithoutTrailingSubstatement
      | Identifier ":" StatementNoShortIf
-     |  "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
+     | "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
      | "while" "(" Expression ")" StatementNoShortIf
      | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" StatementNoShortIf
      ;
@@ -500,7 +482,7 @@ syntax CatchClause
     ;
 
 syntax CatchType  
-    =  {ClassType "|"}+
+    =  {QualifiedIdentifier "|"}+
     ;
 
 syntax Finally 
@@ -790,8 +772,7 @@ syntax Arguments
      ;
 
 syntax TypeDeclSpecifier
-     = TypeName
-     | ReferenceType "." Identifier
+     = Identifier (TypeArguments? "." Identifier)*
      ;     
 
 syntax SuperSuffix 
