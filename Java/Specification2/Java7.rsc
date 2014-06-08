@@ -284,12 +284,8 @@ syntax VariableInitializer
     ;
     
 syntax ArrayInitializer 
-    = "{" VariableInitializers ","? "}"
+    = "{"  {VariableInitializer ","}* ","? "}"
     ;
-    
-syntax VariableInitializers
-     = {VariableInitializer ","}+
-     ;    
     
 /************************************************************************************************************************
  * Methods
