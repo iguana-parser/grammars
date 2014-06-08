@@ -574,7 +574,6 @@ syntax Dims
 	 = ("[" "]")+
 	 ;
 
-
 syntax FieldAccess
      = Primary "." Identifier
      | "super" "." Identifier
@@ -762,10 +761,6 @@ syntax MethodName
      = QualifiedIdentifier
      ;
      
-syntax Arguments 
-     = "(" {Expression ","}* ")"
-     ;
-
 syntax TypeDeclSpecifier
      = Identifier (TypeArguments? "." Identifier)*
      ;     
