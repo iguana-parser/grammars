@@ -436,7 +436,7 @@ syntax Statement
 syntax StatementWithoutTrailingSubstatement
      = Block
      | ";" 
-     | StatementExpression 
+     | StatementExpression ";"
      | "assert" Expression (":" Expression)? ";" 
      | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* "}" 
      | "do" Statement "while" "(" Expression ")" ";" 
