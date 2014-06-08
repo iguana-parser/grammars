@@ -56,8 +56,7 @@ syntax TypeParameter
      ;     
      
 syntax TypeBound 
-     = "extends" TypeVariable
-     | "extends" {ReferenceType "&"}+
+     = "extends" {ReferenceType "&"}+
      ;  
        
 syntax TypeArguments 
@@ -301,7 +300,7 @@ syntax MethodDeclaration
      ;
      
 syntax MethodHeader 
-     = MethodModifier* TypeParameter* Result MethodDeclarator Throws?
+     = MethodModifier* TypeParameters? Result MethodDeclarator Throws?
      ;
      
 syntax MethodDeclarator
