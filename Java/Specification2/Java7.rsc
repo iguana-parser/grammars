@@ -346,7 +346,6 @@ syntax Throws
      
 syntax ExceptionType
      = TypeName
-     | TypeVariable
      ;    
             
 syntax MethodBody
@@ -501,13 +500,12 @@ syntax SwitchBlockStatementGroup =
     ;
 
 syntax SwitchLabel 
-    = "case" Expression ":"
-    | "case" EnumConstantName ":"
+    = "case" ConstantExpression ":"
     | "default" ":"
     ;
 
-syntax EnumConstantName 
-    = Identifier
+syntax ConstantExpression 
+    = Expression
     ;
 
 syntax LocalVariableDeclaration 
