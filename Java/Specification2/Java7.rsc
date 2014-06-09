@@ -613,8 +613,8 @@ syntax PostDecrementExpression
 syntax UnaryExpression
      = PreIncrementExpression 
      | PreDecrementExpression 
-     | "+" UnaryExpression
-     | "-" UnaryExpression
+     | "+" !>> "+" UnaryExpression
+     | "-" !>> "-" UnaryExpression
      | UnaryExpressionNotPlusMinus
      ;
      
@@ -649,8 +649,8 @@ syntax MultiplicativeExpression
      
 syntax AdditiveExpression
      = MultiplicativeExpression
-     | AdditiveExpression "+" MultiplicativeExpression
-     | AdditiveExpression "-" MultiplicativeExpression     
+     | AdditiveExpression "+" !>> "+" MultiplicativeExpression
+     | AdditiveExpression "-" !>> "-" MultiplicativeExpression     
      ;
      
 syntax ShiftExpression
@@ -806,30 +806,6 @@ lexical LineTerminator
 lexical InputCharacter 
 	 = ![\n \r]   //UnicodeInputCharacter but not CR or LF // [\a00] to match zero
      ;
-//----------------------------------------------------------------------------------------------------------------
-
-lexical Input 
-     = InputElement* Sub?
-     ;
-
-lexical InputElement 
-     = WhiteSpace
-     | Comment
-     | Token
-     ;
-
-lexical Token 
-     = Identifier
-     | Keyword
-     | Literal
-     | Separator
-     | Operator
-     ;
-
-lexical Sub 
-    = [\u001A]        //the ASCII SUB character, also known as "control-Z"
-    ;
-
 //----------------------------------------------------------------------------------------------------------------
 
 layout Layout 
@@ -1157,44 +1133,4 @@ lexical ZeroToThree = [0-3];
 lexical NullLiteral = "null";
 
 lexical Separator = [( ) { } \[ \] ; , .];
-   
-lexical Operator 
-     = "=" 
-     | "\>" 
-     | "\<" 
-     | "!" 
-     | "~" 
-     | "?" 
-     | ":" 
-     | "==" 
-     | "\<=" 
-     | "\>=" 
-     | "!=" 
-     | "&&" 
-     | "||" 
-     | "++" 
-     | "--" 
-     | "+" 
-     | "-" 
-     | "*" 
-     | "/" 
-     | "&" 
-     | "|" 
-     | "^" 
-     | "%" 
-     | "\<\<" 
-     | "\>\>" 
-     | "\>\>\>" 
-     | "+=" 
-     | "-=" 
-     | "*=" 
-     | "/=" 
-     | "&=" 
-     | "|=" 
-     | "^=" 
-     | "%=" 
-     | "\<\<=" 
-     | "\>\>=" 
-     | "\>\>\>="
-     ;
     
