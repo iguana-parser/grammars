@@ -437,7 +437,7 @@ syntax StatementWithoutTrailingSubstatement
      | ";" 
      | StatementExpression ";"
      | "assert" Expression (":" Expression)? ";" 
-     | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* "}" 
+     | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
      | "do" Statement "while" "(" Expression ")" ";" 
      | "break" Identifier? ";" 
      | "continue" Identifier? ";" 
@@ -492,17 +492,17 @@ syntax Resources
     ;
 
 syntax Resource 
-    = VariableModifier* ReferenceType VariableDeclaratorId "=" Expression
-    ; 
+     = VariableModifier* ReferenceType VariableDeclaratorId "=" Expression
+     ; 
 
-syntax SwitchBlockStatementGroup =  
-    SwitchLabel+ BlockStatement*
-    ;
+syntax SwitchBlockStatementGroup 
+	     = SwitchLabel+ BlockStatement+
+     ;
 
 syntax SwitchLabel 
-    = "case" ConstantExpression ":"
-    | "default" ":"
-    ;
+     = "case" ConstantExpression ":"
+     | "default" ":"
+     ;
 
 syntax ConstantExpression 
     = Expression
