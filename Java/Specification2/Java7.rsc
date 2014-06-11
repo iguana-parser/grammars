@@ -794,30 +794,22 @@ lexical UnicodeMarker
 
 lexical RawInputCharacter = [0-0x10FFFF];
 
-lexical HexDigit = [0-9 a-f A-F];
-
-//----------------------------------------------------------------------------------------------------------------
-lexical LineTerminator
-	 = [\n]         // the ASCII LF character, also known as "newline"
-     | [\r]         //the ASCII CR character, also known as "return"
-     | [\r][\n]  //the ASCII CR character followed by the ASCII LF character
-     ;
-
 lexical InputCharacter 
-	 = ![\n \r]   //UnicodeInputCharacter but not CR or LF // [\a00] to match zero
-     ;
+	  = ![\n \r]    // UnicodeInputCharacter but not CR or LF // [\a00] to match zero
+      ;
 //----------------------------------------------------------------------------------------------------------------
 
 layout Layout 
-    = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+     = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
 
 lexical WhiteSpace 
-    = [\ ]            // the ASCII SP character, also known as "space"
-    | [\t]            // the ASCII HT character, also known as "horizontal tab"
-    | [\f]            // the ASCII FF character, also known as "form feed"
-    | LineTerminator
-    ;
-    
+      = [\ \t \f \r \n]
+      ;
+      
+lexical LineTerminator
+      = [\r \n]
+      ;
+     
 //----------------------------------------------------------------------------------------------------------------
     
 lexical Comment 
@@ -1125,8 +1117,6 @@ lexical OctalEscape
     | [\\] OctalDigit OctalDigit
     | [\\] ZeroToThree OctalDigit OctalDigit
     ;
-
-lexical OctalDigit = [0-7];
 
 lexical ZeroToThree = [0-3];
     
