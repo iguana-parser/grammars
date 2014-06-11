@@ -206,6 +206,7 @@ syntax InterfaceMemberDeclaration
      | AbstractMethodDeclaration 
      | ClassDeclaration 
      | InterfaceDeclaration
+     | ";"
      ;
      
 syntax ConstantDeclaration
@@ -792,10 +793,10 @@ lexical UnicodeMarker
      | UnicodeMarker [u]
      ;
 
-lexical RawInputCharacter = [0-0x10FFFF];
+lexical RawInputCharacter = ![];
 
 lexical InputCharacter 
-	  = ![\n \r]    // UnicodeInputCharacter but not CR or LF // [\a00] to match zero
+	  = UnicodeInputCharacter \ [\n \r]    // UnicodeInputCharacter but not CR or LF // [\a00] to match zero
       ;
 //----------------------------------------------------------------------------------------------------------------
 
@@ -1092,31 +1093,31 @@ lexical SingleCharacter
       ;
 
 lexical StringLiteral 
-    = [\"] StringCharacter* [\"]
-    ;
+     = [\"] StringCharacter* [\"]
+     ;
 
 lexical StringCharacter 
-    = InputCharacter \ [\" \\]
-    | EscapeSequence
-    ;
+     = InputCharacter \ [\" \\]
+     | EscapeSequence
+     ;
         
 lexical EscapeSequence 
-    = [\\] [b]                 /* \u0008: backspace BS */
-    | [\\] [t]                /* \u0009: horizontal tab HT */
-    | [\\] [n]               /* \u000a: linefeed LF */
-    | [\\] [f]                /* \u000c: form feed FF */
-    | [\\] [r]                /* \u000d: carriage return CR */
-    | [\\] [\"]                /* \u0022: double quote " */
-    | [\\] [\']               /* \u0027: single quote ' */
-    | [\\] [\\]             /* \u005c: backslash \ */
-    | OctalEscape            /* \u0000 to \u00ff: from octal value */
-    ;
+     = [\\] [b]                 /* \u0008: backspace BS */
+     | [\\] [t]                 /* \u0009: horizontal tab HT */
+     | [\\] [n]                 /* \u000a: linefeed LF */
+     | [\\] [f]                 /* \u000c: form feed FF */
+     | [\\] [r]                 /* \u000d: carriage return CR */
+     | [\\] [\"]                /* \u0022: double quote " */
+     | [\\] [\']                /* \u0027: single quote ' */
+     | [\\] [\\]                /* \u005c: backslash \ */
+     | OctalEscape              /* \u0000 to \u00ff: from octal value */
+     ;
 
 lexical OctalEscape 
-    = [\\] OctalDigit
-    | [\\] OctalDigit OctalDigit
-    | [\\] ZeroToThree OctalDigit OctalDigit
-    ;
+     = [\\] OctalDigit
+     | [\\] OctalDigit OctalDigit
+     | [\\] ZeroToThree OctalDigit OctalDigit
+     ;
 
 lexical ZeroToThree = [0-3];
     
