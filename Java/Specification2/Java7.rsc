@@ -224,7 +224,8 @@ syntax AbstractMethodDeclaration
      ;
      
 syntax AbstractMethodModifier
-     = "public"
+     = Annotation
+     | "public"
      | "abstract"
      ;          
 
