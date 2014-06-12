@@ -164,7 +164,7 @@ syntax ConstructorBody
 syntax ExplicitConstructorInvocation
      = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
      | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList ")" ";"
+     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
      ;          
 
 syntax NonWildTypeArguments
@@ -564,8 +564,8 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	     = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
-	     | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
+	 = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	 | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
      
 syntax DimExpr
@@ -790,7 +790,7 @@ lexical UnicodeEscape
 lexical RawInputCharacter 
      = ![\\]
      | [\\] !>> [\\ u]
-     | [\\][\\]   // Java Language Specification §3.3  
+     | [\\][\\]   // Java Language Specification ��3.3  
      ;
 
 lexical InputCharacter 
