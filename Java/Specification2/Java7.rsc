@@ -784,19 +784,19 @@ lexical UnicodeInputCharacter
      ;
 
 lexical UnicodeEscape 
-     = [\\] UnicodeMarker HexDigit HexDigit HexDigit HexDigit
+     = [\\] [u]+ HexDigit HexDigit HexDigit HexDigit
      ;
  
-lexical UnicodeMarker 
-     = [u]
-     | UnicodeMarker [u]
+lexical RawInputCharacter 
+     = ![\\]
+     | [\\] !>> [\\ u]
+     | [\\][\\]   // Java Language Specification §3.3  
      ;
-
-lexical RawInputCharacter = ![];
 
 lexical InputCharacter 
 	  = UnicodeInputCharacter \ [\n \r]    // UnicodeInputCharacter but not CR or LF // [\a00] to match zero
       ;
+
 //----------------------------------------------------------------------------------------------------------------
 
 layout Layout 
@@ -1108,7 +1108,7 @@ lexical EscapeSequence
      | [\\] [r]                 /* \u000d: carriage return CR */
      | [\\] [\"]                /* \u0022: double quote " */
      | [\\] [\']                /* \u0027: single quote ' */
-     | [\\] [\\]                /* \u005c: backslash \ */
+     // | [\\] [\\]                /* \u005c: backslash \ */
      | OctalEscape              /* \u0000 to \u00ff: from octal value */
      ;
 
