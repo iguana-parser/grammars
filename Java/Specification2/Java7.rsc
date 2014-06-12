@@ -218,7 +218,8 @@ syntax ConstantDeclaration
      ;
      
 syntax ConstantModifier
-     = "public"
+     = Annotation
+     | "public"
      | "static"
      | "final"
      ;
@@ -246,7 +247,6 @@ syntax AnnotationTypeElementDeclaration
      | ConstantDeclaration
      | ClassDeclaration
      | InterfaceDeclaration
-     | EnumDeclaration
      | AnnotationTypeDeclaration
      | ";"
      ;
