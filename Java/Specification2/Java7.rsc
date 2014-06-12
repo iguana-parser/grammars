@@ -928,8 +928,8 @@ lexical Literal
 //----------------------------------------------------------------------------------------------------------------
 
 lexical IntegerLiteral 
-    = DecimalIntegerLiteral
-    | HexIntegerLiteral    
+    = DecimalIntegerLiteral !>> [.]
+    | HexIntegerLiteral !>> [.]
     | OctalIntegerLiteral
     | BinaryIntegerLiteral
     ; 
@@ -1063,7 +1063,7 @@ lexical FloatTypeSuffix = [f F d D];
 //----------------------------------------------------------------------------------------------------------------
 
 lexical HexadecimalFloatingPointLiteral 
-      =  HexSignificand BinaryExponent FloatTypeSuffix;
+     =  HexSignificand BinaryExponent FloatTypeSuffix?;
 
 lexical HexSignificand 
     = HexNumeral
