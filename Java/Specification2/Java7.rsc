@@ -31,6 +31,10 @@ syntax ReferenceType
      | ArrayType
      ;
      
+syntax ReferenceTypeNonArrayType
+     = TypeDeclSpecifier TypeArguments?
+     ;
+     
 syntax TypeList
      = {Type ","}+
      ;     
@@ -238,7 +242,7 @@ syntax AnnotationTypeBody
      ;
 
 syntax AnnotationTypeElementDeclaration 
-     = AbstractMethodModifier* Type Identifier "(" ")" Dims? DefaultValue? ";" ConstantDeclaration
+     = AbstractMethodModifier* Type Identifier "(" ")" ("[" "]")* DefaultValue? ";" ConstantDeclaration
      | ClassDeclaration
      | InterfaceDeclaration
      | EnumDeclaration
@@ -547,7 +551,7 @@ syntax PrimaryNoNewArray
 
 syntax ClassInstanceCreationExpression
      = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
-     | Primary "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     | QualifiedIdentifier "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
      ;
      
 syntax TypeArgumentsOrDiamond 
@@ -560,20 +564,14 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	 = "new" PrimitiveType DimExpr+ Dims?
-	 | "new" ReferenceType DimExpr+ Dims? 
-	 | "new" PrimitiveType Dims ArrayInitializer
-     | "new" ReferenceType Dims ArrayInitializer
+	     = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	     | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
      
 syntax DimExpr
      = "[" Expression "]"
      ;
      
-syntax Dims
-	 = ("[" "]")+
-	 ;
-
 syntax FieldAccess
      = Primary "." Identifier
      | "super" "." Identifier
