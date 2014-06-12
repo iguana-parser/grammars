@@ -242,11 +242,13 @@ syntax AnnotationTypeBody
      ;
 
 syntax AnnotationTypeElementDeclaration 
-     = AbstractMethodModifier* Type Identifier "(" ")" ("[" "]")* DefaultValue? ";" ConstantDeclaration
+     = AbstractMethodModifier* Type Identifier "(" ")" ("[" "]")* DefaultValue? ";" 
+     | ConstantDeclaration
      | ClassDeclaration
      | InterfaceDeclaration
      | EnumDeclaration
      | AnnotationTypeDeclaration
+     | ";"
      ;
      
 syntax DefaultValue
@@ -416,18 +418,18 @@ syntax EnumBodyDeclarations
  ***********************************************************************************************************************/
 
 syntax Block 
-    = "{" BlockStatement* "}"
-    ;
+     = "{" BlockStatement* "}"
+     ;
 
 syntax BlockStatement 
-    = LocalVariableDeclarationStatement
-    | ClassDeclaration
-    | Statement
-    ;
+     = LocalVariableDeclarationStatement
+     | ClassDeclaration
+     | Statement
+     ;
 
 syntax LocalVariableDeclarationStatement 
-    = VariableModifier*  Type VariableDeclarators ";"
-    ;
+     = VariableModifier*  Type VariableDeclarators ";"
+     ;
 
 syntax Statement
      = StatementWithoutTrailingSubstatement 
