@@ -1040,7 +1040,7 @@ lexical FloatingPointLiteral
     ;
 
 lexical DecimalFloatingPointLiteral 
-    = Digits [.] Digits ExponentPart? FloatTypeSuffix?
+    = Digits [.] Digits? ExponentPart? FloatTypeSuffix?
     | [.] Digits ExponentPart? FloatTypeSuffix?
     | Digits ExponentPart FloatTypeSuffix?
     | Digits ExponentPart? FloatTypeSuffix
