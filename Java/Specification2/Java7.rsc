@@ -368,7 +368,7 @@ syntax MethodBody
   
 syntax Annotation 
     = "@" TypeName  "(" {ElementValuePair ","}* ")"
-    | "@" Identifier ( "(" ElementValue ")" )? 
+    | "@" TypeName ( "(" ElementValue ")" )? 
     ;
 
 syntax ElementValuePair 
