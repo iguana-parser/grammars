@@ -1115,8 +1115,8 @@ lexical EscapeSequence
      ;
 
 lexical OctalEscape 
-     = [\\] OctalDigit
-     | [\\] OctalDigit OctalDigit
+     = [\\] OctalDigit !>> [0-7]
+     | [\\] OctalDigit OctalDigit !>> [0-7]
      | [\\] ZeroToThree OctalDigit OctalDigit
      ;
 
