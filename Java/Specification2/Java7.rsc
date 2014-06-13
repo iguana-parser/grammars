@@ -1108,15 +1108,20 @@ lexical StringCharacter
      ;
         
 lexical EscapeSequence 
-     = [\\] [b]                 /* \u0008: backspace BS */
-     | [\\] [t]                 /* \u0009: horizontal tab HT */
-     | [\\] [n]                 /* \u000a: linefeed LF */
-     | [\\] [f]                 /* \u000c: form feed FF */
-     | [\\] [r]                 /* \u000d: carriage return CR */
-     | [\\] [\"]                /* \u0022: double quote " */
-     | [\\] [\']                /* \u0027: single quote ' */
-     | OctalEscape              /* \u0000 to \u00ff: from octal value */
+     = Backslash [b]                 /* \u0008: backspace BS */
+     | Backslash [t]                 /* \u0009: horizontal tab HT */
+     | Backslash [n]                 /* \u000a: linefeed LF */
+     | Backslash [f]                 /* \u000c: form feed FF */
+     | Backslash [r]                 /* \u000d: carriage return CR */
+     | Backslash [\"]                /* \u0022: double quote " */
+     | Backslash [\']                /* \u0027: single quote ' */
+     | [\\] [u]+ "005" [cC] [\\] [u]+ "005" [cC]   // Todo: merge it with [\\][\\]
+     | OctalEscape                   /* \u0000 to \u00ff: from octal value */
      ;
+     
+lexical Backslash
+     = [\\] [u]+ "005" [cC]
+     | [\\];    
 
 lexical OctalEscape 
      = [\\] OctalDigit !>> [0-7]
