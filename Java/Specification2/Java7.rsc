@@ -87,8 +87,8 @@ start syntax CompilationUnit
       ;
   
 syntax PackageDeclaration 
-    = Annotation* "package"  QualifiedIdentifier ";" 
-      ;  
+     = Annotation* "package"  QualifiedIdentifier ";" 
+     ;  
   
 syntax ImportDeclaration 
     = "import"  "static"?  {Identifier "."}+ ("." "*")? ";" 
@@ -205,6 +205,7 @@ syntax InterfaceModifier
 syntax InterfaceBody
      = "{" InterfaceMemberDeclaration* "}"
      ;
+     
 syntax InterfaceMemberDeclaration
      = ConstantDeclaration 
      | AbstractMethodDeclaration 
@@ -553,8 +554,8 @@ syntax PrimaryNoNewArray
 
 syntax ClassInstanceCreationExpression
      = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
-     | QualifiedIdentifier "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
-     ;
+     | (Primary | QualifiedIdentifier) "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     ; // Check if it's a good idea to add Identifier to primary?
      
 syntax TypeArgumentsOrDiamond 
      = "\<" "\>" 
@@ -721,7 +722,8 @@ syntax Assignment
      ;
      
 syntax LeftHandSide
-     = ExpressionName 
+     = ExpressionName
+     | "(" ExpressionName ")" 
      | FieldAccess 
      | ArrayAccess
      ;
@@ -792,11 +794,12 @@ lexical UnicodeEscape
 lexical RawInputCharacter 
      = ![\\]
      | [\\] !>> [\\ u]
-     | [\\][\\]   // Java Language Specification ��3.3  
+     | [\\][\\]   // Java Language Specification §3.3  
      ;
 
 lexical InputCharacter 
-	  = UnicodeInputCharacter \ [\n \r]    // UnicodeInputCharacter but not CR or LF // [\a00] to match zero
+	  = UnicodeInputCharacter \ [\n \r]    // UnicodeInputCharacter but not CR or LF 
+	  | [\a00]                             // to match zero        
       ;
 
 //----------------------------------------------------------------------------------------------------------------
@@ -805,7 +808,8 @@ layout Layout
      = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
 
 lexical WhiteSpace 
-      = [\ \t \f \r \n]
+      = [\ \t \f \r \n \a1a]  // to match SUB in the end, but we need a better solution for this when we added better
+                              // suuport for layout
       ;
       
 lexical LineTerminator
@@ -1110,7 +1114,6 @@ lexical EscapeSequence
      | [\\] [r]                 /* \u000d: carriage return CR */
      | [\\] [\"]                /* \u0022: double quote " */
      | [\\] [\']                /* \u0027: single quote ' */
-     // | [\\] [\\]                /* \u005c: backslash \ */
      | OctalEscape              /* \u0000 to \u00ff: from octal value */
      ;
 
