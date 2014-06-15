@@ -130,6 +130,34 @@ syntax VariableReference
      ;
 
 
+// Expressions
+
+syntax ArgumentList
+     = Argument
+     | ArgumentList   ","   Argument
+     ;
+
+syntax Argument
+     = ArgumentName?   ArgumentValue
+     ;
+
+syntax ArgumentName
+     = Identifier  ":" 
+     ;
+
+syntax ArgumentValue
+     = Expression
+     | "ref"   VariableReference
+     | "out"   VariableReference
+     ;
+
+syntax PrimaryExpression 
+     = PrimaryNoArrayCreationExpression
+     | ArrayCreationExpression
+     ;
+
+
+
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
 //----------------------------------------------------------------------------------------------------------------
