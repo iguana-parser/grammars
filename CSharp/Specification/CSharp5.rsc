@@ -10,7 +10,124 @@
 module CSharp5
 
 
+// Basic concepts
 
+syntax NamespaceName
+     = NamespaceOrTypeName
+     ;
+
+syntax TypeName 
+     = NamespaceOrTypeName
+     ;
+
+syntax NamespaceOrTypeName 
+     = Identifier   TypeArgumentList?
+     | NamespaceOrTypeName   "."   Identifier   TypeArgumentList?
+     | QualifiedAliasMember
+     ;
+
+// Types
+
+syntax ValueType
+     = StructType
+     | EnumType
+     ;
+
+syntax StructType
+     = TypeName
+     | SimpleType 
+     | NullableType
+     ;
+
+syntax SimpleType
+     = NumericType
+     | "bool"
+     ;
+
+syntax NumericType
+     = IntegralType
+     | FloatingPointType
+     | "decimal"
+     ;
+
+syntax IntegralType
+     = "sbyte"
+     | "byte"
+     | "short"
+     | "ushort"
+     | "int"
+     | "uint"
+     | "long"
+     | "ulong"
+     | "char"
+     ;
+
+syntax FloatingPointType
+     = "float"
+     | "double"
+     ;
+
+syntax NullableType
+     = NonNullableValueType  "?"
+     ;
+
+syntax NonNullableValueType
+     = Type
+     ;
+
+syntax EnumType
+     = TypeName
+     ;
+
+syntax ReferenceType
+     = ClassType
+     | IinterfaceType
+     | ArrayType
+     | DelegateType
+     ;
+
+syntax ClassType
+     = TypeName
+     | "object"
+     | "dynamic"
+     | "string"
+     ;
+
+syntax InterfaceType
+     = TypeName
+     ;
+     
+syntax RankSpecifiers
+     = RankSpecifier
+     | RankSpecifiers   RankSpecifier
+     ;
+
+syntax RankSpecifier
+     = "["   ","*   "]"
+     ;
+
+syntax DelegateType
+     = TypeName
+     ;
+
+syntax TypeArgumentList
+     = "\<"   {TypeArgument ","}+   "\>"
+     ;
+
+syntax TypeArgument
+     = Type
+     ;
+
+syntax TypeParameter
+     = Identifier
+     ;
+     
+
+// Variables
+
+syntax VariableReference
+     = Expression
+     ;
 
 
 //----------------------------------------------------------------------------------------------------------------
@@ -506,5 +623,47 @@ lexical PpStartRegion
 
 lexical PpEndRegion 
       = Whitespace?   "#"   Whitespace?   "endregion"   PpMessage
+      ;
+      
+      
+lexical PpLine
+     =  Whitespace?   "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
+     ;
+     
+lexical LineIndicator 
+     = DecimalDigit+   Whitespace   FileName 
+     | DecimalDigit+
+     | "default" 
+     | "hidden"
+     ;
+
+lexical FileName 
+     = "\""   FileNameCharacter+   "\""
+     ;
+
+lexical FileNameCharacter 
+     = ![] \ [\"]
+     ;
+
+lexical PpPragma 
+     = Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
+     ;
+
+lexical PragmaBody 
+     = PragmaWarningBody
+     ;
+
+lexical PragmaWarningBody 
+     = "warning"   Whitespace   WarningAction   (Whitespace   WarningList)?
+     ;
+
+lexical WarningAction 
+      = "disable"
+      | "restore"
+      ;
+
+lexical WarningList 
+      = DecimalDigit+
+      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+
       ;
       
