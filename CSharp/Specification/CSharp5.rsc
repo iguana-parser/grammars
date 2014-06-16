@@ -113,11 +113,6 @@ syntax InterfaceType
      = TypeName
      ;
      
-syntax RankSpecifiers
-     = RankSpecifier
-     | RankSpecifiers   RankSpecifier
-     ;
-
 syntax RankSpecifier
      = "["   ","*   "]"
      ;
@@ -269,8 +264,7 @@ syntax ObjectInitializer
      ;
 
 syntax MemberInitializerList
-     = MemberInitializer
-     | MemberInitializerList   ","   MemberInitializer
+     = { MemberInitializer ","}+
      ;
 
 syntax MemberInitializer
@@ -288,8 +282,7 @@ syntax CollectionInitializer
      ;
 
 syntax ElementInitializerList
-     = ElementInitializer
-     | ElementInitializerList   ","   ElementInitializer
+     = { ElementInitializer ","}+
      ;
 
 syntax ElementInitializer
@@ -298,12 +291,11 @@ syntax ElementInitializer
      ;
 
 syntax ExpressionList
-     = Expression
-     | ExpressionList   ","   Expression
+     = { Expression ","}+
      ;
 
 syntax ArrayCreationExpression
-     = "new"   NonArrayType   "["   ExpressionList   "]"   RankSpecifiers?   ArrayInitializer?
+     = "new"   NonArrayType   "["   ExpressionList   "]"   RankSpecifier*   ArrayInitializer?
      | "new"   ArrayType   ArrayInitializer 
      | "new"   RankSpecifier   ArrayInitializer
      ;
@@ -322,8 +314,7 @@ syntax AnonymousObjectInitializer
      ;
 
 syntax MemberDeclaratorList
-     = MemberDeclarator
-     | MemberDeclaratorList   ","   MemberDeclarator
+     = { MemberDeclarator "," }+
      ;
 
 syntax MemberDeclarator
@@ -398,12 +389,11 @@ syntax FixedStatement
      ;
 
 syntax FixedPointerDeclarators
-     = FixedPointerDeclarator
-     | FixedPointerDeclarators   ","   FixedPointerDeclarator
+     = { FixedPointerDeclarator ","}+
      ;
 
 syntax FixedPointerDeclarator
-     = Identifier   "="   fixedPointerInitializer
+     = Identifier   "="   FixedPointerInitializer
      ;
 
 syntax FixedPointerInitializer
@@ -513,8 +503,7 @@ syntax ExplicitAnonymousFunctionSignature
      ;
 
 syntax ExplicitAnonymousFunctionParameterList
-     = ExplicitAnonymousFunctionParameter
-     | ExplicitAnonymousFunctionParameterList   ","   ExplicitAnonymousFunctionParameter
+     = { ExplicitAnonymousFunctionParameter "," }+
      ;
 
 syntax ExplicitAnonymousFunctionParameter
@@ -532,8 +521,7 @@ syntax ImplicitAnonymousFunctionSignature
      ;
 
 syntax ImplicitAnonymousFunctionParameterList
-     = ImplicitAnonymousFunctionParameter
-     | ImplicitAnonymousFunctionParameterList   ","   ImplicitAnonymousFunctionParameter
+     = { ImplicitAnonymousFunctionParameter ","}+
      ;
 
 syntax ImplicitAnonymousFunctionParameter
@@ -554,12 +542,7 @@ syntax FromClause
      ;
 
 syntax QueryBody
-     = QueryBodyClauses?   SelectOrGroupClause   QueryContinuation?
-     ;
-
-syntax QueryBodyClauses
-     = QueryBodyClause
-     | QueryBodyClauses   QueryBodyClause
+     = QueryBodyClause*   SelectOrGroupClause   QueryContinuation?
      ;
 
 syntax QueryBodyClause
@@ -585,7 +568,7 @@ syntax JoinClause
      
 
 syntax JoinIntoClause
-     = "join"   type?   Identifier   "in"   Expression   "on"   Expression   "equals"   Expression   "into"   Identifier
+     = "join"   Type?   Identifier   "in"   Expression   "on"   Expression   "equals"   Expression   "into"   Identifier
      ;
 
 syntax OrderbyClause
@@ -593,8 +576,7 @@ syntax OrderbyClause
      ;
 
 syntax Orderings
-     = Ordering
-     | Orderings   ","   Ordering
+     = { Ordering ","}+
      ;
 
 syntax Ordering
@@ -722,13 +704,11 @@ syntax LocalVariableType
      ;
 
 syntax LocalVariableDeclarators
-     = LocalVariableDeclarator
-     | LocalVariableDeclarators   ","   LocalVariableDeclarator
+     = { LocalVariableDeclarator "," }+
      ;
 
 syntax LocalVariableDeclarator
-     = Identifier
-     | Identifier   "="   LocalVariableInitializer
+     = { Identifier "=" }+
      ;
       
 syntax LocalVariableInitializer
@@ -778,21 +758,12 @@ syntax SwitchStatement
      ;
 
 syntax SwitchBlock
-     = "{"   SwitchSections?   "}"
+     = "{"   SwitchSection*   "}"
      ;
 
-syntax SwitchSections
-     = SwitchSection
-     | SwitchSections   SwitchSection
-     ;
 
 syntax SwitchSection
-     = SwitchLabels   StatementList
-     ;
-
-syntax SwitchLabels
-     = SwitchLabel
-     | SwitchLabels   SwitchLabel
+     = SwitchLabel+   StatementList
      ;
 
 syntax SwitchLabel
@@ -833,8 +804,7 @@ syntax ForIterator
      ;
 
 syntax StatementExpressionList
-     = StatementExpression
-     | StatementExpressionList   ","   StatementExpression
+     = { StatementExpression "," }+
      ;
 
 syntax ForeachStatement
@@ -878,13 +848,8 @@ syntax TryStatement
      ;
 
 syntax CatchClauses
-     = SpecificCatchClauses   GeneralCatchClause?
-     | SpecificCatchClauses?   GeneralCatchClause
-     ;
-
-syntax SpecificCatchClauses
-     = SpecificCatchClause
-     | SpecificCatchClauses   SpecificCatchClause
+     = SpecificCatchClause+   GeneralCatchClause?
+     | SpecificCatchClause*   GeneralCatchClause
      ;
 
 syntax SpecificCatchClause
@@ -929,7 +894,7 @@ syntax YieldStatement
 // Namespaces
 
 syntax CompilationUnit
-     = ExternAliasDirectives?   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclarations?
+     = ExternAliasDirectives?   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclaration*
 	; 
 
 syntax NamespaceDeclaration
@@ -937,17 +902,11 @@ syntax NamespaceDeclaration
      ;
 
 syntax QualifiedIdentifier
-     = Identifier
-     | QualifiedIdentifier   "."   Identifier
+     = { Identifier "." }+
      ;
 
 syntax NamespaceBody
-     = "{"   ExternAliasDirectives?   UsingDirectives?   NamespaceMemberDeclarations?   "}"
-     ;
-
-syntax ExternAliasDirectives
-     = ExternAliasDirective
-     | ExternAliasDirectives   ExternAliasDirective
+     = "{"   ExternAliasDirective*   UsingDirectives?   NamespaceMemberDeclaration*   "}"
      ;
 
 syntax ExternAliasDirective
@@ -972,10 +931,6 @@ syntax UsingNamespaceDirective
      = "using"   NamespaceName   ";"
      ;
 
-syntax NamespaceMemberDeclarations
-     = NamespaceMemberDeclaration
-     | NamespaceMemberDeclarations   NamespaceMemberDeclaration
-     ;
 
 syntax NamespaceMemberDeclaration
      = NamespaceDeclaration
@@ -997,13 +952,8 @@ syntax QualifiedAliasMember
      
 // Classes
 syntax ClassDeclaration
-     = Attributes?   ClassModifiers?   "partial"?   "class"   Identifier   TypeParameterList?
-          ClassBase?   TypeParameterConstraintsClauses?   ClassBody   ";"?
-     ;
-
-syntax ClassModifiers
-     = ClassModifier
-     | ClassModifiers   ClassModifier
+     = Attributes?   ClassModifier*   "partial"?   "class"   Identifier   TypeParameterList?
+          ClassBase?   TypeParameterConstraintsClause*   ClassBody   ";"?
      ;
 
 syntax ClassModifier
@@ -1038,13 +988,7 @@ syntax ClassBase
      ;
 
 syntax InterfaceTypeList
-     = InterfaceType
-     | InterfaceTypeList   ","   InterfaceType
-     ;
-
-syntax TypeParameterConstraintsClauses
-     = TypeParameterConstraintsClause
-     | TypeParameterConstraintsClauses   TypeParameterConstraintsClause
+     = { InterfaceType "," }+
      ;
 
 syntax TypeParameterConstraintsClause
@@ -1079,12 +1023,7 @@ syntax ConstructorConstraint
      ;
 
 syntax ClassBody
-     = "{"   ClassMemberDeclarations?   "}"
-     ;
-
-syntax ClassMemberDeclarations
-     = ClassMemberDeclaration
-     | ClassMemberDeclarations   ClassMemberDeclaration
+     = "{"   ClassMemberDeclaration*   "}"
      ;
 
  syntax ClassMemberDeclaration
@@ -1102,12 +1041,7 @@ syntax ClassMemberDeclarations
      ;
 
 syntax ConstantDeclaration
-     = Attributes?   ConstantModifiers?   "const"   Type   ConstantDeclarators   ";"
-     ;
-
-syntax ConstantModifiers
-     = ConstantModifier
-     | ConstantModifiers   ConstantModifier
+     = Attributes?   ConstantModifier*   "const"   Type   ConstantDeclarators   ";"
      ;
 
 syntax ConstantModifier
@@ -1119,8 +1053,7 @@ syntax ConstantModifier
      ;
 
 syntax ConstantDeclarators
-     = ConstantDeclarator
-     | ConstantDeclarators   ","   ConstantDeclarator
+     = { ConstantDeclarator "," }+
      ;
 
 syntax ConstantDeclarator
@@ -1128,12 +1061,7 @@ syntax ConstantDeclarator
      ;
 
 syntax FieldDeclaration
-     = Attributes?   FieldModifiers?   Type   VariableDeclarators   ";"
-     ;
-
-syntax FieldModifiers
-     = FieldModifier
-     | FieldModifiers   FieldModifier
+     = Attributes?   FieldModifier*   Type   VariableDeclarators   ";"
      ;
 
 syntax FieldModifier
@@ -1149,8 +1077,7 @@ syntax FieldModifier
      ;
 
 syntax VariableDeclarators
-     = VariableDeclarator
-     | VariableDeclarators   ","   VariableDeclarator
+     = { VariableDeclarator ","}+
      ;
 
  syntax VariableDeclarator
@@ -1168,14 +1095,9 @@ syntax MethodDeclaration
      ;
 
 syntax MethodHeader
-     = Attributes?   MethodModifiers?   "partial"?   ReturnType   MemberName   TypeParameterList?
+     = Attributes?   MethodModifier*   "partial"?   ReturnType   MemberName   TypeParameterList?
 		"("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?
 	  ;
-
-syntax MethodModifiers
-     = MethodModifier
-     | MethodModifiers   MethodModifier
-     ;
 
 syntax MethodModifier
      = "new"
@@ -1214,8 +1136,7 @@ syntax FormalParameterList
      ;
 
 syntax FixedParameters
-     = FixedParameter
-     | FixedParameters   ","   FixedParameter
+     = { FixedParameter ","}+
      ;
 
 syntax FixedParameter
@@ -1237,12 +1158,7 @@ syntax ParameterArray
      ;
 
 syntax PropertyDeclaration
-     = Attributes?   PropertyModifiers?   Type   MemberName   "{"   AccessorDeclarations   "}"
-     ;
-
-syntax PropertyModifiers
-     = PropertyModifier
-     | PropertyModifiers   PropertyModifier
+     = Attributes?   PropertyModifier*   Type   MemberName   "{"   AccessorDeclarations   "}"
      ;
 
 syntax PropertyModifier
@@ -1271,11 +1187,11 @@ syntax AccessorDeclarations
      ;
 
 syntax GetAccessorDeclaration
-     = Attributes?   accessorModifier?    "get"   AccessorBody
+     = Attributes?   AccessorModifier?    "get"   AccessorBody
      ;
 
 syntax SetAccessorDeclaration
-     = Attributes?   accessorModifier?   "set"   AccessorBody
+     = Attributes?   AccessorModifier?   "set"   AccessorBody
      ;
 
 syntax AccessorModifier
@@ -1292,14 +1208,10 @@ syntax AccessorBody
      ;
 
 syntax EventDeclaration
-     = Attributes?   EventModifiers?   "event"   Type   VariableDeclarators   ";"
-     | Attributes?   EventModifiers?   "event"   Type   MemberName   "{"   EventAccessorDeclarations   "}"
+     = Attributes?   EventModifier*   "event"   Type   VariableDeclarators   ";"
+     | Attributes?   EventModifier*   "event"   Type   MemberName   "{"   EventAccessorDeclarations   "}"
      ;
      
-syntax EventModifiers
-     = EventModifier
-     | EventModifiers   EventModifier
-     ;
 
 syntax EventModifier
      = "new"
@@ -1326,16 +1238,11 @@ syntax AddAccessorDeclaration
      ;
 
 syntax RemoveAccessorDeclaration
-     = Attributes?   "remove"   block
+     = Attributes?   "remove"   Block
      ;
 
 syntax IndexerDeclaration
-     = Attributes?   IndexerModifiers?   IndexerDeclarator   "{"   AccessorDeclarations   "}"
-     ;
-
-syntax IndexerModifiers
-     = IndexerModifier
-     | IndexerModifiers   IndexerModifier
+     = Attributes?   IndexerModifier*   IndexerDeclarator   "{"   AccessorDeclarations   "}"
      ;
 
 syntax IndexerModifier
@@ -1358,12 +1265,7 @@ syntax IndexerDeclarator
      ;
 
 syntax OperatorDeclaration
-     = Attributes?   OperatorModifiers   OperatorDeclarator   OperatorBody
-     ;
-
-syntax OperatorModifiers
-     = OperatorModifier
-     | OperatorModifiers   OperatorModifier
+     = Attributes?   OperatorModifier+   OperatorDeclarator   OperatorBody
      ;
 
 
@@ -1408,7 +1310,7 @@ syntax OverloadableBinaryOperator
      | "|"
      | "^"
      | "\<\<"
-     | rightShift
+     | RightShift
      | "=="
      | "!="
      | "\>"
@@ -1428,13 +1330,9 @@ syntax OperatorBody
      ;
 
 syntax ConstructorDeclaration
-     = Attributes?   ConstructorModifiers?   ConstructorDeclarator   ConstructorBody
+     = Attributes?   ConstructorModifier*   ConstructorDeclarator   ConstructorBody
      ;
 
-syntax ConstructorModifiers
-     = ConstructorModifier
-     | ConstructorModifiers   ConstructorModifier
-     ;
 
 syntax ConstructorModifier
      = "public"
@@ -1494,15 +1392,9 @@ syntax DestructorBody
 // Structs     
 
 syntax StructDeclaration
-     = Attributes?   StructModifiers?   "partial"?   "struct"   Identifier   TypeParameterList?
+     = Attributes?   StructModifier*   "partial"?   "struct"   Identifier   TypeParameterList?
         StructInterfaces?   TypeParameterConstraintsClauses?   StructBody   ";"?
      ;
-
-syntax StructModifiers
-     = StructModifier
-     | StructModifiers   StructModifier
-     ;
-
 
 syntax StructModifier
      = "new"
@@ -1541,13 +1433,8 @@ syntax StructMemberDeclaration
      ;
      
 syntax FixedSizeBufferDeclaration
-     = Attributes?   FixedSizeBufferModifiers?   "fixed"   BufferElementType
-        FixedSizeBufferDeclarators   ";"
-     ;
-
-syntax FixedSizeBufferModifiers
-     = FixedSizeBufferModifier
-     | FixedSizeBufferModifier   FixedSizeBufferModifiers
+     = Attributes?   FixedSizeBufferModifier*   "fixed"   BufferElementType
+        FixedSizeBufferDeclarator+   ";"
      ;
 
 syntax FixedSizeBufferModifier
@@ -1563,36 +1450,23 @@ syntax BufferElementType
      = Type
      ;
 
-syntax FixedSizeBufferDeclarators
-     = FixedSizeBufferDeclarator
-     | FixedSizeBufferDeclarator   FixedSizeBufferDeclarators
-     ;
-
 syntax FixedSizeBufferDeclarator
      = Identifier   "["   ConstantExpression   "]"
      ;     
 
 // Arrays
 syntax ArrayType
-     = NonArrayType   RankSpecifiers
+     = NonArrayType   RankSpecifier+
      ;
 
 syntax NonArrayType
      = Type
      ;
-syntax RankSpecifiers
-     = RankSpecifier
-     | RankSpecifiers   RankSpecifier
-     ;
 
 syntax RankSpecifier
-     = "["   DimSeparators?   "]"
+     = "["   ","*   "]"
      ;
 
-syntax DimSeparators
-     = ","
-     | DimSeparators   ","
-     ;
 
 syntax ArrayInitializer
      = "{"   VariableInitializerList?   "}"
@@ -1600,8 +1474,7 @@ syntax ArrayInitializer
      ;
 
 syntax VariableInitializerList
-     = VariableInitializer
-     | VariableInitializerList   ","   VariableInitializer
+     = { VariableInitializer ","}+
      ;
 
 syntax VariableInitializer
@@ -1612,14 +1485,9 @@ syntax VariableInitializer
 // Interfaces
 
 syntax InterfaceDeclaration
-     = Attributes?   InterfaceModifiers?   "partial"?   "interface"   
+     = Attributes?   InterfaceModifiers*   "partial"?   "interface"   
         Identifier   VariantTypeParameterList?   InterfaceBase?
-        TypeParameterConstraintsClauses?   InterfaceBody   ";"?
-     ;
-
-syntax InterfaceModifiers
-     = InterfaceModifier
-     | InterfaceModifiers   InterfaceModifier
+        TypeParameterConstraintsClause*   InterfaceBody   ";"?
      ;
 
 syntax InterfaceModifier
@@ -1645,18 +1513,12 @@ syntax VarianceAnnotation
      | "out"
      ;
 
-
 syntax InterfaceBase
      = ":"   interfaceTypeList
      ;
 
 syntax InterfaceBody
-     = "{"   InterfaceMemberDeclarations?   "}"
-     ;
-
-syntax InterfaceMemberDeclarations
-     = InterfaceMemberDeclaration
-     | InterfaceMemberDeclarations   InterfaceMemberDeclaration
+     = "{"   InterfaceMemberDeclaration*   "}"
      ;
 
 syntax InterfaceMemberDeclaration
@@ -1668,7 +1530,7 @@ syntax InterfaceMemberDeclaration
 
 syntax InterfaceMethodDeclaration
      = Attributes?   "new"?   ReturnType   Identifier   TypeParameterList
-        "("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?   ";"
+        "("   FormalParameterList?   ")"   TypeParameterConstraintsClause*   ";"
      ;
 
 syntax InterfacePropertyDeclaration
@@ -1693,7 +1555,7 @@ syntax InterfaceIndexerDeclaration
 // Enums
 
 syntax EnumDeclaration
-     = Attributes?   EnumModifiers?   "enum"   Identifier   EnumBase?   EnumBody   ";"?
+     = Attributes?   EnumModifier*   "enum"   Identifier   EnumBase?   EnumBody   ";"?
      ;
 
 syntax EnumBase
@@ -1705,11 +1567,6 @@ syntax EnumBody
      | "{"   EnumMemberDeclarations   ","   "}"
      ;
 
-syntax EnumModifiers
-     = EnumModifier
-     | EnumModifiers   EnumModifier
-     ;
-
 syntax EnumModifier
      = "new"
      | "public"
@@ -1719,8 +1576,7 @@ syntax EnumModifier
      ;
 
 syntax EnumMemberDeclarations
-     = EnumMemberDeclaration
-     | EnumMemberDeclarations   ","   EnumMemberDeclaration
+     = { EnumMemberDeclaration "," }+
      ;
 
 syntax EnumMemberDeclaration
@@ -1732,14 +1588,9 @@ syntax EnumMemberDeclaration
 // Delegates
 
 syntax DelegateDeclaration
-     = Attributes?   DelegateModifiers?   "delegate"   ReturnType   
+     = Attributes?   DelegateModifier*   "delegate"   ReturnType   
         Identifier  VariantTypeParameterList?   
-        "("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?   ";"
-     ;
-
-syntax DelegateModifiers
-     = DelegateModifier
-     | DelegateModifiers   DelegateModifier
+        "("   FormalParameterList?   ")"   TypeParameterConstraintsClause*   ";"
      ;
 
 syntax DelegateModifier
@@ -1754,12 +1605,7 @@ syntax DelegateModifier
 // Attributes
 
 syntax GlobalAttributes
-    = GlobalAttributeSections
-    ;
-
-syntax GlobalAttributeSections
-    = GlobalAttributeSection
-    | GlobalAttributeSections   GlobalAttributeSection
+    = GlobalAttributeSection+
     ;
 
 syntax GlobalAttributeSection
@@ -1778,12 +1624,7 @@ syntax GlobalAttributeTarget
     ;
 
 syntax Attributes
-    = AttributeSections
-    ;
-
-syntax AttributeSections
-    = AttributeSection
-    | AttributeSections   AttributeSection
+    = AttributeSection+
     ;
 
 syntax AttributeSection
@@ -1806,8 +1647,7 @@ syntax AttributeTarget
     ;
 
 syntax AttributeList
-    = Attribute
-    | AttributeList   ","   Attribute
+    = { Attribute ","}+
     ;
 
 syntax Attribute
@@ -1825,8 +1665,7 @@ syntax AttributeArguments
     ;
 
 syntax PositionalArgumentList
-    = PositionalArgument
-    | PositionalArgumentList   ","   PositionalArgument
+    = { PositionalArgument "," }+
     ;
 
 syntax PositionalArgument
@@ -1834,8 +1673,7 @@ syntax PositionalArgument
     ;
 
 syntax NamedArgumentList
-    = NamedArgument
-    | NamedArgumentList   ","   NamedArgument
+    = { NamedArgument ","}+
     ;
 
 syntax NamedArgument
@@ -1845,8 +1683,6 @@ syntax NamedArgument
 syntax AttributeArgumentExpression
     = Expression
     ;
-
-     
 
 
 //----------------------------------------------------------------------------------------------------------------
