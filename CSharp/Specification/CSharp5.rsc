@@ -928,6 +928,485 @@ syntax QualifiedAliasMember
      = Identifier  "::"    Identifier   TypeArgumentList?
      ;
      
+     
+// Classes
+syntax ClassDeclaration
+     = Attributes?   ClassModifiers?   "partial"?   "class"   Identifier   TypeParameterList?
+          ClassBase?   TypeParameterConstraintsClauses?   ClassBody   ";"?
+     ;
+
+syntax ClassModifiers
+     = ClassModifier
+     | ClassModifiers   ClassModifier
+     ;
+
+syntax ClassModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "abstract"
+     | "sealed"
+     | "static"
+     ;
+
+syntax TypeParameterList
+     = "\<"   TypeParameters   "\>"
+     ;
+
+syntax TypeParameters
+     = Attributes?   TypeParameter
+     | TypeParameters   ","   Attributes?   TypeParameter
+     ;
+
+syntax TypeParameter
+     = Identifier
+     ;
+
+syntax ClassBase
+     = ":" ClassType
+     | ":" InterfaceTypeList
+     | ":" ClassType   ","   InterfaceTypeList
+     ;
+
+syntax InterfaceTypeList
+     = InterfaceType
+     | InterfaceTypeList   ","   InterfaceType
+     ;
+
+syntax TypeParameterConstraintsClauses
+     = TypeParameterConstraintsClause
+     | TypeParameterConstraintsClauses   TypeParameterConstraintsClause
+     ;
+
+syntax TypeParameterConstraintsClause
+     = "where"   TypeParameter   ":"   TypeParameterConstraints
+     ;
+
+syntax TypeParameterConstraints
+     = PrimaryConstraint
+     | SecondaryConstraints
+     | ConstructorConstraint
+     | PrimaryConstraint   ","   SecondaryConstraints
+     | PrimaryConstraint   ","   ConstructorConstraint
+     | SecondaryConstraints   ","   ConstructorConstraint
+     | PrimaryConstraint   ","   SecondaryConstraints   ","   ConstructorConstraint
+     ;
+
+syntax PrimaryConstraint
+     = ClassType
+     | "class"
+     | "struct"
+     ;
+
+syntax SecondaryConstraints
+     = InterfaceType
+     | TypeParameter
+     | SecondaryConstraints   ","   InterfaceType
+     | SecondaryConstraints   ","   TypeParameter
+     ;
+
+syntax ConstructorConstraint
+     = "new"   "("   ")"
+     ;
+
+syntax ClassBody
+     = "{"   ClassMemberDeclarations?   "}"
+     ;
+
+syntax ClassMemberDeclarations
+     = ClassMemberDeclaration
+     | ClassMemberDeclarations   ClassMemberDeclaration
+     ;
+
+ syntax ClassMemberDeclaration
+     = ConstantDeclaration
+     | FieldDeclaration
+     | MethodDeclaration
+     | PropertyDeclaration
+     | EventDeclaration
+     | IndexerDeclaration
+     | OperatorDeclaration
+     | ConstructorDeclaration
+     | DestructorDeclaration
+     | StaticConstructorDeclaration
+     | TypeDeclaration
+     ;
+
+syntax ConstantDeclaration
+     = Attributes?   ConstantModifiers?   "const"   Type   ConstantDeclarators   ";"
+     ;
+
+syntax ConstantModifiers
+     = ConstantModifier
+     | ConstantModifiers   ConstantModifier
+     ;
+
+syntax ConstantModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     ;
+
+syntax ConstantDeclarators
+     = ConstantDeclarator
+     | ConstantDeclarators   ","   ConstantDeclarator
+     ;
+
+syntax ConstantDeclarator
+     = Identifier   "="   ConstantExpression
+     ;
+
+syntax FieldDeclaration
+     = Attributes?   FieldModifiers?   Type   VariableDeclarators   ";"
+     ;
+
+syntax FieldModifiers
+     = FieldModifier
+     | FieldModifiers   FieldModifier
+     ;
+
+syntax FieldModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "static"
+     | "readonly"
+     | "volatile"
+     ;
+
+syntax VariableDeclarators
+     = VariableDeclarator
+     | VariableDeclarators   ","   VariableDeclarator
+     ;
+
+ syntax VariableDeclarator
+     = Identifier
+     | Identifier   "="   VariableInitializer
+     ;
+
+syntax VariableInitializer
+     = Expression
+     | ArrayInitializer
+     ;
+
+syntax MethodDeclaration
+     = MethodHeader   MethodBody
+     ;
+
+syntax MethodHeader
+     = Attributes?   MethodModifiers?   "partial"?   ReturnType   MemberName   TypeParameterList?
+		"("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?
+	  ;
+
+syntax MethodModifiers
+     = MethodModifier
+     | MethodModifiers   MethodModifier
+     ;
+
+syntax MethodModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "static"
+     | "virtual"
+     | "sealed"
+     | "override"
+     | "abstract"
+     | "extern"
+     ;
+
+syntax ReturnType
+     = Type
+     | "void"
+     ;
+
+syntax MemberName
+     = Identifier
+     | InterfaceType   "."   Identifier
+     ;
+
+syntax MethodBody
+     = Block
+     | ";"
+     ;
+
+syntax FormalParameterList
+     = FixedParameters
+     | FixedParameters   ","   ParameterArray
+     | ParameterArray
+     ;
+
+syntax FixedParameters
+     = FixedParameter
+     | FixedParameters   ","   FixedParameter
+     ;
+
+syntax FixedParameter
+     = Attributes?   ParameterModifier?   Type   Identifier   DefaultArgument?
+     ;
+
+syntax DefaultArgument
+     =  Expression
+     ;
+
+syntax ParameterModifier
+     = "ref"
+     | "out"
+     | "this"
+     ;
+
+syntax ParameterArray
+     = Attributes?   "params"   ArrayType   Identifier
+     ;
+
+syntax PropertyDeclaration
+     = Attributes?   PropertyModifiers?   Type   MemberName   "{"   AccessorDeclarations   "}"
+     ;
+
+syntax PropertyModifiers
+     = PropertyModifier
+     | PropertyModifiers   PropertyModifier
+     ;
+
+syntax PropertyModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "static"
+     | "virtual"
+     | "sealed"
+     | "override"
+     | "abstract"
+     | "extern"
+     ;
+
+syntax MemberName
+     = Identifier
+     | InterfaceType   "."   Identifier
+     ;
+
+syntax AccessorDeclarations
+     = GetAccessorDeclaration   SetAccessorDeclaration?
+     | SetAccessorDeclaration   GetAccessorDeclaration?
+     ;
+
+syntax GetAccessorDeclaration
+     = Attributes?   accessorModifier?    "get"   AccessorBody
+     ;
+
+syntax SetAccessorDeclaration
+     = Attributes?   accessorModifier?   "set"   AccessorBody
+     ;
+
+syntax AccessorModifier
+     = "protected"
+     | "internal"
+     | "private"
+     | "protected"   "internal"
+     | "internal"   "protected"
+     ;
+
+syntax AccessorBody
+     = Block
+     | ";"
+     ;
+
+syntax EventDeclaration
+     = Attributes?   EventModifiers?   "event"   Type   VariableDeclarators   ";"
+     | Attributes?   EventModifiers?   "event"   Type   MemberName   "{"   EventAccessorDeclarations   "}"
+     ;
+     
+syntax EventModifiers
+     = EventModifier
+     | EventModifiers   EventModifier
+     ;
+
+syntax EventModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "static"
+     | "virtual"
+     | "sealed"
+     | "override"
+     | "abstract"
+     | "extern"
+     ;
+
+syntax EventAccessorDeclarations
+     = AddAccessorDeclaration   RemoveAccessorDeclaration
+     | RemoveAccessorDeclaration   AddAccessorDeclaration
+     ;
+
+syntax AddAccessorDeclaration
+     = Attributes?   "add"   Block
+     ;
+
+syntax RemoveAccessorDeclaration
+     = Attributes?   "remove"   block
+     ;
+
+syntax IndexerDeclaration
+     = Attributes?   IndexerModifiers?   IndexerDeclarator   "{"   AccessorDeclarations   "}"
+     ;
+
+syntax IndexerModifiers
+     = IndexerModifier
+     | IndexerModifiers   IndexerModifier
+     ;
+
+syntax IndexerModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private "
+     | "virtual"
+     | "sealed"
+     | "override"
+     | "abstract"
+     | "extern"
+     ;
+
+syntax IndexerDeclarator
+     = Type   "this"   "["   FormalParameterList   "]"
+     | Type   InterfaceType   "."   "this"   "["   FormalParameterList   "]"
+     ;
+
+syntax OperatorDeclaration
+     = Attributes?   OperatorModifiers   OperatorDeclarator   OperatorBody
+     ;
+
+syntax OperatorModifiers
+     = OperatorModifier
+     | OperatorModifiers   OperatorModifier
+     ;
+
+
+syntax OperatorModifier
+     = "public"
+     | "static"
+     | "extern"
+     ;
+
+syntax OperatorDeclarator
+     = UnaryOperatorDeclarator
+     | BinaryOperatorDeclarator
+     | ConversionOperatorDeclarator
+     ;
+
+syntax UnaryOperatorDeclarator
+     = Type   "operator"   OverloadableUnaryOperator   "("   Type   Identifier   ")"
+     ;
+
+syntax OverloadableUnaryOperator
+     = "+"
+     | "!"
+     | "~"   
+     | "++" 
+     | "-"   
+     | "true"
+     | "false"
+     ;
+
+syntax BinaryOperatorDeclarator
+     = Type   "operator"   OverloadableBinaryOperator   "("   Type   Identifier   ","   Type   Identifier   ")"
+     ;
+
+syntax OverloadableBinaryOperator
+     = "+"
+     | "-"
+     | "*"
+     | "/"
+     | "%"
+     | "&"
+     | "|"
+     | "^"
+     | "\<\<"
+     | rightShift
+     | "=="
+     | "!="
+     | "\>"
+     | "\<"
+     | "\>="
+     | "\<="
+     ;
+
+syntax ConversionOperatorDeclarator
+     = "implicit"   "operator"   Type   "("   Type   Identifier   ")"
+     | "explicit"   "operator"   Type   "("   Type   Identifier   ")"
+     ;
+
+syntax OperatorBody
+     = Block
+     | ";"
+     ;
+
+syntax ConstructorDeclaration
+     = Attributes?   ConstructorModifiers?   ConstructorDeclarator   ConstructorBody
+     ;
+
+syntax ConstructorModifiers
+     = ConstructorModifier
+     | ConstructorModifiers   ConstructorModifier
+     ;
+
+syntax ConstructorModifier
+     = "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "extern"
+     ;
+
+syntax ConstructorDeclarator
+     = Identifier   "("   FormalParameterList?   ")"   ConstructorInitializer?
+     ;
+
+syntax ConstructorInitializer
+        = ":" "base"   "("   ArgumentList?   ")"
+        | ":" "this"   "("   ArgumentList?   ")"
+        ;
+
+syntax ConstructorBody
+     = Block
+     | ";"
+     ;
+
+syntax StaticConstructorDeclaration
+     = Attributes?   StaticConstructorModifiers  Identifier   "("   ")"   StaticConstructorBody
+     ;
+
+syntax StaticConstructorModifiers
+     = "extern"? "static"
+     | "static" "extern"?
+     ;
+
+syntax StaticConstructorBody
+     = Block
+     | ";"
+     ;
+
+syntax DestructorDeclaration
+     = Attributes?   "extern"?   "~"   Identifier   "("   ")"    DestructorBody
+     ;
+
+syntax DestructorBody
+     = Block
+     | ";"
+     ;
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions

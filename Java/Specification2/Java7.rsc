@@ -723,7 +723,7 @@ syntax Assignment
      
 syntax LeftHandSide
      = ExpressionName
-     | "(" ExpressionName ")" 
+     | "(" LeftHandSide ")" 
      | FieldAccess 
      | ArrayAccess
      ;
