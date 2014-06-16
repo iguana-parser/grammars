@@ -1407,6 +1407,172 @@ syntax DestructorBody
      = Block
      | ";"
      ;
+     
+
+// Structs     
+
+syntax StructDeclaration
+     = Attributes?   StructModifiers?   "partial"?   "struct"   Identifier   TypeParameterList?
+        StructInterfaces?   TypeParameterConstraintsClauses?   StructBody   ";"?
+     ;
+
+syntax StructModifiers
+     = StructModifier
+     | StructModifiers   StructModifier
+     ;
+
+
+syntax StructModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     ; 
+
+syntax StructInterfaces
+     = ":" InterfaceTypeList
+     ;
+
+syntax StructBody
+     = "{"   StructMemberDeclarations?   "}"
+     ;
+
+syntax StructMemberDeclarations
+     = StructMemberDeclaration
+     | StructMemberDeclarations   StructMemberDeclaration
+     ;
+
+syntax StructMemberDeclaration
+     = ConstantDeclaration
+     | FieldDeclaration
+     | MethodDeclaration
+     | PropertyDeclaration
+     | EventDeclaration
+     | IndexerDeclaration
+     | OperatorDeclaration
+     | ConstructorDeclaration
+     | StaticConstructorDeclaration
+     | TypeDeclaration
+     ;
+
+
+// Arrays
+syntax ArrayType
+     = NonArrayType   RankSpecifiers
+     ;
+
+syntax NonArrayType
+     = Type
+     ;
+syntax RankSpecifiers
+     = RankSpecifier
+     | RankSpecifiers   RankSpecifier
+     ;
+
+syntax RankSpecifier
+     = "["   DimSeparators?   "]"
+     ;
+
+syntax DimSeparators
+     = ","
+     | DimSeparators   ","
+     ;
+
+syntax ArrayInitializer
+     = "{"   VariableInitializerList?   "}"
+     | "{"   VariableInitializerList   ","   "}"
+     ;
+
+syntax VariableInitializerList
+     = VariableInitializer
+     | VariableInitializerList   ","   VariableInitializer
+     ;
+
+syntax VariableInitializer
+     = Expression
+     | ArrayInitializer
+     ;
+
+// Interfaces
+
+syntax InterfaceDeclaration
+     = Attributes?   InterfaceModifiers?   "partial"?   "interface"   
+        Identifier   VariantTypeParameterList?   InterfaceBase?
+        TypeParameterConstraintsClauses?   InterfaceBody   ";"?
+     ;
+
+syntax InterfaceModifiers
+     = InterfaceModifier
+     | InterfaceModifiers   InterfaceModifier
+     ;
+
+syntax InterfaceModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     ;
+
+syntax VariantTypeParameterList
+     = "\<"   VariantTypeParameters   "\>"
+     ;
+
+syntax VariantTypeParameters
+     = Attributes?  VarianceAnnotation?  TypeParameter
+     | VariantTypeParameters   ","   Attributes?   VarianceAnnotation?  TypeParameter
+     ;
+
+syntax VarianceAnnotation
+     = "in"
+     | "out"
+     ;
+
+
+syntax InterfaceBase
+     = ":"   interfaceTypeList
+     ;
+
+syntax InterfaceBody
+     = "{"   InterfaceMemberDeclarations?   "}"
+     ;
+
+syntax InterfaceMemberDeclarations
+     = InterfaceMemberDeclaration
+     | InterfaceMemberDeclarations   InterfaceMemberDeclaration
+     ;
+
+syntax InterfaceMemberDeclaration
+     = InterfaceMethodDeclaration
+     | InterfacePropertyDeclaration
+     | InterfaceEventDeclaration
+     | InterfaceIndexerDeclaration
+     ;
+
+syntax InterfaceMethodDeclaration
+     = Attributes?   "new"?   ReturnType   Identifier   TypeParameterList
+        "("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?   ";"
+     ;
+
+syntax InterfacePropertyDeclaration
+     = Attributes?   "new"?   Type   Identifier   "{"   InterfaceAccessors   "}"
+     ;
+
+syntax InterfaceAccessors
+     = Attributes?   "get"   ";"
+     | Attributes?   "set"   ";"
+     | Attributes?   "get"   ";"   Attributes?   "set"   ";"
+     | Attributes?   "set"   ";"   Attributes?   "get"   ";"
+     ;
+
+syntax InterfaceEventDeclaration
+     = Attributes?   "new"?   "event"   Type   Identifier   ";"
+     ;
+
+syntax InterfaceIndexerDeclaration
+     = Attributes?   "new"?   Type   "this"   "["   FormalParameterList   "]"   "{"   InterfaceAccessors   "}"
+     ; 
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
