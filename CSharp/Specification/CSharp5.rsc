@@ -1574,6 +1574,164 @@ syntax InterfaceIndexerDeclaration
      = Attributes?   "new"?   Type   "this"   "["   FormalParameterList   "]"   "{"   InterfaceAccessors   "}"
      ; 
 
+// Enums
+
+syntax EnumDeclaration
+     = Attributes?   EnumModifiers?   "enum"   Identifier   EnumBase?   EnumBody   ";"?
+     ;
+
+syntax EnumBase
+     = ":"   IntegralType
+     ;
+
+syntax EnumBody
+     = "{"   EnumMemberDeclarations?   "}"
+     | "{"   EnumMemberDeclarations   ","   "}"
+     ;
+
+syntax EnumModifiers
+     = EnumModifier
+     | EnumModifiers   EnumModifier
+     ;
+
+syntax EnumModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     ;
+
+syntax EnumMemberDeclarations
+     = EnumMemberDeclaration
+     | EnumMemberDeclarations   ","   EnumMemberDeclaration
+     ;
+
+syntax EnumMemberDeclaration
+     = Attributes?   Identifier
+     | Attributes?   Identifier   "="   ConstantExpression
+     ;
+
+
+// Delegates
+
+syntax DelegateDeclaration
+     = Attributes?   DelegateModifiers?   "delegate"   ReturnType   
+        Identifier  VariantTypeParameterList?   
+        "("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?   ";"
+     ;
+
+syntax DelegateModifiers
+     = DelegateModifier
+     | DelegateModifiers   DelegateModifier
+     ;
+
+syntax DelegateModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     ;
+     
+// Attributes
+
+syntax GlobalAttributes
+    = GlobalAttributeSections
+    ;
+
+syntax GlobalAttributeSections
+    = GlobalAttributeSection
+    | GlobalAttributeSections   GlobalAttributeSection
+    ;
+
+syntax GlobalAttributeSection
+    = "["   GlobalAttributeTargetSpecifier   AttributeList   "]"
+    | "["   GlobalAttributeTargetSpecifier   AttributeList   ","   "]"
+    ;
+
+
+syntax GlobalAttributeTargetSpecifier
+    = GlobalAttributeTarget  ":"
+    ;
+
+syntax GlobalAttributeTarget
+    = "assembly"
+    | "module"
+    ;
+
+syntax Attributes
+    = AttributeSections
+    ;
+
+syntax AttributeSections
+    = AttributeSection
+    | AttributeSections   AttributeSection
+    ;
+
+syntax AttributeSection
+    = "["   AttributeTargetSpecifier?   AttributeList   "]"
+    | "["   AttributeTargetSpecifier?   AttributeList   ","   "]"
+    ;
+
+syntax AttributeTargetSpecifier
+    = AttributeTarget   ":"
+    ;
+
+syntax AttributeTarget
+    = "field"
+    | "event"
+    | "method"
+    | "param"
+    | "property"
+    | "return"
+    | "type"
+    ;
+
+syntax AttributeList
+    = Attribute
+    | AttributeList   ","   Attribute
+    ;
+
+syntax Attribute
+    = AttributeName   AttributeArguments?
+    ;
+
+syntax AttributeName
+    = TypeName
+    ;
+
+syntax AttributeArguments
+    = "("   PositionalArgumentList?   ")"
+    | "("   PositionalArgumentList   ","   NamedArgumentList   ")"
+    | "("   NamedArgumentList   ")"
+    ;
+
+syntax PositionalArgumentList
+    = PositionalArgument
+    | PositionalArgumentList   ","   PositionalArgument
+    ;
+
+syntax PositionalArgument
+    = ArgumentName?   AttributeArgumentExpression
+    ;
+
+syntax NamedArgumentList
+    = NamedArgument
+    | NamedArgumentList   ","   NamedArgument
+    ;
+
+syntax NamedArgument
+    = Identifier   "="   AttributeArgumentExpression
+    ;
+
+syntax AttributeArgumentExpression
+    = Expression
+    ;
+
+     
+
+
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
 //----------------------------------------------------------------------------------------------------------------
