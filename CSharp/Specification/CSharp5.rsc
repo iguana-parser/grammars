@@ -599,8 +599,265 @@ syntax ConstantExpression
 
 syntax BooleanExpression
      = Expression
-     ; 
+     ;
+     
+// Statements
 
+syntax Statement
+     = LabeledStatement
+     | DeclarationStatement
+     | EmbeddedStatement
+     ;
+
+syntax EmbeddedStatement
+     = Block
+     | EmptyStatement
+     | ExpressionStatement
+     | SelectionStatement
+     | IterationStatement
+     | JumpStatement
+     | TryStatement
+     | CheckedStatement
+     | UncheckedStatement
+     | LockStatement
+     | UsingStatement 
+     | YieldStatement
+     ;
+
+syntax Block
+     = "{"   StatementList?   "}"
+     ;
+
+syntax StatementList
+     = Statement
+     | StatementList   Statement
+     ;
+
+syntax EmptyStatement
+     = ";"
+     ;
+
+syntax LabeledStatement
+     = Identifier  ":"    Statement
+     ;
+
+syntax DeclarationStatement
+     = LocalVariableDeclaration   ";"
+     | LocalConstantDeclaration   ";"
+     ;
+
+syntax LocalVariableDeclaration
+     = LocalVariableType   LocalVariableDeclarators
+     ;
+
+syntax LocalVariableType
+     = Type
+     | "var"
+     ;
+
+syntax LocalVariableDeclarators
+     = LocalVariableDeclarator
+     | LocalVariableDeclarators   ","   LocalVariableDeclarator
+     ;
+
+syntax LocalVariableDeclarator
+     = Identifier
+     | Identifier   "="   LocalVariableInitializer
+     ;
+      
+syntax LocalVariableInitializer
+     = Expression
+     | ArrayInitializer
+     ;
+
+syntax LocalConstantDeclaration
+     = "const"   Type   ConstantDeclarators
+     ;
+
+syntax ConstantDeclarators
+     = ConstantDeclarator
+     | ConstantDeclarators   ","   ConstantDeclarator
+     ;
+
+syntax ConstantDeclarator
+     = Identifier   "="   ConstantExpression
+     ;
+
+syntax ExpressionStatement
+     = StatementExpression   ";"
+     ;
+
+syntax StatementExpression
+     = InvocationExpression
+     | ObjectCreationExpression
+     | Assignment
+     | PostIncrementExpression
+     | PostDecrementExpression
+     | PreIncrementExpression
+     | PreDecrementExpression
+     ;
+
+syntax SelectionStatement
+     = IfStatement
+     | SwitchStatement
+     ;
+
+syntax IfStatement
+     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement
+     | "if"   "("   BooleanExpression   ")"   EmbeddedStatement   "else"   EmbeddedStatement
+     ;
+
+syntax SwitchStatement
+     = "switch"   "("   Expression   ")"   SwitchBlock
+     ;
+
+syntax SwitchBlock
+     = "{"   SwitchSections?   "}"
+     ;
+
+syntax SwitchSections
+     = SwitchSection
+     | SwitchSections   SwitchSection
+     ;
+
+syntax SwitchSection
+     = SwitchLabels   StatementList
+     ;
+
+syntax SwitchLabels
+     = SwitchLabel
+     | SwitchLabels   SwitchLabel
+     ;
+
+syntax SwitchLabel
+     = "case"   ConstantExpression ":"  
+     | "default"  ":"
+     ;
+     
+syntax IterationStatement
+     = WhileStatement
+     | DoStatement
+     | ForStatement
+     | ForeachStatement
+     ;
+
+syntax WhileStatement
+     = "while"   "("   BooleanExpression   ")"   EmbeddedStatement
+     ;
+
+syntax DoStatement
+     = "do"   EmbeddedStatement   "while"   "("   BooleanExpression   ")"   ";"
+     ;
+
+syntax ForStatement
+     = "for"   "("   ForInitializer?   ";"   ForCondition?   ";"   ForIterator?   ")"   EmbeddedStatement
+     ;
+
+syntax ForInitializer
+     = LocalVariableDeclaration
+     | StatementExpressionList
+     ;
+
+syntax ForCondition
+     = BooleanExpression
+     ;
+
+syntax ForIterator
+     = StatementExpressionList
+     ;
+
+syntax StatementExpressionList
+     = StatementExpression
+     | StatementExpressionList   ","   StatementExpression
+     ;
+
+syntax ForeachStatement
+     = "foreach"   "("   LocalVariableType   Identifier   "in"   Expression   ")"   EmbeddedStatement
+     ;
+
+syntax JumpStatement
+     = BreakStatement
+     | ContinueStatement
+     | GotoStatement
+     | ReturnStatement
+     | ThrowStatement
+     ;
+
+syntax BreakStatement
+     = "break"   ";"
+     ;
+
+syntax ContinueStatement
+     = "continue"   ";"
+     ;
+
+syntax GotoStatement
+     = "goto"   Identifier   ";"
+     | "goto"   "case"   ConstantExpression   ";"
+     | "goto"   "default"   ";"
+     ;
+
+syntax ReturnStatement
+     = "return"   Expression?   ";"
+     ;
+
+syntax ThrowStatement
+     = "throw"   Expression?   ";"
+     ;
+     
+syntax TryStatement
+     = "try"   "block"   CatchClauses
+     | "try"   "block"   FinallyClause
+     | "try"   "block"   CatchClauses   FinallyClause
+     ;
+
+syntax CatchClauses
+     = SpecificCatchClauses   GeneralCatchClause?
+     | SpecificCatchClauses?   GeneralCatchClause
+     ;
+
+syntax SpecificCatchClauses
+     = SpecificCatchClause
+     | SpecificCatchClauses   SpecificCatchClause
+     ;
+
+syntax SpecificCatchClause
+     = "catch"   "("   ClassType   Identifier?   ")"   "block"
+     ;
+
+syntax GeneralCatchClause
+     = "catch"   "block"
+     ;
+
+syntax FinallyClause
+     = "finally"   "block"
+     ;
+
+syntax CheckedStatement
+     = "checked"   "block"
+     ;
+
+syntax UncheckedStatement
+     = "unchecked"   "block"
+     ;
+
+syntax LockStatement
+     = "lock"   "("   Expression   ")"   EmbeddedStatement
+     ;
+
+syntax UsingStatement
+     = "using"   "("    ResourceAcquisition   ")"    EmbeddedStatement
+     ;
+
+syntax ResourceAcquisition
+     = LocalVariableDeclaration
+     | Expression
+     ;
+
+syntax YieldStatement
+     = "yield"   "return"   Expression   ";"
+     | "yield"   "break"   ";"
+     ;
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
