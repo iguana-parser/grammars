@@ -97,7 +97,7 @@ syntax EnumType
 
 syntax ReferenceType
      = ClassType
-     | IinterfaceType
+     | InterfaceType
      | ArrayType
      | DelegateType
      ;
@@ -144,8 +144,7 @@ syntax VariableReference
 // Expressions
 
 syntax ArgumentList
-     = Argument
-     | ArgumentList   ","   Argument
+     = { Argument "," }+
      ;
 
 syntax Argument
@@ -369,7 +368,7 @@ syntax PointerIndirectionExpression
      ;
 
 syntax PointerMemberAccess
-     = PrimaryExpression   "\>"   Identifier  TypeArgumentListopt
+     = PrimaryExpression   "\>"   Identifier  TypeArgumentList?
      ;
 
 syntax PointerElementAccess
@@ -411,7 +410,7 @@ syntax PreDecrementExpression
      ;
 
 syntax CastExpression
-     = "("   Type   ")"   UnaryExpressin
+     = "("   Type   ")"   UnaryExpression
      ;
 
 syntax MultiplicativeExpression
@@ -489,7 +488,7 @@ syntax LambdaExpression
      ;
 
 syntax AnonymousMethodExpression
-     = "delegate"   ExplicitAnonymousFunctionSignatureopt   Block
+     = "delegate"   ExplicitAnonymousFunctionSignature?   Block
      ;
 
 syntax AnonymousFunctionSignature
@@ -673,12 +672,7 @@ syntax UnsafeStatement
      ;
 
 syntax Block
-     = "{"   StatementList?   "}"
-     ;
-
-syntax StatementList
-     = Statement
-     | StatementList   Statement
+     = "{"   Statement*   "}"
      ;
 
 syntax EmptyStatement
@@ -720,11 +714,6 @@ syntax LocalConstantDeclaration
      = "const"   Type   ConstantDeclarators
      ;
 
-syntax ConstantDeclarators
-     = ConstantDeclarator
-     | ConstantDeclarators   ","   ConstantDeclarator
-     ;
-
 syntax ConstantDeclarator
      = Identifier   "="   ConstantExpression
      ;
@@ -763,7 +752,7 @@ syntax SwitchBlock
 
 
 syntax SwitchSection
-     = SwitchLabel+   StatementList
+     = SwitchLabel+   Statement+
      ;
 
 syntax SwitchLabel
@@ -894,7 +883,7 @@ syntax YieldStatement
 // Namespaces
 
 syntax CompilationUnit
-     = ExternAliasDirectives?   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclaration*
+     = ExternAliasDirective*   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclaration*
 	; 
 
 syntax NamespaceDeclaration
@@ -952,8 +941,7 @@ syntax QualifiedAliasMember
      
 // Classes
 syntax ClassDeclaration
-     = Attributes?   ClassModifier*   "partial"?   "class"   Identifier   TypeParameterList?
-          ClassBase?   TypeParameterConstraintsClause*   ClassBody   ";"?
+     = Attributes?   ClassModifier*   "partial"?   "class"   Identifier   TypeParameterList? ClassBase?   TypeParameterConstraintsClause*   ClassBody   ";"?
      ;
 
 syntax ClassModifier
@@ -1096,7 +1084,7 @@ syntax MethodDeclaration
 
 syntax MethodHeader
      = Attributes?   MethodModifier*   "partial"?   ReturnType   MemberName   TypeParameterList?
-		"("   FormalParameterList?   ")"   TypeParameterConstraintsClauses?
+		"("   FormalParameterList?   ")"   TypeParameterConstraintsClause*
 	  ;
 
 syntax MethodModifier
@@ -1393,7 +1381,7 @@ syntax DestructorBody
 
 syntax StructDeclaration
      = Attributes?   StructModifier*   "partial"?   "struct"   Identifier   TypeParameterList?
-        StructInterfaces?   TypeParameterConstraintsClauses?   StructBody   ";"?
+        StructInterfaces?   TypeParameterConstraintsClause*   StructBody   ";"?
      ;
 
 syntax StructModifier
@@ -1485,7 +1473,7 @@ syntax VariableInitializer
 // Interfaces
 
 syntax InterfaceDeclaration
-     = Attributes?   InterfaceModifiers*   "partial"?   "interface"   
+     = Attributes?   InterfaceModifier*   "partial"?   "interface"   
         Identifier   VariantTypeParameterList?   InterfaceBase?
         TypeParameterConstraintsClause*   InterfaceBody   ";"?
      ;
@@ -1690,7 +1678,7 @@ syntax AttributeArgumentExpression
 //----------------------------------------------------------------------------------------------------------------
 
 layout Layout 
-     = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
 
 /* 
  * Carriage return character (U+000D)
@@ -1761,12 +1749,12 @@ lexical Identifier
 lexical IdentifierOrKeyword
       = IdentifierStartCharacter IdentifierPartCharacter*
       ;
+      
+lexical IdentifierStartCharacter
+      = LetterCharacter
+      | "_"
+      ;
 
-lexical IdentifierPartCharacter
-     = LetterCharacter
-     |  "_"
-     ;
-     
 lexical IdentifierPartCharacter
       = LetterCharacter
       | DecimalDigitCharacter
@@ -2145,7 +2133,7 @@ lexical PpEndif
       = Whitespace?   "#"   Whitespace?   "endif"   PpNewLine
       ;
 
-lexical ConditionalSction 
+lexical ConditionalSection 
      = InputSection
      | SkippedSectionPart+
      ;
@@ -2156,7 +2144,7 @@ lexical SkippedSectionPart
       ;
 
 lexical SkippedCharacters
-     = Whitespace?   ![#]   InputCharacters?
+     = Whitespace?   ![#]   InputCharacter*
      ;
 
 lexical PpDiagnostic
@@ -2165,11 +2153,11 @@ lexical PpDiagnostic
 
 lexical PpMessage
       = NewLine
-      | Whitespace   InputCharacters?   NewLine
+      | Whitespace   InputCharacter*   NewLine
       ;
 
 lexical PpRegion 
-      = PpStartRegion   ConditionalSection?   PpESRegion
+      = PpStartRegion   ConditionalSection?   PpEndRegion
       ;
 
 lexical PpStartRegion 
