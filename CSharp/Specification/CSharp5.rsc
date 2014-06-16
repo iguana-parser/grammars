@@ -156,6 +156,450 @@ syntax PrimaryExpression
      | ArrayCreationExpression
      ;
 
+syntax PrimaryNoArrayCreationExpression
+     = Literal
+     | SimpleName
+     | ParenthesizedExpression
+     | MemberAccess
+     | InvocationExpression
+     | ElementAccess
+     | ThisAccess
+     | BaseAccess
+     | PostIncrementExpression
+     | PostDecrementExpression
+     | ObjectCreationExpression
+     | DelegateCreationExpression
+     | AnonymousObjectCreationExpression
+     | TypeofExpression
+     | CheckedExpression
+     | UncheckedExpression 
+     | DefaultValueExpression
+     | AnonymousMethodExpression
+     ;
+
+syntax SimpleName
+     = Identifier   TypeArgumentList?
+     ;
+
+syntax ParenthesizedExpression
+     = "("   Expression   ")"
+     ;
+
+syntax MemberAccess
+     = PrimaryExpression   "."   Identifier  TypeArgumentList?
+     | PredefinedType   "."   Identifier  TypeArgumentList?
+     | QualifiedAliasMember   "."   Identifier
+     ;
+
+syntax PredefinedType
+     = "bool"
+     | "byte"
+     | "char"
+     | "decimal"
+     | "double"
+     | "float"
+     | "int"
+     | "long"
+     | "object"
+     | "sbyte"
+     | "short"
+     | "string"
+     | "uint"
+     | "ulong"
+     | "ushort"
+     ; 
+
+syntax InvocationExpression
+     = PrimaryExpression   "("   ArgumentList?   ")"
+     ;
+
+syntax ElementAccess
+     = PrimaryNoArrayCreationExpression   "["   ArgumentList   "]"
+     ;
+
+syntax ThisAccess
+     = "this"
+     ;
+
+syntax BaseAccess
+     = "base"   "."   Identifier
+     | "base"   "["   ArgumentList   "]"
+     ;
+
+syntax PostIncrementExpression
+     = PrimaryExpression   "++"
+     ;
+
+syntax PostDecrementExpression
+     = PrimaryExpression   "--"
+     ;
+
+syntax ObjectCreationExpression
+     = "new"   Type   "("   ArgumentList?   ")"   ObjectOrCollectionInitializer? 
+     | "new"   Type   ObjectOrCollectionInitializer
+     ;
+
+syntax ObjectOrCollectionInitializer
+     = ObjectInitializer
+     | CollectionInitializer
+     ;
+
+syntax ObjectInitializer
+     = "{"  MemberInitializerList?   "}"
+     | "{"   MemberInitializerList   ","   "}"
+     ;
+
+syntax MemberInitializerList
+     = MemberInitializer
+     | MemberInitializerList   ","   MemberInitializer
+     ;
+
+syntax MemberInitializer
+     = Identifier   "="   InitializerValue
+     ;
+
+syntax InitializerValue
+     = Expression
+     | ObjectOrCollectionInitializer
+     ;
+
+syntax CollectionInitializer
+     = "{"   ElementInitializerList   "}"
+     | "{"   ElementInitializerList   ","   "}"
+     ;
+
+syntax ElementInitializerList
+     = ElementInitializer
+     | ElementInitializerList   ","   ElementInitializer
+     ;
+
+syntax ElementInitializer
+     = NonAssignmentExpression
+     | "{"   ExpressionList   "}"
+     ;
+
+syntax ExpressionList
+     = Expression
+     | ExpressionList   ","   Expression
+     ;
+
+syntax ArrayCreationExpression
+     = "new"   NonArrayType   "["   ExpressionList   "]"   RankSpecifiers?   ArrayInitializer?
+     | "new"   ArrayType   ArrayInitializer 
+     | "new"   RankSpecifier   ArrayInitializer
+     ;
+
+syntax DelegateCreationExpression
+     = "new"   DelegateType   "("   Expression   ")"
+     ;
+
+syntax AnonymousObjectCreationExpression
+     = "new"   AnonymousObjectInitializer
+     ;
+
+syntax AnonymousObjectInitializer
+     = "{"   MemberDeclaratorList?   "}"
+     | "{"   MemberDeclaratorList   ","   "}"
+     ;
+
+syntax MemberDeclaratorList
+     = MemberDeclarator
+     | MemberDeclaratorList   ","   MemberDeclarator
+     ;
+
+syntax MemberDeclarator
+     = SimpleName
+     | MemberAccess
+     | Identifier   "="   Expression
+     ;
+
+syntax TypeofExpression
+     = "typeof"   "("   type   ")"
+     | "typeof"   "("   UnboundTypeName   ")"
+     | "typeof" "(" "void" ")"
+     ; 
+
+syntax UnboundTypeName
+     = Identifier   GenericDimensionSpecifier?
+     | Identifier   "::"   Identifier   GenericDimensionSpecifier?
+     | UnboundTypeName   "."   Identifier   GenericDimensionSpecifier?
+     ;
+
+syntax GenericDimensionSpecifier
+     = "\<"   ","*   "\>"
+     ;
+
+syntax CheckedExpression
+     = "checked"   "("   Expression   ")"
+     ;
+
+syntax UncheckedExpression
+     = "unchecked"  "("   Expression   ")"
+     ;
+
+syntax DefaultValueExpression
+     = "default"   "("   Type   ")"
+     ;
+
+syntax UnaryExpression
+     = PrimaryExpression
+     | "+"   UnaryExpression
+     | "-"   UnaryExpression
+     | "!"   UnaryExpression
+     | "~"   UnaryExpression
+     | PreIncrementExpression
+     | PreDecrementExpression
+     | CastExpression
+     ;
+
+syntax PreIncrementExpression
+     = "++"   UnaryExpression
+     ;
+
+syntax PreDecrementExpression
+     = "--"   UnaryExpression
+     ;
+
+syntax CastExpression
+     = "("   Type   ")"   UnaryExpressin
+     ;
+
+syntax MultiplicativeExpression
+     = UnaryExpression
+     | MultiplicativeExpression   "*"   UnaryExpression
+     | MultiplicativeExpression   "/"   UnaryExpression
+     | MultiplicativeExpression   "%"   UnaryExpression
+     ;
+
+syntax AdditiveExpression
+     = MultiplicativeExpression
+     | AdditiveExpression   "+"   MultiplicativeExpression
+     | AdditiveExpression   "–"   MultiplicativeExpression
+     ;
+     
+syntax ShiftExpression
+     = AdditiveExpression 
+     | ShiftExpression   "\<\<"   AdditiveExpression
+     | ShiftExpression   RightShift   AdditiveExpression
+     ;
+
+syntax RelationalExpression
+     = ShiftExpression
+     | RelationalExpression   "\<"   ShiftExpression
+     | RelationalExpression   "\>"   ShiftExpression
+     | RelationalExpression   "\<="   ShiftExpression
+     | RelationalExpression   "\>="   ShiftExpression
+     | RelationalExpression   "is"   Type
+     | RelationalExpression   "as"   Type
+     ;
+
+syntax EqualityExpression
+     = RelationalExpression
+     | EqualityExpression   "=="   RelationalExpression
+     | EqualityExpression   "!="   RelationalExpression
+     ;
+
+syntax AndExpression
+     = EqualityExpression
+     | AndExpression   "&"   EqualityExpression
+     ;
+
+syntax ExclusiveOrExpression
+     = AndExpression
+     | ExclusiveOrExpression   "^"   AndExpression
+     ;
+
+syntax InclusiveOrExpression
+     = ExclusiveOrExpression
+     | InclusiveOrExpression   "|"   ExclusiveOrExpression
+     ;
+
+syntax ConditionalAndExpression
+     = InclusiveOrExpression
+     | ConditionalAndExpression   "&&"   InclusiveOrExpression
+     ;
+
+syntax ConditionalOrExpression
+     = ConditionalAndExpression
+     | ConditionalOrExpression   "||"   ConditionalAndExpression
+     ;
+
+syntax NullCoalescingExpression
+     = ConditionalOrExpression
+     | ConditionalOrExpression   "??"   NullCoalescingExpression
+     ;
+
+syntax ConditionalExpression
+     = NullCoalescingExpression
+     | NullCoalescingExpression   "?"   Expression   ":"   Expression
+     ;
+
+syntax LambdaExpression
+     = AnonymousFunctionSignature   "=\>"   AnonymousFunctionBody
+     ;
+
+syntax AnonymousMethodExpression
+     = "delegate"   ExplicitAnonymousFunctionSignatureopt   Block
+     ;
+
+syntax AnonymousFunctionSignature
+     = ExplicitAnonymousFunctionSignature 
+     | ImplicitAnonymousFunctionSignature
+     ;
+     
+     
+syntax ExplicitAnonymousFunctionSignature
+     = "("   ExplicitAnonymousFunctionParameterList?   ")"
+     ;
+
+syntax ExplicitAnonymousFunctionParameterList
+     = ExplicitAnonymousFunctionParameter
+     | ExplicitAnonymousFunctionParameterList   ","   ExplicitAnonymousFunctionParameter
+     ;
+
+syntax ExplicitAnonymousFunctionParameter
+     = AnonymousFunctionParameterModifier?   Type   Identifier
+     ;
+
+syntax AnonymousFunctionParameterModifier 
+     = "ref"
+     | "out"
+     ;
+
+syntax ImplicitAnonymousFunctionSignature
+     = "("   ImplicitAnonymousFunctionParameterList?   ")"
+     | ImplicitAnonymousFunctionParameter
+     ;
+
+syntax ImplicitAnonymousFunctionParameterList
+     = ImplicitAnonymousFunctionParameter
+     | ImplicitAnonymousFunctionParameterList   ","   ImplicitAnonymousFunctionParameter
+     ;
+
+syntax ImplicitAnonymousFunctionParameter
+     = Identifier
+     ;
+
+syntax AnonymousFunctionBody
+     = Expression
+     | Block
+     ;
+
+syntax QueryExpression
+     = FromClause   QueryBody
+     ;
+
+syntax FromClause
+     = "from"   Type?   Identifier   "in"   Expression
+     ;
+
+syntax QueryBody
+     = QueryBodyClauses?   SelectOrGroupClause   QueryContinuation?
+     ;
+
+syntax QueryBodyClauses
+     = QueryBodyClause
+     | QueryBodyClauses   QueryBodyClause
+     ;
+
+syntax QueryBodyClause
+     = FromClause
+     | LetClause
+     | WhereClause
+     | JoinClause
+     | JoinIntoClause
+     | OrderbyClause
+     ;
+
+syntax LetClause
+     = "let"   Identifier   "="   Expression
+     ; 
+
+syntax WhereClause
+     = "where"   BooleanExpression
+     ;
+
+syntax JoinClause
+     = "join"   Type?   Identifier   "in"   Expression   "on"   Expression   "equals"   Expression 
+     ;
+     
+
+syntax JoinIntoClause
+     = "join"   type?   Identifier   "in"   Expression   "on"   Expression   "equals"   Expression   "into"   Identifier
+     ;
+
+syntax OrderbyClause
+     = "orderby"   Orderings
+     ;
+
+syntax Orderings
+     = Ordering
+     | Orderings   ","   Ordering
+     ;
+
+syntax Ordering
+     = Expression    OrderingDirection?
+     ;
+
+syntax OrderingDirection
+     = "ascending"
+     | "descending"
+     ;
+
+syntax SelectOrGroupClause
+     = SelectClause
+     | GroupClause
+     ;
+
+syntax SelectClause
+     = "select"   Expression
+     ;
+
+syntax GroupClause
+     = "group"   Expression   "by"   Expression
+     ;
+
+syntax QueryContinuation
+     = "into"   Identifier   QueryBody
+     ;
+
+syntax Assignment
+     = UnaryExpression   AssignmentOperator   Expression
+     ;
+
+syntax AssignmentOperator
+     = "="
+     | "+="
+     | "="
+     | "*="
+     | "/="
+     | "%="
+     | "&="
+     | "|="
+     | "^="
+     | "\<\<="
+     | RightShiftAssignment
+     ;
+
+syntax Expression 
+     = NonAssignmentExpression
+     | Assignment
+     ;
+
+syntax NonAssignmentExpression
+     = ConditionalExpression
+     | LambdaExpression
+     | QueryExpression
+     ;
+
+syntax ConstantExpression
+     = Expression
+     ;
+
+
+syntax BooleanExpression
+     = Expression
+     ; 
 
 
 //----------------------------------------------------------------------------------------------------------------
