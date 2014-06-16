@@ -858,6 +858,76 @@ syntax YieldStatement
      = "yield"   "return"   Expression   ";"
      | "yield"   "break"   ";"
      ;
+     
+     
+// Namespaces
+
+syntax CompilationUnit
+     = ExternAliasDirectives?   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclarations?
+	; 
+
+syntax NamespaceDeclaration
+     = "namespace"   QualifiedIdentifier   NamespaceBody   ";"?
+     ;
+
+syntax QualifiedIdentifier
+     = Identifier
+     | QualifiedIdentifier   "."   Identifier
+     ;
+
+syntax NamespaceBody
+     = "{"   ExternAliasDirectives?   UsingDirectives?   NamespaceMemberDeclarations?   "}"
+     ;
+
+syntax ExternAliasDirectives
+     = ExternAliasDirective
+     | ExternAliasDirectives   ExternAliasDirective
+     ;
+
+syntax ExternAliasDirective
+     = "extern"   "alias"   Identifier   ";"
+     ;
+
+syntax UsingDirectives
+     = UsingDirective
+     | UsingDirectives   UsingDirective
+     ;
+
+syntax UsingDirective
+     = UsingAliasDirective
+     | UsingNamespaceDirective
+     ;
+
+syntax UsingAliasDirective
+     = "using"   Identifier   "="   NamespaceOrTypeName   ";"
+     ;
+
+syntax UsingNamespaceDirective
+     = "using"   NamespaceName   ";"
+     ;
+
+syntax NamespaceMemberDeclarations
+     = NamespaceMemberDeclaration
+     | NamespaceMemberDeclarations   NamespaceMemberDeclaration
+     ;
+
+syntax NamespaceMemberDeclaration
+     = NamespaceDeclaration
+     | TypeDeclaration
+     ;
+
+syntax TypeDeclaration
+     = ClassDeclaration
+     | StructDeclaration
+     | InterfaceDeclaration
+     | EnumDeclaration
+     | DelegateDeclaration
+     ;
+
+syntax QualifiedAliasMember
+     = Identifier  "::"    Identifier   TypeArgumentList?
+     ;
+     
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions
