@@ -28,6 +28,22 @@ syntax NamespaceOrTypeName
 
 // Types
 
+syntax Type
+     = ValueType
+     | ReferenceType 
+     | TypeParameter
+     | PointerType
+     ;
+     
+syntax PointerType
+     = UnmanagedType   "*"
+     | "void"   "*"
+     ;
+
+syntax UnmanagedType
+     = Type
+	 ;     
+
 syntax ValueType
      = StructType
      | EnumType
@@ -175,6 +191,9 @@ syntax PrimaryNoArrayCreationExpression
      | UncheckedExpression 
      | DefaultValueExpression
      | AnonymousMethodExpression
+     | PointerMemberAccess
+     | PointerElementAccess
+     | SizeofExpression
      ;
 
 syntax SimpleName
@@ -350,7 +369,48 @@ syntax UnaryExpression
      | PreIncrementExpression
      | PreDecrementExpression
      | CastExpression
+     | PointerIndirectionExpression
+     | AddressofExpression
      ;
+     
+syntax PointerIndirectionExpression
+     = "*"   UnaryExpression
+     ;
+
+syntax PointerMemberAccess
+     = PrimaryExpression   "\>"   Identifier  TypeArgumentListopt
+     ;
+
+syntax PointerElementAccess
+     = PrimaryNoArrayCreationExpression   "["   Expression   "]"
+     ;
+
+syntax AddressofExpression
+     = "&"   UnaryExpression
+     ;
+
+syntax SizeofExpression
+     = "sizeof"   "("   UnmanagedType   ")"
+     ;
+
+syntax FixedStatement
+     = "fixed"   "("   PointerType   FixedPointerDeclarators   ")"   EmbeddedStatement
+     ;
+
+syntax FixedPointerDeclarators
+     = FixedPointerDeclarator
+     | FixedPointerDeclarators   ","   FixedPointerDeclarator
+     ;
+
+syntax FixedPointerDeclarator
+     = Identifier   "="   fixedPointerInitializer
+     ;
+
+syntax FixedPointerInitializer
+     = "&"   VariableReference
+     | Expression
+     ;
+     
 
 syntax PreIncrementExpression
      = "++"   UnaryExpression
@@ -622,6 +682,12 @@ syntax EmbeddedStatement
      | LockStatement
      | UsingStatement 
      | YieldStatement
+     | UnsafeStatement 
+     | FixedStatement
+     ;
+
+syntax UnsafeStatement
+     = "unsafe"   Block
      ;
 
 syntax Block
@@ -949,6 +1015,7 @@ syntax ClassModifier
      | "abstract"
      | "sealed"
      | "static"
+     | "unsafe"
      ;
 
 syntax TypeParameterList
@@ -1078,6 +1145,7 @@ syntax FieldModifier
      | "static"
      | "readonly"
      | "volatile"
+     | "unsafe"
      ;
 
 syntax VariableDeclarators
@@ -1121,6 +1189,7 @@ syntax MethodModifier
      | "override"
      | "abstract"
      | "extern"
+     | "unsafe"
      ;
 
 syntax ReturnType
@@ -1188,6 +1257,7 @@ syntax PropertyModifier
      | "override"
      | "abstract"
      | "extern"
+     | "unsafe"
      ;
 
 syntax MemberName
@@ -1243,6 +1313,7 @@ syntax EventModifier
      | "override"
      | "abstract"
      | "extern"
+     | "unsafe"
      ;
 
 syntax EventAccessorDeclarations
@@ -1278,6 +1349,7 @@ syntax IndexerModifier
      | "override"
      | "abstract"
      | "extern"
+     | "unsafe"
      ;
 
 syntax IndexerDeclarator
@@ -1299,6 +1371,7 @@ syntax OperatorModifier
      = "public"
      | "static"
      | "extern"
+     | "unsafe"
      ;
 
 syntax OperatorDeclarator
@@ -1369,6 +1442,7 @@ syntax ConstructorModifier
      | "internal"
      | "private"
      | "extern"
+     | "unsafe"
      ;
 
 syntax ConstructorDeclarator
@@ -1390,8 +1464,14 @@ syntax StaticConstructorDeclaration
      ;
 
 syntax StaticConstructorModifiers
-     = "extern"? "static"
-     | "static" "extern"?
+     = "extern"?   "static"
+     | "static"    "extern"?
+     | "extern"?   "unsafe"?   "static"
+     | "unsafe"?   "extern"?   "static"
+     | "extern"?   "static"    "unsafe"?
+     | "unsafe"?   "static"    "extern"?
+     | "static"    "extern"?   "unsafe"?
+     | "static"    "unsafe"?   "extern"?
      ;
 
 syntax StaticConstructorBody
@@ -1401,6 +1481,8 @@ syntax StaticConstructorBody
 
 syntax DestructorDeclaration
      = Attributes?   "extern"?   "~"   Identifier   "("   ")"    DestructorBody
+     | Attributes?   "extern"?   "unsafe"?   "~"   "identifier"   "("   ")"    DestructorBody
+     | Attributes?   "unsafe"?   "extern"?   "~"   "identifier"   "("   ")"    DestructorBody
      ;
 
 syntax DestructorBody
@@ -1428,6 +1510,7 @@ syntax StructModifier
      | "protected"
      | "internal"
      | "private"
+     | "unsafe"
      ; 
 
 syntax StructInterfaces
@@ -1441,6 +1524,7 @@ syntax StructBody
 syntax StructMemberDeclarations
      = StructMemberDeclaration
      | StructMemberDeclarations   StructMemberDeclaration
+     | FixedSizeBufferDeclaration
      ;
 
 syntax StructMemberDeclaration
@@ -1455,7 +1539,38 @@ syntax StructMemberDeclaration
      | StaticConstructorDeclaration
      | TypeDeclaration
      ;
+     
+syntax FixedSizeBufferDeclaration
+     = Attributes?   FixedSizeBufferModifiers?   "fixed"   BufferElementType
+        FixedSizeBufferDeclarators   ";"
+     ;
 
+syntax FixedSizeBufferModifiers
+     = FixedSizeBufferModifier
+     | FixedSizeBufferModifier   FixedSizeBufferModifiers
+     ;
+
+syntax FixedSizeBufferModifier
+     = "new"
+     | "public"
+     | "protected"
+     | "internal"
+     | "private"
+     | "unsafe"
+     ;
+
+syntax BufferElementType
+     = Type
+     ;
+
+syntax FixedSizeBufferDeclarators
+     = FixedSizeBufferDeclarator
+     | FixedSizeBufferDeclarator   FixedSizeBufferDeclarators
+     ;
+
+syntax FixedSizeBufferDeclarator
+     = Identifier   "["   ConstantExpression   "]"
+     ;     
 
 // Arrays
 syntax ArrayType
@@ -1513,6 +1628,7 @@ syntax InterfaceModifier
      | "protected"
      | "internal"
      | "private"
+     | "unsafe"
      ;
 
 syntax VariantTypeParameterList
@@ -1632,6 +1748,7 @@ syntax DelegateModifier
      | "protected"
      | "internal"
      | "private"
+     | "unsafe"
      ;
      
 // Attributes
