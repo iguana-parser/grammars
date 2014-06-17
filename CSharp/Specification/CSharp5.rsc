@@ -1714,7 +1714,7 @@ layout Layout
  * Paragraph separator character (U+2029)
  */
 lexical NewLine
-      = [\r \n \u0085 \u2028 \u2029]
+      = [\r \n] //[\r \n \u0085 \u2028 \u2029]
       ;
       
 // Comments
@@ -1725,11 +1725,12 @@ lexical Comment
       ;
       
 lexical SingleLineComment
-      = "//" InputCharacter*
+      = "//" InputCharacter* !>> ![\n \r]
       ;      
       
 lexical InputCharacter 
-	  = ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine 
+	  = // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
+	    ![] \ [\r \n] 
 	  | [\a00]                                // to match zero        
       ;
       
@@ -1753,7 +1754,7 @@ lexical NotSlashOrAsterisk
  * Form feed character (U+000C)
  */
  lexical Whitespace
-      = [\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+      = [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
       ;
        
 // B.1.5 Unicode character escape sequences       
