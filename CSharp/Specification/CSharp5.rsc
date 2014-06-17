@@ -689,25 +689,12 @@ syntax DeclarationStatement
      ;
 
 syntax LocalVariableDeclaration
-     = LocalVariableType   LocalVariableDeclarators
+     = LocalVariableType   VariableDeclarators
      ;
 
 syntax LocalVariableType
      = Type
      | "var"
-     ;
-
-syntax LocalVariableDeclarators
-     = { LocalVariableDeclarator "," }+
-     ;
-
-syntax LocalVariableDeclarator
-     = { Identifier "=" }+
-     ;
-      
-syntax LocalVariableInitializer
-     = Expression
-     | ArrayInitializer
      ;
 
 syntax LocalConstantDeclaration
@@ -1458,11 +1445,6 @@ syntax ArrayInitializer
 
 syntax VariableInitializerList
      = { VariableInitializer ","}+
-     ;
-
-syntax VariableInitializer
-     = Expression
-     | ArrayInitializer
      ;
 
 // Interfaces
