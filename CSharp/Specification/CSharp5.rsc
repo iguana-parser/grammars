@@ -45,13 +45,8 @@ syntax UnmanagedType
 	 ;     
 
 syntax ValueType
-     = StructType
-     | EnumType
-     ;
-
-syntax StructType
      = TypeName
-     | SimpleType 
+     | SimpleType
      | NullableType
      ;
 
@@ -84,33 +79,12 @@ syntax FloatingPointType
      ;
 
 syntax NullableType
-     = NonNullableValueType  "?"
-     ;
-
-syntax NonNullableValueType
-     = Type
-     ;
-
-syntax EnumType
-     = TypeName
+     = Type  "?"
      ;
 
 syntax ReferenceType
-     = ClassType
-     | InterfaceType
+     = TypeName
      | ArrayType
-     | DelegateType
-     ;
-
-syntax ClassType
-     = TypeName
-     | "object"
-     | "dynamic"
-     | "string"
-     ;
-
-syntax InterfaceType
-     = TypeName
      ;
      
 syntax RankSpecifier
@@ -829,7 +803,7 @@ syntax CatchClauses
      ;
 
 syntax SpecificCatchClause
-     = "catch"   "("   ClassType   Identifier?   ")"   "block"
+     = "catch"   "("   TypeName   Identifier?   ")"   "block"
      ;
 
 syntax GeneralCatchClause
@@ -952,14 +926,14 @@ syntax TypeParameter
      ;
 
 syntax ClassBase
-     = ":" ClassType
-     | ":" InterfaceTypeList
-     | ":" ClassType   ","   InterfaceTypeList
+     = ":" TypeName
+     | ":" TypeNameList
+     | ":" TypeName   ","  TypeNameList
      ;
-
-syntax InterfaceTypeList
-     = { InterfaceType "," }+
-     ;
+     
+syntax TypeNameList
+     = { TypeName "," }+
+     ; 
 
 syntax TypeParameterConstraintsClause
      = "where"   TypeParameter   ":"   TypeParameterConstraints
@@ -976,15 +950,15 @@ syntax TypeParameterConstraints
      ;
 
 syntax PrimaryConstraint
-     = ClassType
+     = TypeName
      | "class"
      | "struct"
      ;
 
 syntax SecondaryConstraints
-     = InterfaceType
+     = TypeName
      | TypeParameter
-     | SecondaryConstraints   ","   InterfaceType
+     | SecondaryConstraints   ","   TypeName
      | SecondaryConstraints   ","   TypeParameter
      ;
 
@@ -1091,7 +1065,7 @@ syntax ReturnType
 
 syntax MemberName
      = Identifier
-     | InterfaceType   "."   Identifier
+     | TypeName   "."   Identifier
      ;
 
 syntax MethodBody
@@ -1148,7 +1122,7 @@ syntax PropertyModifier
 
 syntax MemberName
      = Identifier
-     | InterfaceType   "."   Identifier
+     | TypeName   "."   Identifier
      ;
 
 syntax AccessorDeclarations
@@ -1231,7 +1205,7 @@ syntax IndexerModifier
 
 syntax IndexerDeclarator
      = Type   "this"   "["   FormalParameterList   "]"
-     | Type   InterfaceType   "."   "this"   "["   FormalParameterList   "]"
+     | Type   TypeName   "."   "this"   "["   FormalParameterList   "]"
      ;
 
 syntax OperatorDeclaration
@@ -1376,7 +1350,7 @@ syntax StructModifier
      ; 
 
 syntax StructInterfaces
-     = ":" InterfaceTypeList
+     = ":" TypeNameList
      ;
 
 syntax StructBody
@@ -1479,7 +1453,7 @@ syntax VarianceAnnotation
      ;
 
 syntax InterfaceBase
-     = ":"   interfaceTypeList
+     = ":"   TypeNameList
      ;
 
 syntax InterfaceBody
