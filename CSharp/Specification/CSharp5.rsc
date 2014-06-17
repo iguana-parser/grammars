@@ -1677,6 +1677,36 @@ syntax AttributeArgumentExpression
 // Lexical Definititions
 //----------------------------------------------------------------------------------------------------------------
 
+syntax Input
+     = InputSection*
+     ;
+
+syntax InputSection
+     = InputSectionPart+
+     ;
+
+syntax InputSectionPart
+     = InputElement* NewLine
+     | PpDirective
+     ;
+
+syntax InputElement
+     = Whitespace
+     | Comment
+     | Token
+     ;
+     
+syntax Token
+     = Identifier
+     | Keyword
+     | IntegerLiteral
+     | RealLiteral
+     | CharacterLiteral
+     | StringLiteral
+     | OperatorOrPunctuator
+     ;     
+
+
 layout Layout 
      = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
 
