@@ -883,7 +883,7 @@ syntax YieldStatement
 // Namespaces
 
 syntax CompilationUnit
-     = ExternAliasDirective*   UsingDirectives?  GlobalAttributes? NamespaceMemberDeclaration*
+     = ExternAliasDirective*   UsingDirective*  GlobalAttributes? NamespaceMemberDeclaration*
 	; 
 
 syntax NamespaceDeclaration
@@ -895,16 +895,11 @@ syntax QualifiedIdentifier
      ;
 
 syntax NamespaceBody
-     = "{"   ExternAliasDirective*   UsingDirectives?   NamespaceMemberDeclaration*   "}"
+     = "{"   ExternAliasDirective*   UsingDirective*   NamespaceMemberDeclaration*   "}"
      ;
 
 syntax ExternAliasDirective
      = "extern"   "alias"   Identifier   ";"
-     ;
-
-syntax UsingDirectives
-     = UsingDirective
-     | UsingDirectives   UsingDirective
      ;
 
 syntax UsingDirective
