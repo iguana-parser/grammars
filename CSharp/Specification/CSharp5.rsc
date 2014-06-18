@@ -30,26 +30,40 @@ syntax NamespaceOrTypeName
 
 syntax Type
      = TypeName
-     | SimpleType
+     | PredefinedType
      | NullableType
      | ArrayType 
      | PointerType
      ;
      
 syntax PointerType
-     = UnmanagedType   "*"
+     = Type   "*"
      | "void"   "*"
      ;
 
-syntax UnmanagedType
-     = Type
-	     ;     
-
 syntax ValueType
      = TypeName
-     | SimpleType
      | NullableType
      ;
+     
+syntax PredefinedType
+     = "bool"
+     | "byte"
+     | "char"
+     | "decimal"
+     | "double"
+     | "float"
+     | "int"
+     | "long"
+     | "object"
+     | "sbyte"
+     | "short"
+     | "string"
+     | "uint"
+     | "ulong"
+     | "ushort"
+     ; 
+
 
 syntax SimpleType
      = NumericType
@@ -178,24 +192,6 @@ syntax MemberAccess
      | PredefinedType   "."   Identifier  TypeArgumentList?
      | QualifiedAliasMember   "."   Identifier
      ;
-
-syntax PredefinedType
-     = "bool"
-     | "byte"
-     | "char"
-     | "decimal"
-     | "double"
-     | "float"
-     | "int"
-     | "long"
-     | "object"
-     | "sbyte"
-     | "short"
-     | "string"
-     | "uint"
-     | "ulong"
-     | "ushort"
-     ; 
 
 syntax InvocationExpression
      = PrimaryExpression   "("   ArgumentList?   ")"
@@ -355,7 +351,7 @@ syntax AddressofExpression
      ;
 
 syntax SizeofExpression
-     = "sizeof"   "("   UnmanagedType   ")"
+     = "sizeof"   "("   Type   ")"
      ;
 
 syntax FixedStatement
