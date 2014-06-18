@@ -29,8 +29,10 @@ syntax NamespaceOrTypeName
 // Types
 
 syntax Type
-     = ValueType
-     | ReferenceType 
+     = TypeName
+     | SimpleType
+     | NullableType
+     | ArrayType 
      | TypeParameter
      | PointerType
      ;
@@ -42,7 +44,7 @@ syntax PointerType
 
 syntax UnmanagedType
      = Type
-	 ;     
+	     ;     
 
 syntax ValueType
      = TypeName
