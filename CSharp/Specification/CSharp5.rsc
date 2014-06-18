@@ -347,7 +347,7 @@ syntax PointerElementAccess
      ;
 
 syntax AddressofExpression
-     = "&"   UnaryExpression
+     = "&" !>> "&"   UnaryExpression
      ;
 
 syntax SizeofExpression
@@ -367,7 +367,7 @@ syntax FixedPointerDeclarator
      ;
 
 syntax FixedPointerInitializer
-     = "&"   VariableReference
+     = "&" !>> "&"   VariableReference
      | Expression
      ;
      
@@ -421,7 +421,7 @@ syntax EqualityExpression
 
 syntax AndExpression
      = EqualityExpression
-     | AndExpression   "&"   EqualityExpression
+     | AndExpression   "&" !>> "&"   EqualityExpression
      ;
 
 syntax ExclusiveOrExpression
