@@ -33,7 +33,6 @@ syntax Type
      | SimpleType
      | NullableType
      | ArrayType 
-     | TypeParameter
      | PointerType
      ;
      
@@ -1725,7 +1724,7 @@ lexical UnicodeEscapeSequence
 // Identifiers      
       
 lexical Identifier
-      = IdentifierOrKeyword \ Keyword
+      = [A-Z _ a-z] !<< IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ Keyword
       | "@"  IdentifierOrKeyword
       ;
       
