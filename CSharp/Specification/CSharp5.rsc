@@ -146,7 +146,6 @@ syntax PrimaryNoArrayCreationExpression
      | PostIncrementExpression
      | PostDecrementExpression
      | ObjectCreationExpression
-     | DelegateCreationExpression
      | AnonymousObjectCreationExpression
      | TypeofExpression
      | CheckedExpression
@@ -246,10 +245,6 @@ syntax ArrayCreationExpression
      = "new"   NonArrayType   "["   ExpressionList   "]"   RankSpecifier*   ArrayInitializer?
      | "new"   ArrayType   ArrayInitializer 
      | "new"   RankSpecifier   ArrayInitializer
-     ;
-
-syntax DelegateCreationExpression
-     = "new"   DelegateType   "("   Expression   ")"
      ;
 
 syntax AnonymousObjectCreationExpression
