@@ -1443,7 +1443,7 @@ syntax InterfaceMemberDeclaration
      ;
 
 syntax InterfaceMethodDeclaration
-     = Attributes?   "new"?   ReturnType   Identifier   TypeParameterList
+     = Attributes?   "new"?   ReturnType   Identifier   TypeParameterList?
         "("   FormalParameterList?   ")"   TypeParameterConstraintsClause*   ";"
      ;
 
