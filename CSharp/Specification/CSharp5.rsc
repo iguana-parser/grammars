@@ -41,11 +41,6 @@ syntax PointerType
      | "void"   "*"
      ;
 
-syntax ValueType
-     = TypeName
-     | NullableType
-     ;
-     
 syntax PredefinedType
      = "bool"
      | "byte"
@@ -65,17 +60,6 @@ syntax PredefinedType
      ; 
 
 
-syntax SimpleType
-     = NumericType
-     | "bool"
-     ;
-
-syntax NumericType
-     = IntegralType
-     | FloatingPointType
-     | "decimal"
-     ;
-
 syntax IntegralType
      = "sbyte"
      | "byte"
@@ -86,11 +70,6 @@ syntax IntegralType
      | "long"
      | "ulong"
      | "char"
-     ;
-
-syntax FloatingPointType
-     = "float"
-     | "double"
      ;
 
 syntax NullableType
@@ -218,8 +197,8 @@ syntax PostDecrementExpression
      ;
 
 syntax ObjectCreationExpression
-     = "new"   Type   "("   ArgumentList?   ")"   ObjectOrCollectionInitializer? 
-     | "new"   Type   ObjectOrCollectionInitializer
+     = "new"   NonArrayType   "("   ArgumentList?   ")"   ObjectOrCollectionInitializer? 
+     | "new"   NonArrayType   ObjectOrCollectionInitializer
      ;
 
 syntax ObjectOrCollectionInitializer
@@ -251,7 +230,7 @@ syntax CollectionInitializer
      ;
 
 syntax ElementInitializerList
-     = { ElementInitializer ","}+
+     = { ElementInitializer "," }+
      ;
 
 syntax ElementInitializer
@@ -1396,8 +1375,12 @@ syntax ArrayType
      ;
 
 syntax NonArrayType
-     = Type
+     = TypeName
+     | PredefinedType
+     | NullableType
+     | PointerType
      ;
+
 
 syntax RankSpecifier
      = "["   ","*   "]"
@@ -1732,6 +1715,7 @@ lexical IdentifierStartCharacter
 lexical IdentifierPartCharacter
       = LetterCharacter
       | DecimalDigitCharacter
+      | "_"
       //| ConnectingCharacter
       //| CombiningCharacter
       //| FormattingCharacter
