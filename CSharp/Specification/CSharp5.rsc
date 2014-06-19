@@ -175,7 +175,6 @@ syntax PrimaryNoArrayCreationExpression
      | DefaultValueExpression
      | AnonymousMethodExpression
      | PointerMemberAccess
-     | PointerElementAccess
      | SizeofExpression
      ;
 
@@ -340,10 +339,6 @@ syntax PointerIndirectionExpression
 
 syntax PointerMemberAccess
      = PrimaryExpression   "\>"   Identifier  TypeArgumentList?
-     ;
-
-syntax PointerElementAccess
-     = PrimaryNoArrayCreationExpression   "["   Expression   "]"
      ;
 
 syntax AddressofExpression
