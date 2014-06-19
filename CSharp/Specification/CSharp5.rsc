@@ -313,7 +313,7 @@ syntax PointerIndirectionExpression
      ;
 
 syntax PointerMemberAccess
-     = PrimaryExpression   "\>"   Identifier  TypeArgumentList?
+     = PrimaryExpression   "-\>"   Identifier  TypeArgumentList?
      ;
 
 syntax AddressofExpression
