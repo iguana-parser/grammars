@@ -20,8 +20,9 @@ syntax TypeName
      = NamespaceOrTypeName
      ;
 
-syntax NamespaceOrTypeName 
-     = Identifier   TypeArgumentList?
+syntax NamespaceOrTypeName
+     = Identifier      
+     | Identifier   TypeArgumentList
      | NamespaceOrTypeName   "."   Identifier   TypeArgumentList?
      | QualifiedAliasMember
      ;
@@ -633,7 +634,7 @@ syntax LocalVariableDeclaration
      ;
 
 syntax LocalVariableType
-     = Type
+     = Type \ "var"
      | "var"
      ;
 
