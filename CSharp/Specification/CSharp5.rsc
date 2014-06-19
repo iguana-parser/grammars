@@ -893,8 +893,7 @@ syntax TypeParameter
      ;
 
 syntax ClassBase
-     = ":" TypeName
-     | ":" TypeNameList
+     = ":" TypeNameList
      | ":" TypeName   ","  TypeNameList
      ;
      
