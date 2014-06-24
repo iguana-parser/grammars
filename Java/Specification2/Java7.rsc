@@ -513,10 +513,6 @@ syntax SwitchLabel
      | "default" ":"
      ;
 
-syntax ConstantExpression 
-    = Expression
-    ;
-
 syntax LocalVariableDeclaration 
     = VariableModifier* Type { VariableDeclarator ","}+
     ;
@@ -609,10 +605,6 @@ syntax MethodInvocation
      | ClassName "." "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
      | TypeName "." NonWildTypeArguments Identifier "(" ArgumentList? ")"
      ;
-     
-syntax NonWildTypeArguments
-     = {ReferenceType ","}+
-     ;     
      
 syntax ArrayAccess
      = ExpressionName "[" Expression "]" 
