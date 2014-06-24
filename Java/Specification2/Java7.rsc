@@ -559,7 +559,19 @@ syntax Literal
     | CharacterLiteral
     | StringLiteral
     | NullLiteral
-    ;     
+    ; 
+    
+syntax IntegerLiteral 
+    = DecimalIntegerLiteral !>> [.]
+    | HexIntegerLiteral !>> [.]
+    | OctalIntegerLiteral
+    | BinaryIntegerLiteral
+    ; 
+    
+syntax FloatingPointLiteral 
+    = DecimalFloatingPointLiteral
+    | HexadecimalFloatingPointLiteral
+    ;
 
 syntax ClassInstanceCreationExpression
      = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
@@ -929,12 +941,6 @@ keyword Keyword
           
 //----------------------------------------------------------------------------------------------------------------
 
-lexical IntegerLiteral 
-    = DecimalIntegerLiteral !>> [.]
-    | HexIntegerLiteral !>> [.]
-    | OctalIntegerLiteral
-    | BinaryIntegerLiteral
-    ; 
 
 lexical DecimalIntegerLiteral 
     = DecimalNumeral IntegerTypeSuffix?
@@ -1038,10 +1044,6 @@ lexical BinaryDigitOrUnderscore
     
 //----------------------------------------------------------------------------------------------------------------        
 
-lexical FloatingPointLiteral 
-    = DecimalFloatingPointLiteral
-    | HexadecimalFloatingPointLiteral
-    ;
 
 lexical DecimalFloatingPointLiteral 
     = Digits [.] Digits? ExponentPart? FloatTypeSuffix?
@@ -1131,5 +1133,3 @@ lexical ZeroToThree = [0-3];
     
 lexical NullLiteral = "null";
 
-lexical Separator = [( ) { } \[ \] ; , .];
-    
