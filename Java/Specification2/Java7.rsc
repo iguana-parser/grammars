@@ -551,6 +551,15 @@ syntax PrimaryNoNewArray
      | MethodInvocation 
      | ArrayAccess
      ;
+     
+syntax Literal 
+    = IntegerLiteral
+    | FloatingPointLiteral
+    | BooleanLiteral
+    | CharacterLiteral
+    | StringLiteral
+    | NullLiteral
+    ;     
 
 syntax ClassInstanceCreationExpression
      = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
@@ -567,8 +576,8 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	 = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
-	 | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
+	     = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	     | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
      
 syntax DimExpr
@@ -917,17 +926,6 @@ keyword Keyword
       | "super"
       | "while"
       ;
-
-//----------------------------------------------------------------------------------------------------------------
-
-lexical Literal 
-    = IntegerLiteral
-    | FloatingPointLiteral
-    | BooleanLiteral
-    | CharacterLiteral
-    | StringLiteral
-    | NullLiteral
-    ;
           
 //----------------------------------------------------------------------------------------------------------------
 
