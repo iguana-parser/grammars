@@ -552,7 +552,7 @@ syntax Assignment
 syntax AssignmentOperator
      = "="
      | "+="
-     | "="
+     | "-="
      | "*="
      | "/="
      | "%="
@@ -1629,7 +1629,8 @@ syntax Token
 
 
 layout Layout 
-     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+       // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
 
 /* 
  * Carriage return character (U+000D)
