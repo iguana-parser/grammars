@@ -1054,7 +1054,7 @@ syntax FixedParameter
      ;
 
 syntax DefaultArgument
-     =  Expression
+     = "=" Expression
      ;
 
 syntax ParameterModifier
