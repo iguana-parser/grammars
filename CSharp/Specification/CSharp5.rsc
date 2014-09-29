@@ -268,7 +268,7 @@ syntax MemberDeclarator
      ;
 
 syntax TypeofExpression
-     = "typeof"   "("   type   ")"
+     = "typeof"   "("   Type   ")"
      | "typeof"   "("   UnboundTypeName   ")"
      | "typeof" "(" "void" ")"
      ; 
