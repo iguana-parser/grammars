@@ -38,9 +38,14 @@ syntax Type
      ;
      
 syntax PointerType
-     = Type   "*"
+     = UnmanagedType   "*"
      | "void"   "*"
      ;
+     
+syntax UnmanagedType
+     = Type
+     ;
+     
 
 syntax PredefinedType
      = "bool"
@@ -630,12 +635,31 @@ syntax DeclarationStatement
      ;
 
 syntax LocalVariableDeclaration
-     = LocalVariableType   VariableDeclarators
+     = LocalVariableType   LocalVariableDeclarators
      ;
 
 syntax LocalVariableType
      = Type \ "var"
      | "var"
+     ;
+     
+syntax LocalVariableDeclarators
+     = { LocalVariableDeclarator "," }+
+     ;     
+
+syntax LocalVariableDeclarator
+     = Identifier
+	 | Identifier   "="   LocalVariableInitializer
+	 ;
+	 
+syntax LocalVariableInitializer
+     = Expression
+     | ArrayInitializer
+     | StackallocInitializer
+     ;
+
+syntax StackallocInitializer
+     = "stackalloc"   UnmanagedType "["  Expression "]"
      ;
 
 syntax LocalConstantDeclaration
