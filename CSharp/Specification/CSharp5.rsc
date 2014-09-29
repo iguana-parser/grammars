@@ -759,9 +759,9 @@ syntax ThrowStatement
      ;
      
 syntax TryStatement
-     = "try"   "block"   CatchClauses
-     | "try"   "block"   FinallyClause
-     | "try"   "block"   CatchClauses   FinallyClause
+     = "try"   Block   CatchClauses
+     | "try"   Block   FinallyClause
+     | "try"   Block   CatchClauses   FinallyClause
      ;
 
 syntax CatchClauses
@@ -770,23 +770,23 @@ syntax CatchClauses
      ;
 
 syntax SpecificCatchClause
-     = "catch"   "("   TypeName   Identifier?   ")"   "block"
+     = "catch"   "("   TypeName   Identifier?   ")"   Block
      ;
 
 syntax GeneralCatchClause
-     = "catch"   "block"
+     = "catch"   Block
      ;
 
 syntax FinallyClause
-     = "finally"   "block"
+     = "finally"   Block
      ;
 
 syntax CheckedStatement
-     = "checked"   "block"
+     = "checked"   Block
      ;
 
 syntax UncheckedStatement
-     = "unchecked"   "block"
+     = "unchecked"   Block
      ;
 
 syntax LockStatement
@@ -2002,11 +2002,11 @@ lexical OperatorOrPunctuator
      ;
       
 lexical RightShift
-      = "\>|\>"
+      = "\>\>"
       ;
       
 lexical RightShiftAssignment
-     = "\>|\>="
+     = "\>\>="
      ;
      
 // Pre-processing directives
