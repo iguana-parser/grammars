@@ -1075,6 +1075,7 @@ syntax FixedParameters
 
 syntax FixedParameter
      = Attributes?   ParameterModifier?   Type   Identifier   DefaultArgument?
+     | "__arglist" // Undocumented keyword, appears in some source files
      ;
 
 syntax DefaultArgument
@@ -1222,10 +1223,11 @@ syntax UnaryOperatorDeclarator
 
 syntax OverloadableUnaryOperator
      = "+"
+     | "-"
      | "!"
      | "~"   
      | "++" 
-     | "-"   
+     | "--"   
      | "true"
      | "false"
      ;
