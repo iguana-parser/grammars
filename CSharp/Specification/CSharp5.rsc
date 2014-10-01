@@ -152,6 +152,7 @@ syntax PrimaryNoArrayCreationExpression
      | PostIncrementExpression
      | PostDecrementExpression
      | ObjectCreationExpression
+     | DelegateCreationExpression
      | AnonymousObjectCreationExpression
      | TypeofExpression
      | CheckedExpression
@@ -191,7 +192,7 @@ syntax ThisAccess
      ;
 
 syntax BaseAccess
-     = "base"   "."   Identifier
+     = "base"   "."   Identifier 
      | "base"   "["   ArgumentList   "]"
      ;
 
@@ -254,6 +255,11 @@ syntax ArrayCreationExpression
      | "new"   ArrayType   ArrayInitializer 
      | "new"   RankSpecifier   ArrayInitializer
      ;
+     
+syntax DelegateCreationExpression
+     = "new"   DelegateType   "("   Expression   ")"
+     ;
+     
 
 syntax AnonymousObjectCreationExpression
      = "new"   AnonymousObjectInitializer
@@ -806,7 +812,7 @@ syntax CatchClauses
      ;
 
 syntax SpecificCatchClause
-     = "catch"   "("   TypeName   Identifier?   ")"   Block
+     = "catch"   "("   TypeName   Identifier?   ")"  ("if"   "("   BooleanExpression   ")")?   Block  // if condition added to comply with C# 6
      ;
 
 syntax GeneralCatchClause
@@ -1629,7 +1635,7 @@ syntax NamedArgument
     ;
 
 syntax AttributeArgumentExpression
-    = Expression
+    = NonAssignmentExpression    // Changed from Expression to deal ambiguity
     ;
 
 
