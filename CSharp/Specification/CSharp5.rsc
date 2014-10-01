@@ -152,7 +152,6 @@ syntax PrimaryNoArrayCreationExpression
      | PostIncrementExpression
      | PostDecrementExpression
      | ObjectCreationExpression
-     | DelegateCreationExpression
      | AnonymousObjectCreationExpression
      | TypeofExpression
      | CheckedExpression
@@ -160,7 +159,6 @@ syntax PrimaryNoArrayCreationExpression
      | DefaultValueExpression
      | AnonymousMethodExpression
      | PointerMemberAccess
-     | PointerElementAccess
      | SizeofExpression
      ;
 
@@ -256,11 +254,6 @@ syntax ArrayCreationExpression
      | "new"   RankSpecifier   ArrayInitializer
      ;
      
-syntax DelegateCreationExpression
-     = "new"   DelegateType   "("   Expression   ")"
-     ;
-     
-
 syntax AnonymousObjectCreationExpression
      = "new"   AnonymousObjectInitializer
      ;
@@ -310,8 +303,8 @@ syntax DefaultValueExpression
 
 syntax UnaryExpression
      = PrimaryExpression
-     | "+"   UnaryExpression
-     | "-"   UnaryExpression
+     | "+" !>> "+"   UnaryExpression
+     | "-" !>> "-"  UnaryExpression
      | "!"   UnaryExpression
      | "~"   UnaryExpression
      | PreIncrementExpression
