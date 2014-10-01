@@ -159,6 +159,7 @@ syntax PrimaryNoArrayCreationExpression
      | DefaultValueExpression
      | AnonymousMethodExpression
      | PointerMemberAccess
+     | PointerElementAccess
      | SizeofExpression
      ;
 
@@ -182,6 +183,7 @@ syntax InvocationExpression
 
 syntax ElementAccess
      = PrimaryNoArrayCreationExpression   "["   ArgumentList   "]"
+     | ArrayCreationExpression   "["   ArgumentList   "]"  // To allow parsing string s = new string[] {"a", "b"} [1]
      ;
 
 syntax ThisAccess
@@ -311,6 +313,7 @@ syntax UnaryExpression
      | CastExpression
      | PointerIndirectionExpression
      | AddressofExpression
+     | AwaitExpression
      ;
      
 syntax PointerIndirectionExpression
@@ -320,6 +323,10 @@ syntax PointerIndirectionExpression
 syntax PointerMemberAccess
      = PrimaryExpression   "-\>"   Identifier  TypeArgumentList?
      ;
+     
+syntax PointerElementAccess
+	 = PrimaryNoArrayCreationExpression   "["   Expression   "]"
+	 ;
 
 syntax AddressofExpression
      = "&" !>> "&"   UnaryExpression
@@ -430,11 +437,11 @@ syntax ConditionalExpression
      ;
 
 syntax LambdaExpression
-     = AnonymousFunctionSignature   "=\>"   AnonymousFunctionBody
+     = "async"? AnonymousFunctionSignature   "=\>"   AnonymousFunctionBody
      ;
 
 syntax AnonymousMethodExpression
-     = "delegate"   ExplicitAnonymousFunctionSignature?   Block
+     = "async"? "delegate"   ExplicitAnonymousFunctionSignature?   Block
      ;
 
 syntax AnonymousFunctionSignature
@@ -682,6 +689,11 @@ syntax StatementExpression
      | PostDecrementExpression
      | PreIncrementExpression
      | PreDecrementExpression
+     | AwaitExpression
+     ;
+     
+syntax AwaitExpression
+     = "await"  UnaryExpression
      ;
 
 syntax SelectionStatement
@@ -1046,6 +1058,7 @@ syntax MethodModifier
      | "abstract"
      | "extern"
      | "unsafe"
+     | "async"
      ;
 
 syntax ReturnType
