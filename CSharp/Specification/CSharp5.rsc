@@ -1310,14 +1310,7 @@ syntax StaticConstructorDeclaration
      ;
 
 syntax StaticConstructorModifiers
-     = "extern"?   "static"
-     | "static"    "extern"?
-     | "extern"?   "unsafe"?   "static"
-     | "unsafe"?   "extern"?   "static"
-     | "extern"?   "static"    "unsafe"?
-     | "unsafe"?   "static"    "extern"?
-     | "static"    "extern"?   "unsafe"?
-     | "static"    "unsafe"?   "extern"?
+     = "static"?    "unsafe"?   "extern"?
      ;
 
 syntax StaticConstructorBody
