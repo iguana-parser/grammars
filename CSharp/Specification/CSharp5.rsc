@@ -280,7 +280,7 @@ syntax TypeofExpression
      ; 
 
 syntax UnboundTypeName
-     = Identifier   GenericDimensionSpecifier?
+     = Identifier   GenericDimensionSpecifier // GenericDimensionSpecifier? changed to GenericDimensionSpecifier to avoid ambiguity with TypeName 
      | Identifier   "::"   Identifier   GenericDimensionSpecifier?
      | UnboundTypeName   "."   Identifier   GenericDimensionSpecifier?
      ;
@@ -446,11 +446,12 @@ syntax AnonymousMethodExpression
 syntax AnonymousFunctionSignature
      = ExplicitAnonymousFunctionSignature 
      | ImplicitAnonymousFunctionSignature
+     | "(" ")" // Separating the empty case to avoid ambiguity
      ;
      
      
 syntax ExplicitAnonymousFunctionSignature
-     = "("   ExplicitAnonymousFunctionParameterList?   ")"
+     = "("   ExplicitAnonymousFunctionParameterList   ")"
      ;
 
 syntax ExplicitAnonymousFunctionParameterList
@@ -467,7 +468,7 @@ syntax AnonymousFunctionParameterModifier
      ;
 
 syntax ImplicitAnonymousFunctionSignature
-     = "("   ImplicitAnonymousFunctionParameterList?   ")"
+     = "("   ImplicitAnonymousFunctionParameterList   ")"
      | ImplicitAnonymousFunctionParameter
      ;
 
@@ -929,7 +930,6 @@ syntax TypeParameter
 
 syntax ClassBase
      = ":" TypeNameList
-     | ":" TypeName   ","  TypeNameList
      ;
      
 syntax TypeNameList
