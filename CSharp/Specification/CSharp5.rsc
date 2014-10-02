@@ -940,7 +940,8 @@ syntax TypeParameterConstraintsClause
      ;
 
 syntax TypeParameterConstraints
-     = PrimaryConstraint
+     = TypeName
+     | PrimaryConstraint
      | SecondaryConstraints
      | ConstructorConstraint
      | PrimaryConstraint   ","   SecondaryConstraints
@@ -950,15 +951,12 @@ syntax TypeParameterConstraints
      ;
 
 syntax PrimaryConstraint
-     = TypeName
-     | "class"
+     = "class"
      | "struct"
      ;
 
 syntax SecondaryConstraints
-     = TypeName
-     | TypeParameter
-     | SecondaryConstraints   ","   TypeName
+     = SecondaryConstraints   ","   TypeName
      | SecondaryConstraints   ","   TypeParameter
      ;
 
