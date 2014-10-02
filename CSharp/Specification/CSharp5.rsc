@@ -348,8 +348,7 @@ syntax FixedPointerDeclarator
      ;
 
 syntax FixedPointerInitializer
-     = "&" !>> "&"   VariableReference
-     | Expression
+     = Expression
      ;
      
 
@@ -1660,7 +1659,7 @@ syntax Token
 
 
 layout Layout 
-     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"; 
        // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
 
 /* 
@@ -1719,7 +1718,7 @@ lexical NotSlashOrAsterisk
  
 lexical UnicodeEscapeSequence
       = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit
-      | "\\U"   HexDigit   HexDigit   HexDigit  HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
+      | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
       ;
       
 // Identifiers      
@@ -1937,7 +1936,10 @@ lexical SimpleEscapeSequence
       ;
       
 lexical HexadecimalEscapeSequence
-     = "\\x"   HexDigit   HexDigit?   HexDigit?   HexDigit?
+     = "\\x"   HexDigit   !>> HexDigit
+     | "\\x"   HexDigit   HexDigit !>> HexDigit
+     | "\\x"   HexDigit   HexDigit   HexDigit !>> HexDigit
+     | "\\x"   HexDigit   HexDigit   HexDigit    HexDigit
      ;
      
 lexical StringLiteral
@@ -2174,7 +2176,8 @@ lexical FileNameCharacter
      ;
 
 lexical PpPragma 
-     = Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
+     = // Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
+     "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
      ;
 
 lexical PragmaBody 
