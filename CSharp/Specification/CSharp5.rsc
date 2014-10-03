@@ -373,8 +373,8 @@ syntax MultiplicativeExpression
 
 syntax AdditiveExpression
      = MultiplicativeExpression
-     | AdditiveExpression   "+"   MultiplicativeExpression
-     | AdditiveExpression   "-"   MultiplicativeExpression
+     | AdditiveExpression   "+" !>> "+"   MultiplicativeExpression
+     | AdditiveExpression   "-" !>> "-"   MultiplicativeExpression
      ;
      
 syntax ShiftExpression
