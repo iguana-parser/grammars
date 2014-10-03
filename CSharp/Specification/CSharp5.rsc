@@ -131,8 +131,8 @@ syntax ArgumentName
 
 syntax ArgumentValue
      = Expression
-     | "ref"   VariableReference
-     | "out"   VariableReference
+     | "ref" !>> [0-9]   VariableReference  // To avoid ambiguities in case of ref1
+     | "out" !>> [0-9]  VariableReference
      ;
 
 syntax PrimaryExpression 
@@ -655,8 +655,8 @@ syntax LocalVariableDeclarators
 
 syntax LocalVariableDeclarator
      = Identifier
-	 | Identifier   "="   LocalVariableInitializer
-	 ;
+	     | Identifier   "="   LocalVariableInitializer
+	     ;
 	 
 syntax LocalVariableInitializer
      = Expression
@@ -701,7 +701,7 @@ syntax SelectionStatement
      ;
 
 syntax IfStatement
-     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement
+     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement () !>> "else"
      | "if"   "("   BooleanExpression   ")"   EmbeddedStatement   "else"   EmbeddedStatement
      ;
 
