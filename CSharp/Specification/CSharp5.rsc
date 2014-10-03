@@ -801,7 +801,7 @@ syntax TryStatement
 
 syntax CatchClauses
      = SpecificCatchClause+   GeneralCatchClause?
-     | SpecificCatchClause*   GeneralCatchClause
+     | GeneralCatchClause
      ;
 
 syntax SpecificCatchClause
@@ -1846,6 +1846,8 @@ lexical Keyword
       | "void"
       | "volatile"
       | "while"
+      | "async"
+      | "await"
       ;
 
 // Literals      
