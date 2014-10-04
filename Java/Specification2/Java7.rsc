@@ -843,6 +843,7 @@ lexical TraditionalComment
 lexical EndOfLineComment 
     = "//" InputCharacter* !>> ![\n \r];
 
+//  NotStar* "*" CommentTailStar
 lexical CommentTail 
     = "*" CommentTailStar
     | NotStar CommentTail

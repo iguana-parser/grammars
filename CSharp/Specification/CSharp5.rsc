@@ -38,9 +38,14 @@ syntax Type
      ;
      
 syntax PointerType
-     = Type   "*"
+     = UnmanagedType   "*"
      | "void"   "*"
      ;
+     
+syntax UnmanagedType
+     = Type
+     ;
+     
 
 syntax PredefinedType
      = "bool"
@@ -126,8 +131,8 @@ syntax ArgumentName
 
 syntax ArgumentValue
      = Expression
-     | "ref"   VariableReference
-     | "out"   VariableReference
+     | "ref" !>> [0-9]   VariableReference  // To avoid ambiguities in case of ref1
+     | "out" !>> [0-9]  VariableReference
      ;
 
 syntax PrimaryExpression 
@@ -177,6 +182,7 @@ syntax InvocationExpression
 
 syntax ElementAccess
      = PrimaryNoArrayCreationExpression   "["   ArgumentList   "]"
+     | ArrayCreationExpression   "["   ArgumentList   "]"  // To allow parsing string s = new string[] {"a", "b"} [1]
      ;
 
 syntax ThisAccess
@@ -184,7 +190,7 @@ syntax ThisAccess
      ;
 
 syntax BaseAccess
-     = "base"   "."   Identifier
+     = "base"   "."   Identifier 
      | "base"   "["   ArgumentList   "]"
      ;
 
@@ -247,7 +253,7 @@ syntax ArrayCreationExpression
      | "new"   ArrayType   ArrayInitializer 
      | "new"   RankSpecifier   ArrayInitializer
      ;
-
+     
 syntax AnonymousObjectCreationExpression
      = "new"   AnonymousObjectInitializer
      ;
@@ -268,13 +274,13 @@ syntax MemberDeclarator
      ;
 
 syntax TypeofExpression
-     = "typeof"   "("   type   ")"
+     = "typeof"   "("   Type   ")"
      | "typeof"   "("   UnboundTypeName   ")"
      | "typeof" "(" "void" ")"
      ; 
 
 syntax UnboundTypeName
-     = Identifier   GenericDimensionSpecifier?
+     = Identifier   GenericDimensionSpecifier // GenericDimensionSpecifier? changed to GenericDimensionSpecifier to avoid ambiguity with TypeName 
      | Identifier   "::"   Identifier   GenericDimensionSpecifier?
      | UnboundTypeName   "."   Identifier   GenericDimensionSpecifier?
      ;
@@ -297,8 +303,8 @@ syntax DefaultValueExpression
 
 syntax UnaryExpression
      = PrimaryExpression
-     | "+"   UnaryExpression
-     | "-"   UnaryExpression
+     | "+" !>> "+"   UnaryExpression
+     | "-" !>> "-"  UnaryExpression
      | "!"   UnaryExpression
      | "~"   UnaryExpression
      | PreIncrementExpression
@@ -306,6 +312,7 @@ syntax UnaryExpression
      | CastExpression
      | PointerIndirectionExpression
      | AddressofExpression
+     | AwaitExpression
      ;
      
 syntax PointerIndirectionExpression
@@ -315,6 +322,10 @@ syntax PointerIndirectionExpression
 syntax PointerMemberAccess
      = PrimaryExpression   "-\>"   Identifier  TypeArgumentList?
      ;
+     
+syntax PointerElementAccess
+	 = PrimaryNoArrayCreationExpression   "["   Expression   "]"
+	 ;
 
 syntax AddressofExpression
      = "&" !>> "&"   UnaryExpression
@@ -337,8 +348,7 @@ syntax FixedPointerDeclarator
      ;
 
 syntax FixedPointerInitializer
-     = "&" !>> "&"   VariableReference
-     | Expression
+     = Expression
      ;
      
 
@@ -363,8 +373,8 @@ syntax MultiplicativeExpression
 
 syntax AdditiveExpression
      = MultiplicativeExpression
-     | AdditiveExpression   "+"   MultiplicativeExpression
-     | AdditiveExpression   "-"   MultiplicativeExpression
+     | AdditiveExpression   "+" !>> "+"   MultiplicativeExpression
+     | AdditiveExpression   "-" !>> "-"   MultiplicativeExpression
      ;
      
 syntax ShiftExpression
@@ -425,21 +435,22 @@ syntax ConditionalExpression
      ;
 
 syntax LambdaExpression
-     = AnonymousFunctionSignature   "=\>"   AnonymousFunctionBody
+     = "async"? AnonymousFunctionSignature   "=\>"   AnonymousFunctionBody
      ;
 
 syntax AnonymousMethodExpression
-     = "delegate"   ExplicitAnonymousFunctionSignature?   Block
+     = "async"? "delegate"   ExplicitAnonymousFunctionSignature?   Block
      ;
 
 syntax AnonymousFunctionSignature
      = ExplicitAnonymousFunctionSignature 
      | ImplicitAnonymousFunctionSignature
+     | "(" ")" // Separating the empty case to avoid ambiguity
      ;
      
      
 syntax ExplicitAnonymousFunctionSignature
-     = "("   ExplicitAnonymousFunctionParameterList?   ")"
+     = "("   ExplicitAnonymousFunctionParameterList   ")"
      ;
 
 syntax ExplicitAnonymousFunctionParameterList
@@ -456,7 +467,7 @@ syntax AnonymousFunctionParameterModifier
      ;
 
 syntax ImplicitAnonymousFunctionSignature
-     = "("   ImplicitAnonymousFunctionParameterList?   ")"
+     = "("   ImplicitAnonymousFunctionParameterList   ")"
      | ImplicitAnonymousFunctionParameter
      ;
 
@@ -552,7 +563,7 @@ syntax Assignment
 syntax AssignmentOperator
      = "="
      | "+="
-     | "="
+     | "-="
      | "*="
      | "/="
      | "%="
@@ -630,12 +641,31 @@ syntax DeclarationStatement
      ;
 
 syntax LocalVariableDeclaration
-     = LocalVariableType   VariableDeclarators
+     = LocalVariableType   LocalVariableDeclarators
      ;
 
 syntax LocalVariableType
      = Type \ "var"
      | "var"
+     ;
+     
+syntax LocalVariableDeclarators
+     = { LocalVariableDeclarator "," }+
+     ;     
+
+syntax LocalVariableDeclarator
+     = Identifier
+	     | Identifier   "="   LocalVariableInitializer
+	     ;
+	 
+syntax LocalVariableInitializer
+     = Expression
+     | ArrayInitializer
+     | StackallocInitializer
+     ;
+
+syntax StackallocInitializer
+     = "stackalloc"   UnmanagedType "["  Expression "]"
      ;
 
 syntax LocalConstantDeclaration
@@ -658,6 +688,11 @@ syntax StatementExpression
      | PostDecrementExpression
      | PreIncrementExpression
      | PreDecrementExpression
+     | AwaitExpression
+     ;
+     
+syntax AwaitExpression
+     = "await"  UnaryExpression
      ;
 
 syntax SelectionStatement
@@ -666,7 +701,7 @@ syntax SelectionStatement
      ;
 
 syntax IfStatement
-     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement
+     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement () !>> "else"
      | "if"   "("   BooleanExpression   ")"   EmbeddedStatement   "else"   EmbeddedStatement
      ;
 
@@ -759,34 +794,34 @@ syntax ThrowStatement
      ;
      
 syntax TryStatement
-     = "try"   "block"   CatchClauses
-     | "try"   "block"   FinallyClause
-     | "try"   "block"   CatchClauses   FinallyClause
+     = "try"   Block   CatchClauses
+     | "try"   Block   FinallyClause
+     | "try"   Block   CatchClauses   FinallyClause
      ;
 
 syntax CatchClauses
      = SpecificCatchClause+   GeneralCatchClause?
-     | SpecificCatchClause*   GeneralCatchClause
+     | GeneralCatchClause
      ;
 
 syntax SpecificCatchClause
-     = "catch"   "("   TypeName   Identifier?   ")"   "block"
+     = "catch"   "("   TypeName   Identifier?   ")"  ("if"   "("   BooleanExpression   ")")?   Block  // if condition added to comply with C# 6
      ;
 
 syntax GeneralCatchClause
-     = "catch"   "block"
+     = "catch"   Block
      ;
 
 syntax FinallyClause
-     = "finally"   "block"
+     = "finally"   Block
      ;
 
 syntax CheckedStatement
-     = "checked"   "block"
+     = "checked"   Block
      ;
 
 syntax UncheckedStatement
-     = "unchecked"   "block"
+     = "unchecked"   Block
      ;
 
 syntax LockStatement
@@ -894,7 +929,6 @@ syntax TypeParameter
 
 syntax ClassBase
      = ":" TypeNameList
-     | ":" TypeName   ","  TypeNameList
      ;
      
 syntax TypeNameList
@@ -906,7 +940,8 @@ syntax TypeParameterConstraintsClause
      ;
 
 syntax TypeParameterConstraints
-     = PrimaryConstraint
+     = TypeName
+     | PrimaryConstraint
      | SecondaryConstraints
      | ConstructorConstraint
      | PrimaryConstraint   ","   SecondaryConstraints
@@ -916,15 +951,12 @@ syntax TypeParameterConstraints
      ;
 
 syntax PrimaryConstraint
-     = TypeName
-     | "class"
+     = "class"
      | "struct"
      ;
 
 syntax SecondaryConstraints
-     = TypeName
-     | TypeParameter
-     | SecondaryConstraints   ","   TypeName
+     = SecondaryConstraints   ","   TypeName
      | SecondaryConstraints   ","   TypeParameter
      ;
 
@@ -1022,6 +1054,7 @@ syntax MethodModifier
      | "abstract"
      | "extern"
      | "unsafe"
+     | "async"
      ;
 
 syntax ReturnType
@@ -1051,10 +1084,11 @@ syntax FixedParameters
 
 syntax FixedParameter
      = Attributes?   ParameterModifier?   Type   Identifier   DefaultArgument?
+     | "__arglist" // Undocumented keyword, appears in some source files
      ;
 
 syntax DefaultArgument
-     =  Expression
+     = "=" Expression
      ;
 
 syntax ParameterModifier
@@ -1198,10 +1232,11 @@ syntax UnaryOperatorDeclarator
 
 syntax OverloadableUnaryOperator
      = "+"
+     | "-"
      | "!"
      | "~"   
      | "++" 
-     | "-"   
+     | "--"   
      | "true"
      | "false"
      ;
@@ -1272,14 +1307,7 @@ syntax StaticConstructorDeclaration
      ;
 
 syntax StaticConstructorModifiers
-     = "extern"?   "static"
-     | "static"    "extern"?
-     | "extern"?   "unsafe"?   "static"
-     | "unsafe"?   "extern"?   "static"
-     | "extern"?   "static"    "unsafe"?
-     | "unsafe"?   "static"    "extern"?
-     | "static"    "extern"?   "unsafe"?
-     | "static"    "unsafe"?   "extern"?
+     = "static"?    "unsafe"?   "extern"?
      ;
 
 syntax StaticConstructorBody
@@ -1590,7 +1618,7 @@ syntax NamedArgument
     ;
 
 syntax AttributeArgumentExpression
-    = Expression
+    = NonAssignmentExpression    // Changed from Expression to deal ambiguity
     ;
 
 
@@ -1629,7 +1657,8 @@ syntax Token
 
 
 layout Layout 
-     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"; 
+       // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
 
 /* 
  * Carriage return character (U+000D)
@@ -1687,7 +1716,7 @@ lexical NotSlashOrAsterisk
  
 lexical UnicodeEscapeSequence
       = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit
-      | "\\U"   HexDigit   HexDigit   HexDigit  HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
+      | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
       ;
       
 // Identifiers      
@@ -1817,6 +1846,8 @@ lexical Keyword
       | "void"
       | "volatile"
       | "while"
+      | "async"
+      | "await"
       ;
 
 // Literals      
@@ -1905,7 +1936,10 @@ lexical SimpleEscapeSequence
       ;
       
 lexical HexadecimalEscapeSequence
-     = "\\x"   HexDigit   HexDigit?   HexDigit?   HexDigit?
+     = "\\x"   HexDigit   !>> HexDigit
+     | "\\x"   HexDigit   HexDigit !>> HexDigit
+     | "\\x"   HexDigit   HexDigit   HexDigit !>> HexDigit
+     | "\\x"   HexDigit   HexDigit   HexDigit    HexDigit
      ;
      
 lexical StringLiteral
@@ -2002,11 +2036,11 @@ lexical OperatorOrPunctuator
      ;
       
 lexical RightShift
-      = "\>|\>"
+      = "\>\>"
       ;
       
 lexical RightShiftAssignment
-     = "\>|\>="
+     = "\>\>="
      ;
      
 // Pre-processing directives
@@ -2142,7 +2176,8 @@ lexical FileNameCharacter
      ;
 
 lexical PpPragma 
-     = Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
+     = // Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
+     "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
      ;
 
 lexical PragmaBody 
