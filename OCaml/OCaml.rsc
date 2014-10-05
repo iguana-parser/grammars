@@ -118,14 +118,14 @@ syntax TagSpecFull
 
 syntax Expr 
 	 = prefix: 				PrefixSymbol Expr
-	 > field: 				Expr "." Field  
+	 > field: 				Expr !constant "." Field  
 	 | dotBracket1: 		Expr ".(" Expr ")"
 	 | dotBracket2: 		Expr ".[" Expr "]"
 	 | dotBracket3: 		Expr ".{" Expr "}"
 	 > hash: 				Expr "#" MethodName
      > non-assoc 
      (
-     functionApplication: 	Expr !semicolon Arg+
+     functionApplication: 	Expr !semicolon !constant Arg+
      | constrExp: 			Constr Expr
      | polyVariant:	 		"`" TagName Expr  
      | lazy: 				"lazy" Expr
@@ -152,7 +152,7 @@ syntax Expr
      )
      > right infix8: 		Expr InfixSymbol8 Expr
      > ifThenElse: 	 		"if" Expr "then" Expr "else" Expr
-     | ifThen: 		 		"if"  Expr "then" Expr !>> (Layout "else")
+     | ifThen: 		 		"if"  Expr "then" Expr !>> " else" !>> "else"
      > semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
      > match: 		 		"match" Expr "with" PatternMatching
@@ -183,7 +183,7 @@ syntax Expr
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
- 	                       !infix8 !ifThenElse !ifThen !semicolon !sep !match !function !fun !tryBlock !letbinding !letModule
+ 	                       !infix8 !ifThenElse !ifThen !semicolon !sep !match !function !fun !tryBlock !letbinding !letModule 
  	 | label: 		  Label
      | labelColon:    LabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
