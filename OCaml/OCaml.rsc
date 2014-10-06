@@ -51,7 +51,7 @@ syntax ModulePath = modulePath: (ModuleName ".")* ModuleName;
 
 syntax Constr = const: (ModulePath ".")? ConstrName !>> (Dot ());
 
-lexical Dot = [.][A-Z];
+lexical Dot = [\ \r\n\t]*[.][\ \r\n\t]*[A-Z];
 
 syntax Field = field_name: (ModulePath ".")? FieldName;
 
@@ -75,7 +75,7 @@ syntax Typexpr
 	 > typexprAsId: Typexpr "as" "\'" Ident 
 	 > typexprPrivate: "private" Typexpr
 	 | tagg: "\'" Ident
-     | anyTypexpr: "_"
+     | anyTypexpr: "_" !>> [a-zA-Z0-9]
      | typeExprBrackets: "(" Typexpr ")"
      | typexprConstr2: TypeConstr
   	 | typeExprBrackets2: "(" Typexpr ("," Typexpr)+ ")" TypeConstr
@@ -240,7 +240,7 @@ syntax Pattern
 	 > left patternBar: 	  Pattern "|" Pattern
 	 > patternAs: 			  Pattern "as" ValueName
 	 | patternValueName: 	  ValueName
-     | anyPattern: 			  "_"
+     | anyPattern: 			  "_" !>> [a-zA-Z0-9]   // To enforce longest match with identifiers
      | patternConstant: 	  Constant
      | patternRange: 		  CharLiteral ".." CharLiteral   // Extensions
      | patternBrackets: 	  "(" Pattern ")"
@@ -324,13 +324,13 @@ syntax Specification
      
      
 syntax ModuleType 
-     = modTypePath: ModTypePath
-     | sig: "sig" ( Specification ";;"? )* "end"
-     | modTypeOf: "module" "type" "of" ModuleExpr
-     | modTypeWith: ModuleType "with" ModConstraint ("and" ModConstraint)*
-     > functor: "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleType
-     | bracketModType1: "(" ModuleType ")"
-     | bracketModType2: ModuleType "(" ModuleType ")"
+     = modTypePath:       ModTypePath
+     | sig:               "sig" ( Specification ";;"? )* "end"
+     | modTypeOf:         "module" "type" "of" ModuleExpr
+     | modTypeWith:       ModuleType "with" ModConstraint ("and" ModConstraint)*
+     > functor:           "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleType
+     | bracketModType1:   "(" ModuleType ")"
+     | bracketModType2:   ModuleType !modTypeWith "(" ModuleType ")"
      ;
 
 
@@ -369,7 +369,7 @@ syntax TypeParams
 
 syntax TypeParam 
      = typeParam1: Variance? "\'" Ident
-     | typeParam2: Variance? "_"
+     | typeParam2: Variance? "_" !>> [a-zA-Z0-9]
      ;     
      
 syntax Variance 
