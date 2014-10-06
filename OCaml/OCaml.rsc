@@ -130,7 +130,7 @@ syntax Expr
      | lazy: 				"lazy" Expr
      | assertExpr: 			"assert" Expr
      )
-     > unaryMinus: 			"-" !>> [0-9] Expr | floatUnaryMinus: "-." Expr
+     > unaryMinus: 			"-"  Expr | floatUnaryMinus: "-." Expr
      > right infix1: 		Expr InfixSymbol1 Expr
      > left  infix2: 		Expr InfixSymbol2 Expr
      > left  infix3: 		Expr !semicolon InfixSymbol3 Expr   // to disambiguate [|   5.2026032092;     19132e-10;  -39e-10 |];
@@ -181,7 +181,7 @@ syntax Expr
      ; 
      
      
-lexical Else = [\ \r \n \t]+ "else";     
+lexical Else = [\ \r \n \t]* "else";     
      
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
@@ -198,10 +198,10 @@ syntax Arg
      ;
            
 syntax PatternMatching 
-     = patternMatching: "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> Bar 
+     = patternMatching: "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> (Bar ()) 
      ;
      
-lexical Bar = [\ \n \r \t][|];     
+lexical Bar = [\ \n \r \t]*[|];     
      
 syntax InnerPatternMatching
 	 = innerPatternMatching: "|" Pattern ("when" Expr)? "-\>" Expr
@@ -254,8 +254,7 @@ syntax Pattern
      ;       
          
 syntax Constant 
-     = posInt: 			PositiveIntegerLiteral
-	 | negInt:		 	NegativeIntegerLiteral
+     = posInt: 			IntegerLiteral
      | floatLiteral: 	FloatLiteral
      | charLiteral: 	CharLiteral
      | stringLiteral: 	StringLiteral1
@@ -486,7 +485,7 @@ lexical LowercaseIdentifier = ([a-zA-Z_0-9] !<< [a-z_] [A-Za-z0-9_\']* !>> [A-Za
 
 lexical CapitalizedIdentifier = ([a-zA-Z_0-9] !<< [A-Z] [A-Za-z0-9_\']* !>> [A-Za-z0-9_\']) \ Keywords;
 
-lexical IntegerLiteral1 = [\-]? [0-9] [0-9_]* !>> [0-9_.eE];
+lexical IntegerLiteral1 = [0-9] [0-9_]* !>> [0-9_.eE];
 
 lexical Int32Literal = SpecialInt [l];  
  
@@ -494,23 +493,21 @@ lexical Int64Literal = SpecialInt [L];
  
 lexical NativeIntLiteral =	SpecialInt [n];
 
-lexical SpecialInt = [\-]? [0-9] [0-9_]* !>> [0-9_.eE]
-				   | [\-]? ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
-				   | [\-]? ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
-				   | [\-]? ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
+lexical SpecialInt = [0-9] [0-9_]* !>> [0-9_.eE]
+				   | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
+				   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
+				   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
 				   ;
 
-lexical PositiveIntegerLiteral = [0-9] [0-9_]* !>> [0-9_.eElLn]
-							   | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
- 							   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
- 							   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
- 							   ;
+lexical IntegerLiteral = [0-9] [0-9_]* !>> [0-9_.eElLn]
+					   | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
+ 					   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
+ 					   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
+ 					   ;
 
-lexical NegativeIntegerLiteral = [\-] PositiveIntegerLiteral;
-
-lexical FloatLiteral =  [\-]? [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
-				     |  [\-]? [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
-                     |  [\-]? [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
+lexical FloatLiteral =  [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
+				     |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
+                     |  [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
 					 ;
 					 
 lexical CharLiteral = [\'] (RegularChar | EscapeSequence) [\'];
