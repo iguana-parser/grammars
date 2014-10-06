@@ -211,11 +211,9 @@ syntax InnerPatternMatching
 	 ;     
            
 syntax LetBinding 
-	 = letBinding: Pattern Parameter* (":" Typexpr)? "=" Expr
-	 | polyLetBiding: ValueName ":"  PolyTypExpr "="  Expr
-	 | bindingNew: ValueName ":" "type"  TypeConstr* "."  Typexpr "="  Expr 
+	 = letBinding:      Pattern Parameter* (":" PolyTypExpr)? (":\>" Typexpr)? "=" Expr
+	 | bindingNew:		ValueName ":" "type"  TypeConstr* "."  Typexpr "="  Expr 
 	 ;
-	 
 	 
 syntax MultipleMatching
      = multipleMatching: Parameter+ ("when" Expr)? "-\>" Expr;	 
@@ -231,7 +229,6 @@ syntax Parameter
      | param7: 		 "?" LabelName ":" "(" Pattern (":" Typexpr)? ("=" Expr)? ")"
      | typeParam:	 "(" "type" TypeconstrName ")"  
      ;
-
 
 // Patterns
 
@@ -529,9 +526,9 @@ lexical RegularCharStr = ![\"\\];
 
 lexical OperatorChar = [! $ % & * + \- . / : \< = \> ? @ ^ | ~];
 
-lexical PrefixSymbol = [!] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
-   	                  | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
-	                     ;
+lexical PrefixSymbol = ([!] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "!="
+   	                 | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+	                 ;
 
 lexical Label =	"~" LowercaseIdentifier !>> ":";                 
 lexical LabelColon =	"~" LowercaseIdentifier ":";
