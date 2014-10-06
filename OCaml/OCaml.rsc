@@ -51,8 +51,7 @@ syntax ModulePath = modulePath: (ModuleName ".")* ModuleName;
 
 syntax Constr = const: (ModulePath ".")? ConstrName;
 
-syntax Field = field_name: FieldName
-             | path_field_name: (ModulePath ".")? FieldName;             
+syntax Field = field_name: (ModulePath ".")? FieldName;
 
 syntax ClassPath = classPath: (ModulePath "." )? ClassName;
 
@@ -118,15 +117,15 @@ syntax TagSpecFull
 
 syntax Expr 
 	 = prefix: 				PrefixSymbol Expr
-	 > field: 				Expr !constant "." Field  
+	 > field: 				Expr "." Field  
 	 | dotBracket1: 		Expr ".(" Expr ")"
 	 | dotBracket2: 		Expr ".[" Expr "]"
 	 | dotBracket3: 		Expr ".{" Expr "}"
 	 > hash: 				Expr "#" MethodName
      > non-assoc 
      (
-     functionApplication: 	Expr !semicolon !constant Arg+
-     | constrExp: 			Constr Expr
+     functionApplication: 	Expr !semicolon Arg+
+     //| constrExp: 			Constr Expr    To avoid ambiguities with Expr Arg+ as Expr can derive Constr
      | polyVariant:	 		"`" TagName Expr  
      | lazy: 				"lazy" Expr
      | assertExpr: 			"assert" Expr
@@ -176,7 +175,8 @@ syntax Expr
      | new: 				"new" ClassPath
      | object: 		 		"object" ClassBody "end"  
      | moduleExpr: 	 		"(" "module" ModuleExpr  (":" PackageType)? ")"  
-     | valuePath: 	 		ValuePath
+     //| valuePath: 	 		ValuePath
+     | 						ValueName
 	 | constant: 			Constant
      ; 
      
