@@ -49,7 +49,9 @@ syntax ModTypeName = Ident;
 
 syntax ModulePath = modulePath: (ModuleName ".")* ModuleName;
 
-syntax Constr = const: (ModulePath ".")? ConstrName;
+syntax Constr = const: (ModulePath ".")? ConstrName !>> (Dot ());
+
+lexical Dot = [.][A-Z];
 
 syntax Field = field_name: (ModulePath ".")? FieldName;
 
@@ -116,11 +118,11 @@ syntax TagSpecFull
 // Expressions
 
 syntax Expr 
-	 = prefix: 				PrefixSymbol Expr
-	 > field: 				Expr "." Field  
-	 | dotBracket1: 		Expr ".(" Expr ")"
-	 | dotBracket2: 		Expr ".[" Expr "]"
-	 | dotBracket3: 		Expr ".{" Expr "}"
+	 = prefix: 				PrefixSymbol Expr !valuePath
+	 > non-assoc field: 			Expr "." Field  
+	 | non-assoc dotBracket1: 		Expr ".(" Expr ")"
+	 | non-assoc dotBracket2: 		Expr ".[" Expr "]"
+	 | non-assoc dotBracket3: 		Expr ".{" Expr "}"
 	 > hash: 				Expr "#" MethodName
      > non-assoc 
      (
@@ -178,6 +180,7 @@ syntax Expr
      //| valuePath: 	 		ValuePath
      | 						ValueName
 	 | constant: 			Constant
+	 //| 						InstVarName
      ; 
      
      
