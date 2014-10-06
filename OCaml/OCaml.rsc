@@ -52,7 +52,7 @@ syntax ModulePath = modulePath: (ModuleName ".")* ModuleName;
 syntax Constr = const: (ModulePath ".")? ConstrName;
 
 syntax Field = field_name: FieldName
-             | path_field_name: ModulePath "." FieldName;
+             | path_field_name: (ModulePath ".")? FieldName;             
 
 syntax ClassPath = classPath: (ModulePath "." )? ClassName;
 
@@ -152,7 +152,7 @@ syntax Expr
      )
      > right infix8: 		Expr InfixSymbol8 Expr
      > ifThenElse: 	 		"if" Expr "then" Expr "else" Expr
-     | ifThen: 		 		"if"  Expr "then" Expr !>> " else" !>> "else"
+     | ifThen: 		 		"if"  Expr "then" Expr !>> (Else ())
      > semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
      > match: 		 		"match" Expr "with" PatternMatching
@@ -180,6 +180,9 @@ syntax Expr
 	 | constant: 			Constant
      ; 
      
+     
+lexical Else = [\ \r \n \t]+ "else";     
+     
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
@@ -195,8 +198,10 @@ syntax Arg
      ;
            
 syntax PatternMatching 
-     = patternMatching: "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> (Layout "|") 
+     = patternMatching: "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> Bar 
      ;
+     
+lexical Bar = [\ \n \r \t][|];     
      
 syntax InnerPatternMatching
 	 = innerPatternMatching: "|" Pattern ("when" Expr)? "-\>" Expr
@@ -525,8 +530,8 @@ lexical RegularCharStr = ![\"\\];
 lexical OperatorChar = [! $ % & * + \- . / : \< = \> ? @ ^ | ~];
 
 lexical PrefixSymbol = [!] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
-   	                 | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
-	                 ;
+   	                  | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+	                     ;
 
 lexical Label =	"~" LowercaseIdentifier !>> ":";                 
 lexical LabelColon =	"~" LowercaseIdentifier ":";
