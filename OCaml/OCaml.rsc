@@ -389,7 +389,7 @@ syntax TypeConstraint
 	 = typeConstraint: "constraint" "\'" Ident "=" Typexpr;
      
 syntax ExceptionDefinition 
-	 = exception1: "exception" ConstrName ("of" Typexpr !star ("*" Typexpr)* )?
+	 = exception1: "exception" ConstrName ("of" Typexpr !star ("*" Typexpr !star)* )?
      | exception2: "exception" ConstrName "=" Constr
      ;
      
@@ -423,13 +423,12 @@ syntax ClassExpr
 	 ;
 
 syntax ClassField 
-     = inheritance: ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
-     | classValue: ("val"|"val!") "mutable"? InstVarName (":" Typexpr)? "=" Expr
-     | virtualValue: "val" "mutable"? "virtual" InstVarName ":" Typexpr
-     | method1: ("method" | "method!") "private"? MethodName Parameter* (":" Typexpr)? "=" Expr
-     | method2: "method" "private"? MethodName ":"  PolyTypExpr "=" Expr  
-     | method3: "method" "private"? "virtual" MethodName ":" PolyTypExpr
-     | classConstraint: "constraint" Typexpr "=" Typexpr
+     = inheritance:      ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
+     | classValue:       ("val"|"val!") "mutable"? InstVarName (":" Typexpr)? "=" Expr
+     | virtualValue:     "val" "mutable"? "virtual" InstVarName ":" Typexpr
+     |                   ("method" | "method!") "private"? MethodName Parameter* (":" PolyTypExpr)? "=" Expr     
+     | method3:          "method" "private"? "virtual" MethodName ":" PolyTypExpr
+     | classConstraint:  "constraint" Typexpr "=" Typexpr
      | classInitializer: "initializer" Expr
      ;
      
