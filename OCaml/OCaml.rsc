@@ -211,7 +211,8 @@ syntax InnerPatternMatching
 	 ;     
            
 syntax LetBinding 
-	 = letBinding:      Pattern Parameter* (":" PolyTypExpr)? (":\>" Typexpr)? "=" Expr 
+     =                  Pattern !patternValueName "="  Expr  
+	 | letBinding:      ValueName Parameter* (":" PolyTypExpr)? (":\>" Typexpr)? "=" Expr 
 	 | bindingNew:		ValueName ":" "type"  TypeConstr* "."  Typexpr "="  Expr
 	 ;
 	 
