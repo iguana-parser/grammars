@@ -126,23 +126,23 @@ syntax Expr
 	 > hash: 				Expr "#" MethodName
      > non-assoc 
      (
-     functionApplication: 	Expr !semicolon Arg+
+     functionApplication: 	Expr  Arg+
      //| constrExp: 			Constr Expr    To avoid ambiguities with Expr Arg+ as Expr can derive Constr
-     | polyVariant:	 		"`" TagName Expr  
+     //| polyVariant:	 		"`" TagName Expr  To Avoid ambiguities with Constant("`" TagName) Arg(Expr)
      | lazy: 				"lazy" Expr
      | assertExpr: 			"assert" Expr
      )
      > unaryMinus: 			"-"  Expr | floatUnaryMinus: "-." Expr
      > right infix1: 		Expr InfixSymbol1 Expr
      > left  infix2: 		Expr InfixSymbol2 Expr
-     > left  infix3: 		Expr !semicolon InfixSymbol3 Expr   // to disambiguate [|   5.2026032092;     19132e-10;  -39e-10 |];
+     > left  infix3: 		Expr InfixSymbol3 Expr   // to disambiguate [|   5.2026032092;     19132e-10;  -39e-10 |];
      > right coloncolon:	Expr "::" Expr
      > right infix4: 		Expr InfixSymbol4 Expr
      > left  infix5: 		Expr InfixSymbol5 Expr
      | left  uneq:   		Expr "!=" Expr
      > right infix6: 		Expr InfixSymbol6 Expr
      > right infix7: 		Expr InfixSymbol7 Expr
-     > non-assoc comma: 	Expr ("," Expr !comma !sep !semicolon)+
+     > non-assoc comma: 	Expr ("," Expr !comma !sep)+
      > right 
      (
        assign1: 			Expr "." Field "\<-" Expr
@@ -154,7 +154,7 @@ syntax Expr
      > right infix8: 		Expr InfixSymbol8 Expr
      > ifThenElse: 	 		"if" Expr "then" Expr "else" Expr
      | ifThen: 		 		"if"  Expr "then" Expr !>> (Else ())
-     > semicolon: 	 		Expr ";" !>>  ";"
+     //> semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
      > match: 		 		"match" Expr "with" PatternMatching
      | function: 	 		"function" PatternMatching
@@ -167,11 +167,11 @@ syntax Expr
   	 | brackets1: 	 		"(" Expr ":" Typexpr ")"
   	 | brackets2:	 		"(" Expr ":\>"  Typexpr ")"  
  	 | brackets3: 	 		"(" Expr ":"  Typexpr ":\>"  Typexpr ")"  
- 	 | brackets4: 	 		"{\<" InstVarName "=" Expr !semicolon !sep  (";" InstVarName "="  Expr)*  ";"? "\>}"  
-  	 | tupl: 		 		"["  {Expr !sep !semicolon ";"}+ ";"? "]"
-     | array: 		 		"[|" {Expr !sep !semicolon ";"}+ ";"? "|]"
-     | record1:	     		"{" Field ("=" Expr !semicolon !sep)? (";" Field ("=" Expr !semicolon !sep)?)* ";"? "}"
-     | record2: 	 		"{" Expr "with" Field ("=" Expr !semicolon !sep )? (";" Field ("=" Expr !semicolon !sep)?)* ";"? "}"
+ 	 | brackets4: 	 		"{\<" InstVarName "=" Expr !sep  (";" InstVarName "="  Expr)*  ";"? "\>}"  
+  	 | tupl: 		 		"["  {Expr !sep ";"}+ ";"? "]"
+     | array: 		 		"[|" {Expr !sep ";"}+ ";"? "|]"
+     | record1:	     		"{" Field ("=" Expr !sep)? (";" Field ("=" Expr !sep)?)* ";"? "}"
+     | record2: 	 		"{" Expr "with" Field ("=" Expr !sep )? (";" Field ("=" Expr !sep)?)* ";"? "}"
      | whileloop: 	 		"while" Expr "do" Expr "done"
      | forloop: 			"for" Ident "=" Expr ("to" | "downto") Expr "do" Expr "done"
      | new: 				"new" ClassPath
@@ -189,15 +189,15 @@ lexical Else = [\ \r \n \t]* "else";
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
- 	                       !infix8 !ifThenElse !ifThen !semicolon !sep !match !function !fun !tryBlock !letbinding !letModule 
+ 	                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule 
  	 | label: 		  Label
      | labelColon:    LabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
- 	                       			  !infix8 !ifThenElse !ifThen !semicolon !sep !match !function !fun !tryBlock !letbinding !letModule
+ 	                       			  !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      | optlabel:      OptLabel
      | optlabelColon: OptLabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
- 	                       				 !infix8 !ifThenElse !ifThen !semicolon !sep !match !function !fun !tryBlock !letbinding !letModule
+ 	                       				 !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      ;
            
 syntax PatternMatching 
@@ -211,8 +211,8 @@ syntax InnerPatternMatching
 	 ;     
            
 syntax LetBinding 
-	 = letBinding:      Pattern Parameter* (":" PolyTypExpr)? (":\>" Typexpr)? "=" Expr
-	 | bindingNew:		ValueName ":" "type"  TypeConstr* "."  Typexpr "="  Expr 
+	 = letBinding:      Pattern Parameter* (":" PolyTypExpr)? (":\>" Typexpr)? "=" Expr 
+	 | bindingNew:		ValueName ":" "type"  TypeConstr* "."  Typexpr "="  Expr
 	 ;
 	 
 syntax MultipleMatching
@@ -226,7 +226,7 @@ syntax Parameter
      | param4:		 "?" LabelName !>> ":"
      | param5:		 "?" "(" LabelName (":" Typexpr)? ("=" Expr)? ")"
      | param6: 		 "?" LabelName ":" Pattern
-     | param7: 		 "?" LabelName ":" "(" Pattern (":" Typexpr)? ("=" Expr)? ")"
+     | param7: 		 "?" LabelName ":" "(" Pattern ":" Typexpr "=" Expr ")"
      | typeParam:	 "(" "type" TypeconstrName ")"  
      ;
 
@@ -265,7 +265,7 @@ syntax Constant
 	 | emptyBrackets:	"[" "]"
 	 | emptyArray: 		"[|" "|]"
 	 | emptyCurly: 		"{\<" "\>}"
-     | "`" TagName
+     | 					"`" TagName
      | int32: 			Int32Literal  
 	 | int64: 			Int64Literal  
      | nativeInt: 		NativeIntLiteral
@@ -290,7 +290,6 @@ syntax Definition
      | open: "open" ModulePath
      | include: "include" ModuleExpr
      ;
-     
      
 syntax ModuleExpr 
      = modExpModPath: ModulePath
@@ -563,8 +562,7 @@ keyword Keywords = "_" |
         "val"|       "virtual"|      "when"|        "while"|         "with";
 
 
-lexical Comment
-	= @category="Comment" "(*" (![*] | Comment | "*" !>> [)])* "*)";         
+lexical Comment = "(*" (![(*] | Comment | "*" !>> [)] | "(" !>> [*])* "*)";         
 	
 lexical Whitespace = [\ \t\n\r \u0009-\u000D];
 	
