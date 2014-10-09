@@ -221,7 +221,7 @@ syntax MultipleMatching
      = multipleMatching: Parameter+ ("when" Expr)? "-\>" Expr;	 
 
 syntax Parameter 
-	 = patternParam: Pattern
+	 = patternParam: Pattern !constrPattern  // Paramter always comes in lists and can match another pattern
      | param1: 		 Label 
      | param2:		 "~" "(" LabelName (":" Typexpr)? ")"
      | param3:		 LabelColon Pattern
@@ -278,7 +278,7 @@ syntax Constant
 
 syntax Definition 
 	 = defVal:       "val" ValueName ":" Typexpr
-	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)* ";"?
+	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)* 
      | external:     "external" ValueName ":" Typexpr "=" ExternalDeclaration
      | typeDef:      TypeDefinition
      | exceptionDef: ExceptionDefinition
@@ -305,7 +305,7 @@ syntax ModuleExpr
      ;      
      
 syntax ModuleItems
-     = ";;"? (Definition | Expr) ((";;"? Definition) | (";;" Expr))* ";;"?
+     = ";;"? ( (Definition ";"?) | Expr) ((";;"? Definition ";"?) | (";;" Expr))* ";;"?
      ;     
      
 // ModuleTypes
