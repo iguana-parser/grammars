@@ -163,7 +163,7 @@ syntax Expr
      | letModule:	 		"let" "module" ModuleName "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
      | brackets: 			"(" Expr ")"
-  	 | beginEnd: 	 		"begin" Expr "end"
+  	 | beginEnd: 	 		"begin" Expr ";"? "end"
   	 | brackets1: 	 		"(" Expr ":" Typexpr ")"
   	 | brackets2:	 		"(" Expr ":\>"  Typexpr ")"  
  	 | brackets3: 	 		"(" Expr ":"  Typexpr ":\>"  Typexpr ")"  
@@ -172,8 +172,8 @@ syntax Expr
      | array: 		 		"[|" {Expr !sep ";"}+ ";"? "|]"
      | record1:	     		"{" Field ("=" Expr !sep)? (";" Field ("=" Expr !sep)?)* ";"? "}"
      | record2: 	 		"{" Expr "with" Field ("=" Expr !sep )? (";" Field ("=" Expr !sep)?)* ";"? "}"
-     | whileloop: 	 		"while" Expr "do" Expr "done"
-     | forloop: 			"for" Ident "=" Expr ("to" | "downto") Expr "do" Expr "done"
+     | whileloop: 	 		"while" Expr "do" Expr ";"? "done"
+     | forloop: 			"for" Ident "=" Expr ("to" | "downto") Expr "do" Expr ";"? "done"
      | new: 				"new" ClassPath
      | object: 		 		"object" ClassBody "end"  
      | moduleExpr: 	 		"(" "module" ModuleExpr  (":" PackageType)? ")"  
@@ -202,13 +202,13 @@ syntax Arg
      ;
            
 syntax PatternMatching 
-     = patternMatching: "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> (Bar ()) 
+     =  "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> (Bar ()) 
      ;
      
 lexical Bar = [\ \n \r \t]*[|];     
      
 syntax InnerPatternMatching
-	 = innerPatternMatching: "|" Pattern ("when" Expr)? "-\>" Expr
+	 = ";"? "|" Pattern ("when" Expr)? "-\>" Expr
 	 ;     
            
 syntax LetBinding 
@@ -244,6 +244,7 @@ syntax Pattern
 	 | patternValueName: 	  ValueName
      | anyPattern: 			  "_" !>> [a-zA-Z0-9]   // To enforce longest match with identifiers
      | patternConstant: 	  Constant
+     |                        NegativeIntegerLiteral
      | patternRange: 		  CharLiteral ".." CharLiteral   // Extensions
      | patternBrackets: 	  "(" Pattern ")"
      | patternTypxprBrackets: "(" Pattern ":" Typexpr ")"
@@ -277,7 +278,7 @@ syntax Constant
 
 syntax Definition 
 	 = defVal:       "val" ValueName ":" Typexpr
-	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)*
+	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)* ";"?
      | external:     "external" ValueName ":" Typexpr "=" ExternalDeclaration
      | typeDef:      TypeDefinition
      | exceptionDef: ExceptionDefinition
@@ -397,7 +398,6 @@ syntax ExceptionDefinition
      | exception2: "exception" ConstrName "=" Constr
      ;
      
-     
 // Classes
 
 syntax ClassType 
@@ -487,8 +487,6 @@ lexical LowercaseIdentifier = ([a-zA-Z_0-9] !<< [a-z_] [A-Za-z0-9_\']* !>> [A-Za
 
 lexical CapitalizedIdentifier = ([a-zA-Z_0-9] !<< [A-Z] [A-Za-z0-9_\']* !>> [A-Za-z0-9_\']) \ Keywords;
 
-lexical IntegerLiteral1 = [0-9] [0-9_]* !>> [0-9_.eE];
-
 lexical Int32Literal = SpecialInt [l];  
  
 lexical Int64Literal = SpecialInt [L];  
@@ -506,6 +504,8 @@ lexical IntegerLiteral = [0-9] [0-9_]* !>> [0-9_.eElLn]
  					   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
  					   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
  					   ;
+ 					   
+lexical NegativeIntegerLiteral = [\-] IntegerLiteral; 					   
 
 lexical FloatLiteral =  [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
 				     |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
