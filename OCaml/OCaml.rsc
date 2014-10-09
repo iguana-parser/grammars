@@ -1,19 +1,18 @@
 module OCaml
 
 // Top-level     		
-start syntax Interface = specifications: (Specification ";;"?)*; 
-    	 
-start syntax Implementation = definitions: (Definition ";;"?)*;
 
-start syntax TopLevel = toplevels: TopLevelPhrase*
-			          | toplevels1: TopLevelPhrase* Expr
-			          | toplevels2: TopLevelPhrase* Definition
-			          ;
+start syntax TopLevel = TopLevelPhrase*;
 
 syntax TopLevelPhrase 
-	 = topLevelDefinitions: Definition+ ";;"
-   	 | expr: Expr ";;"
-   	 ;     		
+	 = Definition
+   	 | Expr
+   	 ;
+   	 
+start syntax Interface = (Specification ";;"?)*; 
+    	 
+start syntax Implementation = ModuleItems?;
+   	      		
  
 // Names
 syntax ValuePath 
@@ -162,6 +161,7 @@ syntax Expr
      | tryBlock: 	 		"try" Expr "with" PatternMatching     
      | letbinding: 	 		"let" "rec"? {LetBinding "and"}+ "in" Expr
      | letModule:	 		"let" "module" ModuleName "="  ModuleExpr "in"  Expr 
+     | letOpen:             "let" "open" ModulePath "in"  Expr
      | brackets: 			"(" Expr ")"
   	 | beginEnd: 	 		"begin" Expr "end"
   	 | brackets1: 	 		"(" Expr ":" Typexpr ")"
@@ -276,21 +276,21 @@ syntax Constant
 // ModuleExpressions 
 
 syntax Definition 
-	 = defVal: "val" ValueName ":" Typexpr
-	 | letDef: "let" "rec"? LetBinding  ("and" LetBinding)*
-     | external: "external" ValueName ":" Typexpr "=" ExternalDeclaration
-     | typeDef: TypeDefinition
+	 = defVal:       "val" ValueName ":" Typexpr
+	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)*
+     | external:     "external" ValueName ":" Typexpr "=" ExternalDeclaration
+     | typeDef:      TypeDefinition
      | exceptionDef: ExceptionDefinition
-     | classDef:ClassDefinition
+     | classDef:     ClassDefinition
      | classTypeDef: ClassTypeDefinition
-     | moduleDef1: "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
-     | moduleDef2: "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
-     | modType1: "module" "type" ModTypeName "=" ModuleType
-     | modType2: "module" "type" ModTypeName
-     | modRec1: "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
-     | modRec2: "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
-     | open: "open" ModulePath
-     | include: "include" ModuleExpr
+     | moduleDef1:   "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
+     | moduleDef2:   "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
+     | modType1:     "module" "type" ModTypeName "=" ModuleType
+     | modType2:     "module" "type" ModTypeName
+     | modRec1:      "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
+     | modRec2:      "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
+     | open:         "open" ModulePath
+     | include:      "include" ModuleExpr
      ;
      
 syntax ModuleExpr 
