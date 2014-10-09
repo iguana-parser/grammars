@@ -222,13 +222,13 @@ syntax MultipleMatching
 
 syntax Parameter 
 	 = patternParam: Pattern
-     | param1: 		 "~" LabelName !>> ":"
+     | param1: 		 Label 
      | param2:		 "~" "(" LabelName (":" Typexpr)? ")"
-     | param3:		 "~" LabelName ":" Pattern
-     | param4:		 "?" LabelName !>> ":"
+     | param3:		 LabelColon Pattern
+     | param4:		 OptLabel 
      | param5:		 "?" "(" LabelName (":" Typexpr)? ("=" Expr)? ")"
-     | param6: 		 "?" LabelName ":" Pattern
-     | param7: 		 "?" LabelName ":" "(" Pattern ":" Typexpr "=" Expr ")"
+     | param6: 		 OptLabelColon Pattern
+     | param7: 		 OptLabelColon "(" Pattern ":" Typexpr "=" Expr ")"
      | typeParam:	 "(" "type" TypeconstrName ")"  
      ;
 
