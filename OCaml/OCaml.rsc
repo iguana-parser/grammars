@@ -294,16 +294,18 @@ syntax Definition
      ;
      
 syntax ModuleExpr 
-     = modExpModPath: ModulePath
-     | struct1: "struct" ((Definition+ ";;") | (Expr ";;"))* "end"
-     | struct2: "struct" Definition+ "end"
-     | Expr (";;" Expr)* ";;"? (Definition (";;" Expr)* ";;"?)* "end"
-     | functor: "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
-     | modApp: ModuleExpr "(" ModuleExpr ")"
-     | modExprBrackets: "(" ModuleExpr ")"
-     | moduleExprType: "(" ModuleExpr ":" ModuleType ")"
-     | moduleExprVal: "(" "val" Expr  (":" PackageType)? ")" 
+     = 					 ModulePath
+     | struct1:          "struct" ModuleItems? "end"
+     | functor: 	     "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
+     | modApp:			 ModuleExpr "(" ModuleExpr ")"
+     | modExprBrackets:  "(" ModuleExpr ")"
+     | moduleExprType:   "(" ModuleExpr ":" ModuleType ")"
+     | moduleExprVal:    "(" "val" Expr  (":" PackageType)? ")" 
      ;      
+     
+syntax ModuleItems
+     = ";;"? (Definition | Expr) ((";;"? Definition) | (";;" Expr))* ";;"?
+     ;     
      
 // ModuleTypes
  	
@@ -329,9 +331,9 @@ syntax ModuleType
      | sig:               "sig" ( Specification ";;"? )* "end"
      | modTypeOf:         "module" "type" "of" ModuleExpr
      | modTypeWith:       ModuleType "with" ModConstraint ("and" ModConstraint)*
+     | bracketModType2:   ModuleType !modTypeWith "(" ModuleType ")"
      > functor:           "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleType
      | bracketModType1:   "(" ModuleType ")"
-     | bracketModType2:   ModuleType !modTypeWith "(" ModuleType ")"
      ;
 
 
