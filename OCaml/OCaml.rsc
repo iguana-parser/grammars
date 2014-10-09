@@ -152,7 +152,7 @@ syntax Expr
      | assign5:		 		InstVarName "\<-" Expr
      )
      > right infix8: 		Expr InfixSymbol8 Expr
-     > ifThenElse: 	 		"if" Expr "then" Expr "else" Expr
+     > ifThenElse: 	 		"if" Expr  "then" Expr !sep "else" Expr
      | ifThen: 		 		"if"  Expr "then" Expr !>> (Else ())
      //> semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
