@@ -537,13 +537,14 @@ lexical LabelColon =	"~" LowercaseIdentifier ":";
 lexical OptLabel = "?" LowercaseIdentifier !>> ":";
 lexical OptLabelColon = "?" LowercaseIdentifier ":";	                 
 
-lexical InfixSymbol1 = "lsl" | "lsr" | "asr" | ([*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol1Exclude;
-lexical InfixSymbol2 = "mod" | "land"| "lor" | "lxor" | ([/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol2Exclude; 
+lexical InfixSymbol1 = ("lsl" | "lsr" | "asr") !>> [a-z0-9] | ([*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol1Exclude;
+lexical InfixSymbol2 = ("mod" | "land"| "lor" | "lxor") !>> [a-z0-9] 
+                     | ([/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol2Exclude; 
 lexical InfixSymbol3 = ([+ \-] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol3Exclude;
 lexical InfixSymbol4 = [@ ^] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~];
 lexical InfixSymbol5 = ([= \< \> | & $] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol5Exclude;
-lexical InfixSymbol6 =  "&" | "&&";                      
-lexical InfixSymbol7 =  "||" | "or";
+lexical InfixSymbol6 =  "&" !>> [&] | "&&";                      
+lexical InfixSymbol7 =  "||" | "or" !>> [a-z0-9];
 lexical InfixSymbol8 =  ":=";
 
 keyword InfixSymbol1Exclude = ")";
