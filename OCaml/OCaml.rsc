@@ -69,7 +69,7 @@ syntax ExtendedModulePath = extendedModulePath1: (ExtendedModulePath ".")? Modul
 
 syntax Typexpr 
 	 = typexprConstr1: Typexpr TypeConstr
-	 > non-assoc star: Typexpr "*" {Typexpr !star "*"}+
+	 > non-assoc star: Typexpr "*" {Typexpr !star ! arrow1 "*"}+
 	 > right (arrow1: Typexpr "-\>" Typexpr
 	 |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
 	 > typexprAsId: Typexpr "as" "\'" Ident 
@@ -184,7 +184,8 @@ syntax Expr
      ; 
      
      
-lexical Else = [\ \r \n \t]* "else";     
+lexical Else = ([\ \r \n \t]| ("(*" (![*] | "*" !>> [)])* "*)"))* "else";
+
      
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
@@ -237,7 +238,7 @@ syntax Pattern
 	 = constrPattern: 		  Constr Pattern
 	 > tagNamePattern: 		  "`" TagName Pattern
 	 > right listCons: 		  Pattern "::" Pattern
-	 > non-assoc patterns: 	  Pattern "," {Pattern !patterns !patternBar !patternAs ","}+
+	 > non-assoc patterns: 	  Pattern "," {Pattern !patterns !patternBar !patternAs !lazyPattern ","}+
 	 > left patternBar: 	  Pattern "|" Pattern
 	 > patternAs: 			  Pattern "as" ValueName
 	 | patternValueName: 	  ValueName
