@@ -69,7 +69,7 @@ syntax ExtendedModulePath = extendedModulePath1: (ExtendedModulePath ".")? Modul
 
 syntax Typexpr 
 	 = typexprConstr1: Typexpr TypeConstr
-	 > non-assoc star: Typexpr "*" {Typexpr !star ! arrow1 "*"}+
+	 > non-assoc star: Typexpr "*" {Typexpr !star !arrow1 "*"}+
 	 > right (arrow1: Typexpr "-\>" Typexpr
 	 |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
 	 > typexprAsId: Typexpr "as" "\'" Ident 
@@ -378,8 +378,8 @@ syntax Variance
      | negVariance: "-";
      
 syntax ConstrDecl 
-     = constDecl1: ConstrName ("of" { Typexpr !star "*"}+)?
-     | constDecl2: ConstrName ":" { Typexpr !star "*" }+ "-\>"  Typexpr
+     = constDecl1: ConstrName ("of" { Typexpr !star !arrow1 "*"}+)?
+     | constDecl2: ConstrName ":" { Typexpr !star !arrow1 "*" }+ "-\>"  Typexpr
      ;
 
 syntax FieldDecl 
@@ -391,7 +391,7 @@ syntax TypeConstraint
 	 = typeConstraint: "constraint" "\'" Ident "=" Typexpr;
      
 syntax ExceptionDefinition 
-	 = exception1: "exception" ConstrName ("of" Typexpr !star ("*" Typexpr !star)* )?
+	 = exception1: "exception" ConstrName ("of" Typexpr !star !arrow1 ("*" Typexpr !star !arrow1)* )?
      | exception2: "exception" ConstrName "=" Constr
      ;
      
