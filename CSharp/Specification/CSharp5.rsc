@@ -926,8 +926,7 @@ syntax TypeParameterConstraintsClause
      ;
 
 syntax TypeParameterConstraints
-     = TypeName
-     | PrimaryConstraint
+     = PrimaryConstraint
      | SecondaryConstraints
      | ConstructorConstraint
      | PrimaryConstraint   ","   SecondaryConstraints
@@ -942,7 +941,7 @@ syntax PrimaryConstraint
      ;
 
 syntax SecondaryConstraints
-     = TypeName  (","   TypeName)*
+     = { TypeName "," }+
      ;
 
 syntax ConstructorConstraint
