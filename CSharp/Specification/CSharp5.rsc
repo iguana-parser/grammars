@@ -189,7 +189,7 @@ syntax ThisAccess
      ;
 
 syntax BaseAccess
-     = "base"   "."   Identifier 
+     = "base"   "."   Identifier TypeArgumentList?
      | "base"   "["   ArgumentList   "]"
      ;
 
