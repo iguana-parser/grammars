@@ -1573,6 +1573,7 @@ syntax AttributeTarget
     | "property"
     | "return"
     | "type"
+    | "typevar"
     ;
 
 syntax AttributeList
