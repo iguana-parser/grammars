@@ -106,7 +106,6 @@ syntax TypeArgument
 syntax TypeParameter
      = Identifier
      ;
-     
 
 // Variables
 
@@ -923,10 +922,6 @@ syntax TypeParameters
      | TypeParameters   ","   Attributes?   TypeParameter
      ;
 
-syntax TypeParameter
-     = Identifier
-     ;
-
 syntax ClassBase
      = ":" TypeNameList
      ;
@@ -956,8 +951,7 @@ syntax PrimaryConstraint
      ;
 
 syntax SecondaryConstraints
-     = SecondaryConstraints   ","   TypeName
-     | SecondaryConstraints   ","   TypeParameter
+     = TypeName  (","   TypeName)*
      ;
 
 syntax ConstructorConstraint
