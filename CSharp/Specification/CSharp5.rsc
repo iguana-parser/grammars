@@ -1540,8 +1540,7 @@ syntax GlobalAttributes
     ;
 
 syntax GlobalAttributeSection
-    = "["   GlobalAttributeTargetSpecifier   AttributeList   "]"
-    | "["   GlobalAttributeTargetSpecifier   AttributeList   ","   "]"
+    = "["   GlobalAttributeTargetSpecifier   AttributeList   ","?   "]"
     ;
 
 
@@ -1559,8 +1558,7 @@ syntax Attributes
     ;
 
 syntax AttributeSection
-    = "["   AttributeTargetSpecifier?   AttributeList   "]"
-    | "["   AttributeTargetSpecifier?   AttributeList   ","   "]"
+    = "["   AttributeTargetSpecifier?   AttributeList   ","?   "]"
     ;
 
 syntax AttributeTargetSpecifier
