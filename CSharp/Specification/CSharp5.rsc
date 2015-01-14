@@ -1840,8 +1840,8 @@ lexical Keyword
       | "void"
       | "volatile"
       | "while"
-      | "async"
-      | "await"
+      //| "async"
+      //| "await"
       ;
 
 // Literals      
