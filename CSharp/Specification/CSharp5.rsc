@@ -444,16 +444,11 @@ syntax AnonymousMethodExpression
 syntax AnonymousFunctionSignature
      = ExplicitAnonymousFunctionSignature 
      | ImplicitAnonymousFunctionSignature
-     | "(" ")" // Separating the empty case to avoid ambiguity
      ;
      
      
 syntax ExplicitAnonymousFunctionSignature
-     = "("   ExplicitAnonymousFunctionParameterList   ")"
-     ;
-
-syntax ExplicitAnonymousFunctionParameterList
-     = { ExplicitAnonymousFunctionParameter "," }*
+     = "("   { ExplicitAnonymousFunctionParameter "," }*   ")"
      ;
 
 syntax ExplicitAnonymousFunctionParameter
@@ -466,12 +461,8 @@ syntax AnonymousFunctionParameterModifier
      ;
 
 syntax ImplicitAnonymousFunctionSignature
-     = "("   ImplicitAnonymousFunctionParameterList   ")"
+     = "("   { ImplicitAnonymousFunctionParameter ","}+   ")"
      | ImplicitAnonymousFunctionParameter
-     ;
-
-syntax ImplicitAnonymousFunctionParameterList
-     = { ImplicitAnonymousFunctionParameter ","}+
      ;
 
 syntax ImplicitAnonymousFunctionParameter
