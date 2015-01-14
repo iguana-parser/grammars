@@ -453,7 +453,7 @@ syntax ExplicitAnonymousFunctionSignature
      ;
 
 syntax ExplicitAnonymousFunctionParameterList
-     = { ExplicitAnonymousFunctionParameter "," }+
+     = { ExplicitAnonymousFunctionParameter "," }*
      ;
 
 syntax ExplicitAnonymousFunctionParameter
