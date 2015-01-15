@@ -635,7 +635,7 @@ syntax LocalVariableDeclaration
      ;
 
 syntax LocalVariableType
-     = Type \ "var"
+     = Type \ "var" \ "await"
      | "var"
      ;
      
@@ -645,7 +645,7 @@ syntax LocalVariableDeclarators
 
 syntax LocalVariableDeclarator
      = Identifier
-	     | Identifier   "="   LocalVariableInitializer
+	 | Identifier   "="   LocalVariableInitializer
 	     ;
 	 
 syntax LocalVariableInitializer
