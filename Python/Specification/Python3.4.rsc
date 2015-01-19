@@ -3,261 +3,428 @@
  *  Python 3.4 
  *
  **/
+ 
+module Python
 
-syntax SingleInput = NEWLINE 
-                   | SimpleStmt 
-                   | CompoundStmt NEWLINE
+syntax SingleInput 
+     = NEWLINE 
+     | SimpleStmt 
+     | CompoundStmt NEWLINE
+     ;
 
-syntax FileInput =  (NEWLINE | Stmt)* ENDMARKER
+syntax FileInput 
+     =  (NEWLINE | Stmt)* ENDMARKER
+     ;
 
-syntax EvalInput =  TestList NEWLINE* ENDMARKER
+syntax EvalInput 
+     =  TestList NEWLINE* ENDMARKER
+     ;
 
 
-syntax Decorator =  "@" DottedName [ "(" [Arglist] ")" ] NEWLINE
+syntax Decorator 
+     =  "@" DottedName [ "(" [Arglist] ")" ] NEWLINE
+     ;
 
-syntax decorators =  Decorator+
+syntax decorators 
+     =  Decorator+
+     ;
 
-syntax Decorated =  Decorators (Classdef | Funcdef)
+syntax Decorated 
+     =  Decorators (Classdef | Funcdef)
+     ;
 
-syntax Funcdef =  "def" NAME Parameters ["->" Test] ":" Suite
+syntax Funcdef 
+     =  "def" NAME Parameters ["->" Test] ":" Suite
+     ;
 
-syntax Parameters =  "(" [Typedargslist] ")"
+syntax Parameters 
+     =  "(" [Typedargslist] ")"
+     ;
 
-syntax Typedargslist =  (Tfpdef ["=" Test] ("," Tfpdef ["=" Test])* [","
+syntax Typedargslist 
+     =  (Tfpdef ["=" Test] ("," Tfpdef ["=" Test])* [","
        ["*" [Tfpdef] ("," Tfpdef ["=" Test])* ["," "**" Tfpdef] | "**" Tfpdef]]
      |  "*" [Tfpdef] ("," Tfpdef ["=" Test])* ["," "**" Tfpdef] | "**" Tfpdef)
+     ;
 
-syntax Tfpdef =  NAME [":" Test]
+syntax Tfpdef 
+     =  NAME [":" Test]
+     ;
 
-syntax Varargslist =  (Vfpdef ["=" Test] ("," Vfpdef ["=" Test])* [","
+syntax Varargslist 
+     =  (Vfpdef ["=" Test] ("," Vfpdef ["=" Test])* [","
        ["*" [Vfpdef] ("," Vfpdef ["=" Test])* ["," "**" Vfpdef] | "**" Vfpdef]]
      |  "*" [Vfpdef] ("," Vfpdef ["=" Test])* ["," "**" Vfpdef] | "**" Vfpdef)
+     ;
 
-syntax Vfpdef =  NAME
+syntax Vfpdef 
+     =  NAME
+     ;
 
+syntax Stmt 
+     =  SimpleStmt 
+     | CompoundStmt
+     ;
 
-syntax Stmt =  SimpleStmt | CompoundStmt
+syntax SimpleStmt 
+    =  SmallStmt (";" SmallStmt)* [";"] NEWLINE
+    ;
 
-syntax SimpleStmt =  SmallStmt (";" SmallStmt)* [";"] NEWLINE
+syntax SmallStmt 
+     = ExprStmt 
+     | DelStmt 
+     | PassStmt 
+     | FlowStmt 
+     | ImportStmt 
+     | GlobalStmt 
+     | NonlocalStmt 
+     | AssertStmt
+     ;
 
-syntax SmallStmt = ExprStmt 
-                 | DelStmt 
-                 | PassStmt 
-                 | FlowStmt 
-                 | ImportStmt 
-                 | GlobalStmt 
-                 | NonlocalStmt 
-                 | AssertStmt
-
-syntax ExprStmt =  TestlistStarExpr (Augassign (YieldExpr|TestList) |
+syntax ExprStmt 
+     =  TestlistStarExpr (Augassign (YieldExpr|TestList) |
                      ("=" (YieldExpr|TestlistStarExpr))*)
+     ;
 
-syntax TestlistStarExpr =  (Test|StarExpr) ("," (Test|StarExpr))* [","]
+syntax TestlistStarExpr 
+     =  (Test|StarExpr) ("," (Test|StarExpr))* [","]
+     ;
 
-syntax Augassign = "+=" 
-                 | "-=" 
-                 | "*=" 
-                 | "/=" 
-                 | "%=" 
-                 | "&=" 
-                 | "|=" 
-                 | "^=" 
-                 | "<<=" 
-                 | ">>=" 
-                 | "**=" 
-                 | "//="
+syntax Augassign 
+     = "+=" 
+     | "-=" 
+     | "*=" 
+     | "/=" 
+     | "%=" 
+     | "&=" 
+     | "|=" 
+     | "^=" 
+     | "<<=" 
+     | ">>=" 
+     | "**=" 
+     | "//="
+     ;
 
 # For normal assignments, additional restrictions enforced by the interpreter
 
-syntax DelStmt =  "del" Exprlist
+syntax DelStmt 
+     =  "del" Exprlist
+     ;
 
-syntax PassStmt =  "pass"
+syntax PassStmt 
+     =  "pass"
+     ;
 
-syntax FlowStmt = BreakStmt 
-                | ContinueStmt 
-                | ReturnStmt 
-                | RaiseStmt 
-                | YieldStmt
+syntax FlowStmt 
+     = BreakStmt 
+     | ContinueStmt 
+     | ReturnStmt 
+     | RaiseStmt 
+     | YieldStmt
+     ;
 
-syntax BreakStmt =  "break"
+syntax BreakStmt 
+     =  "break"
+     ;
 
-syntax ContinueStmt =  "continue"
+syntax ContinueStmt 
+     =  "continue"
+     ;
 
-syntax ReturnStmt =  "return" [TestList]
+syntax ReturnStmt 
+     =  "return" [TestList]
+     ;
 
-syntax YieldStmt =  YieldExpr
+syntax YieldStmt 
+     =  YieldExpr
+     ;
 
-syntax RaiseStmt =  "raise" [Test ["from" Test]]
+syntax RaiseStmt 
+     =  "raise" [Test ["from" Test]]
+     ;
 
-syntax ImportStmt =  ImportName 
-                  | ImportFrom
+syntax ImportStmt 
+     =  ImportName 
+     | ImportFrom
+     ;
 
-syntax ImportName =  "import" DottedAsNames
+syntax ImportName 
+     =  "import" DottedAsNames
+     ;
 
-# note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
+// note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
 
-syntax ImportFrom =  ("from" (("." | "...")* DottedName | ("." | "...")+)
+syntax ImportFrom 
+     =  ("from" (("." | "...")* DottedName | ("." | "...")+)
               "import" ("*" | "(" ImportAsNames ")" | ImportAsNames))
+     ;
 
-syntax ImportAsName =  NAME ["as" NAME]
+syntax ImportAsName 
+    =  NAME ["as" NAME]
+    ;
 
-syntax DottedAsName =  DottedName ["as" NAME]
+syntax DottedAsName 
+     =  DottedName ["as" NAME]
+     ;
 
-syntax ImportAsNames =  ImportAsName ("," ImportAsName)* [","]
+syntax ImportAsNames 
+     =  ImportAsName ("," ImportAsName)* [","]
+     ;
 
-syntax DottedAsNames =  DottedAsName ("," DottedAsName)*
+syntax DottedAsNames 
+     =  DottedAsName ("," DottedAsName)*
+     ;
 
-syntax DottedName =  NAME ("." NAME)*
+syntax DottedName 
+     =  NAME ("." NAME)*
+     ;
 
-syntax GlobalStmt =  "global" NAME ("," NAME)*
+syntax GlobalStmt 
+     =  "global" NAME ("," NAME)*
+     ;
 
-syntax NonlocalStmt =  "nonlocal" NAME ("," NAME)*
+syntax NonlocalStmt 
+     =  "nonlocal" NAME ("," NAME)*
+     ;
 
-syntax AssertStmt =  "assert" test ["," test]
+syntax AssertStmt 
+     =  "assert" test ["," test]
+     ;
 
+syntax CompoundStmt 
+     = IfStmt 
+     | WhileStmt 
+     | ForStmt 
+     | TryStmt 
+     | WithStmt 
+     | Funcdef 
+     | Classdef 
+     | Decorated
+     ;
 
-syntax CompoundStmt = IfStmt 
-                    | WhileStmt 
-                    | ForStmt 
-                    | TryStmt 
-                    | WithStmt 
-                    | Funcdef 
-                    | Classdef 
-                    | Decorated
+syntax IfStmt 
+     =  "if" Test ":" Suite ("elif" Test ":" Suite)* ["else" ":" Suite]
+     ;
 
-syntax IfStmt =  "if" Test ":" Suite ("elif" Test ":" Suite)* ["else" ":" Suite]
+syntax WhileStmt 
+     =  "while" Test ":" Suite ["else" ":" Suite]
+     ;
 
-syntax WhileStmt =  "while" Test ":" Suite ["else" ":" Suite]
+syntax ForStmt 
+     =  "for" Exprlist "in" TestList ":" Suite ["else" ":" Suite]
+     ;
 
-syntax ForStmt =  "for" Exprlist "in" TestList ":" Suite ["else" ":" Suite]
-
-syntax TryStmt =  ("try" ":" Suite
+syntax TryStmt 
+     =  ("try" ":" Suite
            ((ExceptClause ":" Suite)+
             ["else" ":" Suite]
             ["finally" ":" Suite] |
            "finally" ":" Suite))
+      ;
 
-syntax WithStmt =  "with" WithItem ("," WithItem)*  ":" Suite
+syntax WithStmt 
+     =  "with" WithItem ("," WithItem)*  ":" Suite
+     ;
 
-syntax WithItem =  Test ["as" Expr]
+syntax WithItem 
+     =  Test ["as" Expr]
+     ;
 
-# NB compile.c makes sure that the default except clause is last
+// NB compile.c makes sure that the default except clause is last
 
-syntax ExceptClause =  "except" [Test ["as" NAME]]
+syntax ExceptClause 
+     =  "except" [Test ["as" NAME]]
+     ;
 
-syntax Suite =  SimpleStmt 
-             | NEWLINE INDENT Stmt+ DEDENT
+syntax Suite 
+     =  SimpleStmt 
+     | NEWLINE INDENT Stmt+ DEDENT
+     ;
 
 
-syntax Test =  OrTest ["if" OrTest "else" Test] 
-            | Lambdef
+syntax Test 
+     =  OrTest ["if" OrTest "else" Test] 
+     | Lambdef
+     ;
 
-syntax TestNocond =  OrTest 
-                  | LambdefNocond
+syntax TestNocond 
+     =  OrTest 
+     | LambdefNocond
+     ;
 
-syntax Lambdef =  "lambda" [Varargslist] ":" Test
+syntax Lambdef 
+     =  "lambda" [Varargslist] ":" Test
+     ;
 
-syntax LambdefNocond =  "lambda" [Varargslist] ":" TestNocond
+syntax LambdefNocond 
+     =  "lambda" [Varargslist] ":" TestNocond
+     ;
 
-syntax OrTest =  AndTest ("or" AndTest)*
+syntax OrTest 
+     =  AndTest ("or" AndTest)*
+     ;
 
-syntax AndTest =  NotTest ("and" NotTest)*
+syntax AndTest 
+     =  NotTest ("and" NotTest)*
+     ;
 
-syntax NotTest =  "not" NotTest 
-               | Comparison
+syntax NotTest 
+     =  "not" NotTest 
+     | Comparison
+     ;
 
-syntax Comparison =  Expr (CompOp Expr)*
-# <> isn't actually a valid comparison operator in Python. It's here for the
-# sake of a __future__ import described in PEP 401
+syntax Comparison 
+     =  Expr (CompOp Expr)*
+     ;
 
-syntax CompOp = "<"
-              | ">"
-              | "=="
-              | ">="
-              | "<="
-              | "<>"
-              | "!="
-              | "in"
-              | "not" "in"
-              | "is"
-              | "is" "not"
+// <> isn't actually a valid comparison operator in Python. It's here for the
+// sake of a __future__ import described in PEP 401
 
-syntax StarExpr =  "*" Expr
+syntax CompOp 
+     = "<"
+     | ">"
+     | "=="
+     | ">="
+     | "<="
+     | "<>"
+     | "!="
+     | "in"
+     | "not" "in"
+     | "is"
+     | "is" "not"
+     ;
 
-syntax Expr =  XorExpr ("|" XorExpr)*
+syntax StarExpr 
+     =  "*" Expr
+     ;
 
-syntax XorExpr =  AndExpr ("^" AndExpr)*
+syntax Expr 
+     =  XorExpr ("|" XorExpr)*
+     ;
 
-syntax AndExpr =  ShiftExpr ("&" ShiftExpr)*
+syntax XorExpr 
+     =  AndExpr ("^" AndExpr)*
+     ;
 
-syntax ShiftExpr =  ArithExpr (("<<"|">>") ArithExpr)*
+syntax AndExpr 
+    =  ShiftExpr ("&" ShiftExpr)*
+    ;
 
-syntax ArithExpr =  Term (("+"|"-") Term)*
+syntax ShiftExpr 
+     =  ArithExpr (("<<"|">>") ArithExpr)*
+     ;
 
-syntax Term =  Factor (("*"|"/"|"%"|"//") Factor)*
+syntax ArithExpr 
+     =  Term (("+"|"-") Term)*
+     ;
 
-syntax Factor =  ("+"|"-"|"~") Factor 
-              | Power
+syntax Term 
+     =  Factor (("*"|"/"|"%"|"//") Factor)*
+     ;
 
-syntax Power =  Atom Trailer* ["**" Factor]
+syntax Factor 
+     =  ("+"|"-"|"~") Factor 
+     | Power
+     ;
 
-syntax Atom = "(" [YieldExpr|TestlistComp] ")" 
-            | "[" [TestlistComp] "]" 
-            | "{" [Dictorsetmaker] "}" 
-            | NAME 
-            | NUMBER 
-            | STRING+ 
-            | "..." 
-            | "None" 
-            | "True" 
-            | "False"
+syntax Power 
+    =  Atom Trailer* ["**" Factor]
+    ;
 
-syntax TestlistComp =  (Test|StarExpr) ( CompFor | ("," (Test|StarExpr))* [","] )
+syntax Atom 
+     = "(" [YieldExpr|TestlistComp] ")" 
+     | "[" [TestlistComp] "]" 
+     | "{" [Dictorsetmaker] "}" 
+     | NAME 
+     | NUMBER 
+     | STRING+ 
+     | "..." 
+     | "None" 
+     | "True" 
+     | "False"
+     ;
 
-syntax Trailer =  "(" [Arglist] ")" 
-               | "[" Subscriptlist "]" 
-               | "." NAME
+syntax TestlistComp 
+     =  (Test|StarExpr) ( CompFor | ("," (Test|StarExpr))* [","] )
+     ;
 
-syntax Subscriptlist =  Subscript ("," Subscript)* [","]
+syntax Trailer 
+     =  "(" [Arglist] ")" 
+     | "[" Subscriptlist "]" 
+     | "." NAME
+     ;
 
-syntax Subscript =  Test 
-                 | [Test] ":" [Test] [Sliceop]
+syntax Subscriptlist 
+     =  Subscript ("," Subscript)* [","]
+     ;
 
-syntax Sliceop =  ":" [Test]
+syntax Subscript 
+     =  Test 
+     | [Test] ":" [Test] [Sliceop]
+     ;
 
-syntax Exprlist =  (Expr|StarExpr) ("," (Expr|StarExpr))* [","]
+syntax Sliceop 
+     =  ":" [Test]
+     ;
 
-syntax TestList =  Test ("," Test)* [","]
+syntax Exprlist 
+     =  (Expr|StarExpr) ("," (Expr|StarExpr))* [","]
+     ;
 
-syntax Dictorsetmaker =  ( (Test ":" Test (CompFor | ("," Test ":" Test)* [","])) |
+syntax TestList 
+     =  Test ("," Test)* [","]
+     ;
+
+syntax Dictorsetmaker 
+     =  ( (Test ":" Test (CompFor | ("," Test ":" Test)* [","])) |
                   (Test (CompFor | ("," Test)* [","])) )
+                  ;
 
 
-syntax Classdef =  "class" NAME ["(" [Arglist] ")"] ":" Suite
+syntax Classdef 
+     =  "class" NAME ["(" [Arglist] ")"] ":" Suite
+     ;
 
 
-syntax Arglist =  (Argument ",")* (Argument [","]
+syntax Arglist 
+     =  (Argument ",")* (Argument [","]
                          |"*" Test ("," Argument)* ["," "**" Test] 
                          |"**" Test)
-# The reason that keywords are test nodes instead of NAME is that using NAME
-# results in an ambiguity. ast.c makes sure it's a NAME.
+                         ;
 
-syntax Argument =  Test [CompFor] 
-                | Test "=" Test  # Really [keyword "="] test
+// The reason that keywords are test nodes instead of NAME is that using NAME
+// results in an ambiguity. ast.c makes sure it's a NAME.
 
-syntax CompIter =  CompFor 
-                | CompIf
+syntax Argument 
+     =  Test [CompFor] 
+     | Test "=" Test  # Really [keyword "="] test
+     ;
 
-syntax CompFor =  "for" Exprlist "in" OrTest [CompIter]
+syntax CompIter 
+     =  CompFor 
+     | CompIf
+     ;
 
-syntax CompIf =  "if" TestNocond [CompIter]
+syntax CompFor 
+     =  "for" Exprlist "in" OrTest [CompIter]
+     ;
 
-# not used in grammar, but may appear in "node" passed from Parser to Compiler
+syntax CompIf 
+    =  "if" TestNocond [CompIter]
+    ;
 
-syntax EncodingDecl =  NAME
+// not used in grammar, but may appear in "node" passed from Parser to Compiler
+
+syntax EncodingDecl 
+     =  NAME
+     ;
 
 
-syntax YieldExpr =  "yield" [YieldArg]
+syntax YieldExpr 
+     =  "yield" [YieldArg]
+     ;
 
-syntax YieldArg =  "from" Test 
-                | TestList
+syntax YieldArg 
+     =  "from" Test 
+     | TestList
+     ;
