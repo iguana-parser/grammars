@@ -4,7 +4,9 @@
  *
  **/
 
-syntax SingleInput =  NEWLINE | SimpleStmt | CompoundStmt NEWLINE
+syntax SingleInput =  NEWLINE 
+                   |  SimpleStmt 
+                   | CompoundStmt NEWLINE
 
 syntax FileInput =  (NEWLINE | Stmt)* ENDMARKER
 
@@ -38,23 +40,44 @@ syntax Stmt =  SimpleStmt | CompoundStmt
 
 syntax SimpleStmt =  SmallStmt (';' SmallStmt)* [';'] NEWLINE
 
-syntax SmallStmt =  (ExprStmt | DelStmt | PassStmt | FlowStmt |
-             ImportStmt | GlobalStmt | NonlocalStmt | AssertStmt)
+syntax SmallStmt = ExprStmt 
+                 | DelStmt 
+                 | PassStmt 
+                 | FlowStmt 
+                 | ImportStmt 
+                 | GlobalStmt 
+                 | NonlocalStmt 
+                 | AssertStmt
 
 syntax ExprStmt =  TestlistStarExpr (Augassign (YieldExpr|Testlist) |
                      ('=' (YieldExpr|TestlistStarExpr))*)
 
 syntax TestlistStarExpr =  (Test|StarExpr) (',' (Test|StarExpr))* [',']
 
-syntax Augassign =  ('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' |
-            '<<=' | '>>=' | '**=' | '//=')
+syntax Augassign = '+=' 
+                 | '-=' 
+                 | '*=' 
+                 | '/=' 
+                 | '%=' 
+                 | '&=' 
+                 | '|=' 
+                 | '^=' 
+                 | '<<=' 
+                 | '>>=' 
+                 | '**=' 
+                 | '//='
+
 # For normal assignments, additional restrictions enforced by the interpreter
 
 syntax DelStmt =  'del' Exprlist
 
 syntax PassStmt =  'pass'
 
-syntax FlowStmt =  BreakStmt | ContinueStmt | ReturnStmt | RaiseStmt | YieldStmt
+syntax FlowStmt = BreakStmt 
+                | ContinueStmt 
+                | ReturnStmt 
+                | RaiseStmt 
+                | YieldStmt
 
 syntax BreakStmt =  'break'
 
@@ -66,11 +89,12 @@ syntax YieldStmt =  YieldExpr
 
 syntax RaiseStmt =  'raise' [Test ['from' Test]]
 
-syntax ImportStmt =  ImportName | ImportFrom
+syntax ImportStmt =  ImportName 
+                  | ImportFrom
 
 syntax ImportName =  'import' DottedAsNames
 
-syntax # note below =  the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
+# note below =  the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
 
 syntax ImportFrom =  ('from' (('.' | '...')* DottedName | ('.' | '...')+)
               'import' ('*' | '(' ImportAsNames ')' | ImportAsNames))
@@ -92,7 +116,14 @@ syntax NonlocalStmt =  'nonlocal' NAME (',' NAME)*
 syntax AssertStmt =  'assert' test [',' test]
 
 
-syntax CompoundStmt =  IfStmt | WhileStmt | ForStmt | TryStmt | WithStmt | Funcdef | Classdef | Decorated
+syntax CompoundStmt = IfStmt 
+                    | WhileStmt 
+                    | ForStmt 
+                    | TryStmt 
+                    | WithStmt 
+                    | Funcdef 
+                    | Classdef 
+                    | Decorated
 
 syntax IfStmt =  'if' Test ':' Suite ('elif' Test ':' Suite)* ['else' ':' Suite]
 
@@ -109,16 +140,20 @@ syntax TryStmt =  ('try' ':' Suite
 syntax WithStmt =  'with' WithItem (',' WithItem)*  ':' Suite
 
 syntax WithItem =  Test ['as' Expr]
+
 # NB compile.c makes sure that the default except clause is last
 
 syntax ExceptClause =  'except' [Test ['as' NAME]]
 
-syntax Suite =  SimpleStmt | NEWLINE INDENT Stmt+ DEDENT
+syntax Suite =  SimpleStmt 
+             | NEWLINE INDENT Stmt+ DEDENT
 
 
-syntax Test =  OrTest ['if' OrTest 'else' Test] | Lambdef
+syntax Test =  OrTest ['if' OrTest 'else' Test] 
+            | Lambdef
 
-syntax TestNocond =  OrTest | LambdefNocond
+syntax TestNocond =  OrTest 
+                  | LambdefNocond
 
 syntax Lambdef =  'lambda' [Varargslist] ':' Test
 
@@ -128,13 +163,24 @@ syntax OrTest =  AndTest ('or' AndTest)*
 
 syntax AndTest =  NotTest ('and' NotTest)*
 
-syntax NotTest =  'not' NotTest | Comparison
+syntax NotTest =  'not' NotTest 
+               | Comparison
 
 syntax Comparison =  Expr (CompOp Expr)*
 # <> isn't actually a valid comparison operator in Python. It's here for the
 # sake of a __future__ import described in PEP 401
 
-syntax CompOp =  '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'
+syntax CompOp = '<'
+              | '>'
+              | '=='
+              | '>='
+              | '<='
+              | '<>'
+              | '!='
+              | 'in'
+              | 'not' 'in'
+              | 'is'
+              | 'is' 'not'
 
 syntax StarExpr =  '*' Expr
 
@@ -150,22 +196,32 @@ syntax ArithExpr =  Term (('+'|'-') Term)*
 
 syntax Term =  Factor (('*'|'/'|'%'|'//') Factor)*
 
-syntax Factor =  ('+'|'-'|'~') Factor | Power
+syntax Factor =  ('+'|'-'|'~') Factor 
+              | Power
 
 syntax Power =  Atom Trailer* ['**' Factor]
 
-syntax Atom =  ('(' [YieldExpr|TestlistComp] ')' |
-       '[' [TestlistComp] ']' |
-       '{' [Dictorsetmaker] '}' |
-       NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False')
+syntax Atom = '(' [YieldExpr|TestlistComp] ')' 
+            | '[' [TestlistComp] ']' 
+            | '{' [Dictorsetmaker] '}' 
+            | NAME 
+            | NUMBER 
+            | STRING+ 
+            | '...' 
+            | 'None' 
+            | 'True' 
+            | 'False'
 
 syntax TestlistComp =  (Test|StarExpr) ( CompFor | (',' (Test|StarExpr))* [','] )
 
-syntax Trailer =  '(' [Arglist] ')' | '[' Subscriptlist ']' | '.' NAME
+syntax Trailer =  '(' [Arglist] ')' 
+               | '[' Subscriptlist ']' 
+               | '.' NAME
 
 syntax Subscriptlist =  Subscript (',' Subscript)* [',']
 
-syntax Subscript =  Test | [Test] ':' [Test] [Sliceop]
+syntax Subscript =  Test 
+                 | [Test] ':' [Test] [Sliceop]
 
 syntax Sliceop =  ':' [Test]
 
@@ -186,9 +242,11 @@ syntax Arglist =  (Argument ',')* (Argument [',']
 # The reason that keywords are test nodes instead of NAME is that using NAME
 # results in an ambiguity. ast.c makes sure it's a NAME.
 
-syntax Argument =  Test [CompFor] | Test '=' Test  # Really [keyword '='] test
+syntax Argument =  Test [CompFor] 
+                | Test '=' Test  # Really [keyword '='] test
 
-syntax CompIter =  CompFor | CompIf
+syntax CompIter =  CompFor 
+                | CompIf
 
 syntax CompFor =  'for' Exprlist 'in' OrTest [CompIter]
 
@@ -201,4 +259,5 @@ syntax EncodingDecl =  NAME
 
 syntax YieldExpr =  'yield' [YieldArg]
 
-syntax YieldArg =  'from' Test | Testlist
+syntax YieldArg =  'from' Test 
+                | Testlist
