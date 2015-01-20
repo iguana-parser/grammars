@@ -41,7 +41,10 @@ syntax Parameters
      ;
 
 syntax Typedargslist 
-     = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," (("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?) | ("**" Tfpdef))? )?
+     = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," ( ("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?) 
+     						                                                    | ("**" Tfpdef)
+                                                         )? 
+                                                    )?
      | "*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?
      | "**" Tfpdef
      ;
@@ -51,7 +54,10 @@ syntax Tfpdef
      ;
 
 syntax Varargslist 
-     = Vfpdef ("=" Test)? ("," Vfpdef ("=" Test)?)* ("," (("*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?) | ("**" Vfpdef) )? )?
+     = Vfpdef ("=" Test)? ("," Vfpdef ("=" Test)?)* ("," ( ("*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?) 
+                                                         | ("**" Vfpdef)
+                                                         )? 
+                                                    )?
      | "*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?
      | "**" Vfpdef
      ;
@@ -81,7 +87,9 @@ syntax SmallStmt
      ;
 
 syntax ExprStmt 
-     =  TestlistStarExpr ( (Augassign (YieldExpr | TestList)) | ("=" (YieldExpr | TestlistStarExpr) )* )
+     =  TestlistStarExpr ( (Augassign (YieldExpr | TestList)) 
+                         | ("=" (YieldExpr | TestlistStarExpr) )* 
+                         )
      ;
 
 syntax TestlistStarExpr 
@@ -153,7 +161,13 @@ syntax ImportName
 // note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
 
 syntax ImportFrom 
-     =  "from" ( (("." | "...")* DottedName) | ("." | "...")+) "import" ("*" | ("(" ImportAsNames ")") | ImportAsNames)
+     =  "from" ( (("." | "...")* DottedName) 
+               | ("." | "...")+
+               ) 
+        "import" ("*" 
+                 | ("(" ImportAsNames ")") 
+                 | ImportAsNames
+                 )
      ;
 
 syntax ImportAsName 
@@ -212,7 +226,9 @@ syntax ForStmt
      ;
 
 syntax TryStmt 
-     =  "try" ":" Suite (((ExceptClause ":" Suite)+ ("else" ":" Suite)? ("finally" ":" Suite)?) | ("finally" ":" Suite))
+     =  "try" ":" Suite ( ((ExceptClause ":" Suite)+ ("else" ":" Suite)? ("finally" ":" Suite)?)
+                        | ("finally" ":" Suite)
+                        )
      ;
 
 syntax WithStmt 
@@ -380,7 +396,10 @@ syntax Classdef
 
 
 syntax Arglist 
-     =  (Argument ",")* ((Argument ","?) | ("*" Test ("," Argument)* ("," "**" Test)?)  | ("**" Test))
+     =  (Argument ",")* ( (Argument ","?) 
+                        | ("*" Test ("," Argument)* ("," "**" Test)?)
+                        | ("**" Test)
+                        )
      ;
 
 // The reason that keywords are test nodes instead of Name is that using Name
