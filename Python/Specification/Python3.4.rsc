@@ -620,8 +620,8 @@ lexical ShortBytes
       ;
 
 lexical LongBytes      
-      = "\'\'\'" LongBytesitem* "\'\'\'" 
-      | "\"\"\"" LongBytesitem* "\"\"\""
+      = "\'\'\'" LongBytesItem* "\'\'\'" 
+      | "\"\"\"" LongBytesItem* "\"\"\""
       ;
 
 lexical ShortBytesitem 
