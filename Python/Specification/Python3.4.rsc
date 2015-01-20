@@ -7,25 +7,25 @@
 module Python
 
 syntax SingleInput 
-     = NEWLINE 
+     = NewLine 
      | SimpleStmt 
-     | CompoundStmt NEWLINE
+     | CompoundStmt NewLine
      ;
 
 syntax FileInput 
-     =  (NEWLINE | Stmt)* ENDMARKER
+     =  (NewLine | Stmt)* EndMarker
      ;
 
 syntax EvalInput 
-     =  TestList NEWLINE* ENDMARKER
+     =  TestList NewLine* EndMarker
      ;
 
 
 syntax Decorator 
-     =  "@" DottedName [ "(" [Arglist] ")" ] NEWLINE
+     =  "@" DottedName ( "(" Arglist? ")" )? NewLine
      ;
 
-syntax decorators 
+syntax Decorators 
      =  Decorator+
      ;
 
@@ -34,7 +34,7 @@ syntax Decorated
      ;
 
 syntax Funcdef 
-     =  "def" NAME Parameters ["->" Test] ":" Suite
+     =  "def" Name Parameters ("-\>" Test)? ":" Suite
      ;
 
 syntax Parameters 
@@ -42,32 +42,32 @@ syntax Parameters
      ;
 
 syntax Typedargslist 
-     =  (Tfpdef ["=" Test] ("," Tfpdef ["=" Test])* [","
-       ["*" [Tfpdef] ("," Tfpdef ["=" Test])* ["," "**" Tfpdef] | "**" Tfpdef]]
-     |  "*" [Tfpdef] ("," Tfpdef ["=" Test])* ["," "**" Tfpdef] | "**" Tfpdef)
+     = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," ("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)? | "**" Tfpdef)?)?
+     | "*" Tfpdef? ("," Tfpdef ["=" Test])* ("," "**" Tfpdef)?
+     | "**" Tfpdef
      ;
 
 syntax Tfpdef 
-     =  NAME [":" Test]
+     =  Name (":" Test)?
      ;
 
 syntax Varargslist 
-     =  (Vfpdef ["=" Test] ("," Vfpdef ["=" Test])* [","
-       ["*" [Vfpdef] ("," Vfpdef ["=" Test])* ["," "**" Vfpdef] | "**" Vfpdef]]
-     |  "*" [Vfpdef] ("," Vfpdef ["=" Test])* ["," "**" Vfpdef] | "**" Vfpdef)
+     = Vfpdef ("=" Test)? ("," Vfpdef ("=" Test)?)* ("," ("*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)? | "**" Vfpdef)?)?
+     | "*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?
+     | "**" Vfpdef
      ;
 
 syntax Vfpdef 
-     =  NAME
+     = Name
      ;
 
 syntax Stmt 
-     =  SimpleStmt 
+     = SimpleStmt 
      | CompoundStmt
      ;
 
 syntax SimpleStmt 
-    =  SmallStmt (";" SmallStmt)* [";"] NEWLINE
+    =  SmallStmt (";" SmallStmt)* ";"? NewLine
     ;
 
 syntax SmallStmt 
@@ -82,12 +82,11 @@ syntax SmallStmt
      ;
 
 syntax ExprStmt 
-     =  TestlistStarExpr (Augassign (YieldExpr|TestList) |
-                     ("=" (YieldExpr|TestlistStarExpr))*)
+     =  TestlistStarExpr (Augassign (YieldExpr | TestList) | ("=" (YieldExpr | TestlistStarExpr))*)
      ;
 
 syntax TestlistStarExpr 
-     =  (Test|StarExpr) ("," (Test|StarExpr))* [","]
+     =  (Test | StarExpr) ("," (Test | StarExpr))* ","?
      ;
 
 syntax Augassign 
@@ -132,7 +131,7 @@ syntax ContinueStmt
      ;
 
 syntax ReturnStmt 
-     =  "return" [TestList]
+     =  "return" TestList?
      ;
 
 syntax YieldStmt 
@@ -140,12 +139,12 @@ syntax YieldStmt
      ;
 
 syntax RaiseStmt 
-     =  "raise" [Test ["from" Test]]
+     =  "raise" (Test ("from" Test)? )?
      ;
 
 syntax ImportStmt 
      =  ImportName 
-     | ImportFrom
+     |  ImportFrom
      ;
 
 syntax ImportName 
@@ -155,20 +154,19 @@ syntax ImportName
 // note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
 
 syntax ImportFrom 
-     =  ("from" (("." | "...")* DottedName | ("." | "...")+)
-              "import" ("*" | "(" ImportAsNames ")" | ImportAsNames))
+     =  "from" (("." | "...")* DottedName | ("." | "...")+) "import" ("*" | "(" ImportAsNames ")" | ImportAsNames)
      ;
 
 syntax ImportAsName 
-    =  NAME ["as" NAME]
+    =  Name ("as" Name)?
     ;
 
 syntax DottedAsName 
-     =  DottedName ["as" NAME]
+     =  DottedName ("as" Name)?
      ;
 
 syntax ImportAsNames 
-     =  ImportAsName ("," ImportAsName)* [","]
+     =  ImportAsName ("," ImportAsName)* ","?
      ;
 
 syntax DottedAsNames 
@@ -176,19 +174,19 @@ syntax DottedAsNames
      ;
 
 syntax DottedName 
-     =  NAME ("." NAME)*
+     =  Name ("." Name)*
      ;
 
 syntax GlobalStmt 
-     =  "global" NAME ("," NAME)*
+     =  "global" Name ("," Name)*
      ;
 
 syntax NonlocalStmt 
-     =  "nonlocal" NAME ("," NAME)*
+     =  "nonlocal" Name ("," Name)*
      ;
 
 syntax AssertStmt 
-     =  "assert" test ["," test]
+     =  "assert" test ("," test)?
      ;
 
 syntax CompoundStmt 
@@ -203,24 +201,20 @@ syntax CompoundStmt
      ;
 
 syntax IfStmt 
-     =  "if" Test ":" Suite ("elif" Test ":" Suite)* ["else" ":" Suite]
+     =  "if" Test ":" Suite ("elif" Test ":" Suite)* ("else" ":" Suite)?
      ;
 
 syntax WhileStmt 
-     =  "while" Test ":" Suite ["else" ":" Suite]
+     =  "while" Test ":" Suite ("else" ":" Suite)?
      ;
 
 syntax ForStmt 
-     =  "for" Exprlist "in" TestList ":" Suite ["else" ":" Suite]
+     =  "for" Exprlist "in" TestList ":" Suite ("else" ":" Suite)?
      ;
 
 syntax TryStmt 
-     =  ("try" ":" Suite
-           ((ExceptClause ":" Suite)+
-            ["else" ":" Suite]
-            ["finally" ":" Suite] |
-           "finally" ":" Suite))
-      ;
+     =  "try" ":" Suite ((ExceptClause ":" Suite)+ ("else" ":" Suite)? ("finally" ":" Suite)? | "finally" ":" Suite)
+     ;
 
 syntax WithStmt 
      =  "with" WithItem ("," WithItem)*  ":" Suite
@@ -233,17 +227,17 @@ syntax WithItem
 // NB compile.c makes sure that the default except clause is last
 
 syntax ExceptClause 
-     =  "except" [Test ["as" NAME]]
+     =  "except" (Test ("as" Name)?)?
      ;
 
 syntax Suite 
      =  SimpleStmt 
-     | NEWLINE INDENT Stmt+ DEDENT
+     | NewLine INDENT Stmt+ DEDENT
      ;
 
 
 syntax Test 
-     =  OrTest ["if" OrTest "else" Test] 
+     =  OrTest ("if" OrTest "else" Test)?
      | Lambdef
      ;
 
@@ -253,11 +247,11 @@ syntax TestNocond
      ;
 
 syntax Lambdef 
-     =  "lambda" [Varargslist] ":" Test
+     =  "lambda" Varargslist? ":" Test
      ;
 
 syntax LambdefNocond 
-     =  "lambda" [Varargslist] ":" TestNocond
+     =  "lambda" Varargslist? ":" TestNocond
      ;
 
 syntax OrTest 
@@ -328,14 +322,14 @@ syntax Factor
      ;
 
 syntax Power 
-    =  Atom Trailer* ["**" Factor]
+    =  Atom Trailer* ("**" Factor)?
     ;
 
 syntax Atom 
      = "(" [YieldExpr|TestlistComp] ")" 
      | "[" [TestlistComp] "]" 
      | "{" [Dictorsetmaker] "}" 
-     | NAME 
+     | Name 
      | NUMBER 
      | STRING+ 
      | "..." 
@@ -345,59 +339,57 @@ syntax Atom
      ;
 
 syntax TestlistComp 
-     =  (Test|StarExpr) ( CompFor | ("," (Test|StarExpr))* [","] )
+     =  (Test|StarExpr) ( CompFor | ("," (Test|StarExpr))* ","? )
      ;
 
 syntax Trailer 
-     =  "(" [Arglist] ")" 
+     =  "(" Arglist? ")" 
      | "[" Subscriptlist "]" 
-     | "." NAME
+     | "." Name
      ;
 
 syntax Subscriptlist 
-     =  Subscript ("," Subscript)* [","]
+     =  Subscript ("," Subscript)* ","?
      ;
 
 syntax Subscript 
-     =  Test 
-     | [Test] ":" [Test] [Sliceop]
+     = Test 
+     | Test? ":" Test? Sliceop?
      ;
 
 syntax Sliceop 
-     =  ":" [Test]
+     =  ":" Test?
      ;
 
 syntax Exprlist 
-     =  (Expr|StarExpr) ("," (Expr|StarExpr))* [","]
+     =  (Expr | StarExpr) ("," (Expr | StarExpr))* ","?
      ;
 
 syntax TestList 
-     =  Test ("," Test)* [","]
+     =  Test ("," Test)* ","?
      ;
 
 syntax Dictorsetmaker 
-     =  ( (Test ":" Test (CompFor | ("," Test ":" Test)* [","])) |
-                  (Test (CompFor | ("," Test)* [","])) )
-                  ;
+     = Test ":" Test (CompFor | ("," Test ":" Test)* ","?)
+     | Test (CompFor | ("," Test)* ","?)
+     ;
 
 
 syntax Classdef 
-     =  "class" NAME ["(" [Arglist] ")"] ":" Suite
+     =  "class" Name ["(" Arglist? ")"] ":" Suite
      ;
 
 
 syntax Arglist 
-     =  (Argument ",")* (Argument [","]
-                         |"*" Test ("," Argument)* ["," "**" Test] 
-                         |"**" Test)
-                         ;
+     =  (Argument ",")* (Argument ","? | "*" Test ("," Argument)* ("," "**" Test)?  | "**" Test)
+     ;
 
-// The reason that keywords are test nodes instead of NAME is that using NAME
-// results in an ambiguity. ast.c makes sure it's a NAME.
+// The reason that keywords are test nodes instead of Name is that using Name
+// results in an ambiguity. ast.c makes sure it's a Name.
 
 syntax Argument 
-     =  Test [CompFor] 
-     | Test "=" Test  # Really [keyword "="] test
+     =  Test CompFor?
+     | Test "=" Test  // Really [keyword "="] test
      ;
 
 syntax CompIter 
@@ -406,22 +398,22 @@ syntax CompIter
      ;
 
 syntax CompFor 
-     =  "for" Exprlist "in" OrTest [CompIter]
+     =  "for" Exprlist "in" OrTest CompIter?
      ;
 
 syntax CompIf 
-    =  "if" TestNocond [CompIter]
+    =  "if" TestNocond CompIter?
     ;
 
 // not used in grammar, but may appear in "node" passed from Parser to Compiler
 
 syntax EncodingDecl 
-     =  NAME
+     =  Name
      ;
 
 
 syntax YieldExpr 
-     =  "yield" [YieldArg]
+     =  "yield" YieldArg?
      ;
 
 syntax YieldArg 
