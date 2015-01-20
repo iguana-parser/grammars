@@ -20,7 +20,6 @@ syntax EvalInput
      =  TestList NewLine* EndMarker
      ;
 
-
 syntax Decorator 
      =  "@" DottedName ( "(" Arglist? ")" )? NewLine
      ;
@@ -154,7 +153,7 @@ syntax ImportName
 // note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
 
 syntax ImportFrom 
-     =  "from" (("." | "...")* DottedName | ("." | "...")+) "import" ("*" | "(" ImportAsNames ")" | ImportAsNames)
+     =  "from" ( (("." | "...")* DottedName) | ("." | "...")+) "import" ("*" | ("(" ImportAsNames ")") | ImportAsNames)
      ;
 
 syntax ImportAsName 
@@ -186,7 +185,7 @@ syntax NonlocalStmt
      ;
 
 syntax AssertStmt 
-     =  "assert" test ("," test)?
+     =  "assert" Test ("," Test)?
      ;
 
 syntax CompoundStmt 
@@ -213,7 +212,7 @@ syntax ForStmt
      ;
 
 syntax TryStmt 
-     =  "try" ":" Suite ((ExceptClause ":" Suite)+ ("else" ":" Suite)? ("finally" ":" Suite)? | "finally" ":" Suite)
+     =  "try" ":" Suite (((ExceptClause ":" Suite)+ ("else" ":" Suite)? ("finally" ":" Suite)?) | ("finally" ":" Suite))
      ;
 
 syntax WithStmt 
@@ -221,7 +220,7 @@ syntax WithStmt
      ;
 
 syntax WithItem 
-     =  Test ["as" Expr]
+     =  Test ("as" Expr)?
      ;
 
 // NB compile.c makes sure that the default except clause is last
@@ -275,12 +274,12 @@ syntax Comparison
 // sake of a __future__ import described in PEP 401
 
 syntax CompOp 
-     = "<"
-     | ">"
+     = "\<"
+     | "\>"
      | "=="
-     | ">="
-     | "<="
-     | "<>"
+     | "\>="
+     | "\<="
+     | "\<\>"
      | "!="
      | "in"
      | "not" "in"
@@ -305,7 +304,7 @@ syntax AndExpr
     ;
 
 syntax ShiftExpr 
-     =  ArithExpr (("<<"|">>") ArithExpr)*
+     =  ArithExpr (( "\<\<" | "\>\>" ) ArithExpr)*
      ;
 
 syntax ArithExpr 
@@ -339,7 +338,7 @@ syntax Atom
      ;
 
 syntax TestlistComp 
-     =  (Test|StarExpr) ( CompFor | ("," (Test|StarExpr))* ","? )
+     =  (Test | StarExpr) ( CompFor | (("," (Test|StarExpr))* ","?) )
      ;
 
 syntax Trailer 
@@ -370,18 +369,18 @@ syntax TestList
      ;
 
 syntax Dictorsetmaker 
-     = Test ":" Test (CompFor | ("," Test ":" Test)* ","?)
-     | Test (CompFor | ("," Test)* ","?)
+     = Test ":" Test (CompFor | (("," Test ":" Test)* ","?))
+     | Test (CompFor | (("," Test)* ","?))
      ;
 
 
 syntax Classdef 
-     =  "class" Name ["(" Arglist? ")"] ":" Suite
+     =  "class" Name ("(" Arglist? ")")? ":" Suite
      ;
 
 
 syntax Arglist 
-     =  (Argument ",")* (Argument ","? | "*" Test ("," Argument)* ("," "**" Test)?  | "**" Test)
+     =  (Argument ",")* ((Argument ","?) | ("*" Test ("," Argument)* ("," "**" Test)?)  | ("**" Test))
      ;
 
 // The reason that keywords are test nodes instead of Name is that using Name
@@ -410,7 +409,6 @@ syntax CompIf
 syntax EncodingDecl 
      =  Name
      ;
-
 
 syntax YieldExpr 
      =  "yield" YieldArg?
