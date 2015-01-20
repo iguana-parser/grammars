@@ -513,7 +513,7 @@ lexical HexInteger
       =  "0" ("x" | "X") HexDigit+
       ;
 
-Lexical BinInteger     
+lexical BinInteger     
       =  "0" ("b" | "B") BinDigit+
       ;
 
@@ -555,10 +555,64 @@ lexical Fraction
       ;
 
 lexical Exponent      
-      =  ("e" | "E") ["+" | "-"] Digit+
+      =  ("e" | "E") ("+" | "-")? Digit+
       ;
 
 lexical ImagNumber 
       =  (Floatnumber | Intpart) ("j" | "J")
       ;      
+      
+// String
+
+lexical StringLiteral   
+      = StringPrefix? (ShortString | LongString)
+      ;
+
+lexical StringPrefix
+      = "R" | "u" | "R" | "U"
+      ;
+
+lexical ShortString
+      = "\'" ShortStringItem* "\'" 
+      | "\"" ShortStringItem* "\""
+      ;
+
+lexical LongString      
+      = "\'\'\'" LongStringItem* "\'\'\'" 
+      | "\"\"\"" LongStringItem* "\"\"\""
+      ;
+
+lexical ShortStringItem 
+      = ShortStringChar 
+      | StringEscapeSeq
+      ;
+
+lexical LongStringItem  
+      = LongStringChar 
+      | StringEscapeSeq
+      ;
+
+lexical ShortStringChar 
+	     =  ![] \ [\" \\ \n]
+	     ;
+
+lexical LongStringChar  
+     =  ![] \ [\\]
+     ;
+
+lexical StringEscapeSeq 
+      = [\\][n]
+      | [\\][\\]       
+      | [\\][\']       
+      | [\\][\"]       
+      | [\\][a]       
+      | [\\][b]
+      | [\\][f]       
+      | [\\][n]
+      | [\\][r]       
+      | [\\][t]       
+      | [\\][v]       
+      | [\\] OctInteger OctInteger OctInteger
+      | [\\] [x] HexInteger HexInteger
+      ;
       
