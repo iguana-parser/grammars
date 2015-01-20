@@ -21,7 +21,7 @@ syntax EvalInput
      ;
 
 syntax Decorator 
-     =  "@" DottedName ( "(" Arglist? ")" )? NewLine
+     = "@" DottedName ( "(" Arglist? ")" )? NewLine
      ;
 
 syntax Decorators 
