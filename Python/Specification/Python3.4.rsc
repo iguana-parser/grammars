@@ -42,8 +42,8 @@ syntax Parameters
      ;
 
 syntax Typedargslist 
-     = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," ("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)? | "**" Tfpdef)?)?
-     | "*" Tfpdef? ("," Tfpdef ["=" Test])* ("," "**" Tfpdef)?
+     = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," (("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?) | ("**" Tfpdef))? )?
+     | "*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?
      | "**" Tfpdef
      ;
 
@@ -52,7 +52,7 @@ syntax Tfpdef
      ;
 
 syntax Varargslist 
-     = Vfpdef ("=" Test)? ("," Vfpdef ("=" Test)?)* ("," ("*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)? | "**" Vfpdef)?)?
+     = Vfpdef ("=" Test)? ("," Vfpdef ("=" Test)?)* ("," (("*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?) | ("**" Vfpdef) )? )?
      | "*" Vfpdef? ("," Vfpdef ("=" Test)?)* ("," "**" Vfpdef)?
      | "**" Vfpdef
      ;
@@ -82,7 +82,7 @@ syntax SmallStmt
      ;
 
 syntax ExprStmt 
-     =  TestlistStarExpr (Augassign (YieldExpr | TestList) | ("=" (YieldExpr | TestlistStarExpr))*)
+     =  TestlistStarExpr ( (Augassign (YieldExpr | TestList)) | ("=" (YieldExpr | TestlistStarExpr) )* )
      ;
 
 syntax TestlistStarExpr 
@@ -98,13 +98,13 @@ syntax Augassign
      | "&=" 
      | "|=" 
      | "^=" 
-     | "<<=" 
-     | ">>=" 
+     | "\<\<=" 
+     | "\>\>=" 
      | "**=" 
      | "//="
      ;
 
-# For normal assignments, additional restrictions enforced by the interpreter
+// For normal assignments, additional restrictions enforced by the interpreter
 
 syntax DelStmt 
      =  "del" Exprlist
