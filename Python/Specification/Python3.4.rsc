@@ -346,7 +346,7 @@ syntax Atom
      | "{" [Dictorsetmaker] "}" 
      | Name 
      | Number 
-     | STRING+ 
+     | String+ 
      | "..." 
      | "None" 
      | "True" 
@@ -542,16 +542,16 @@ lexical FloatNumber
     | ExponentFloat
     ;
 
-lexical Pointfloat    
-      = Intpart? Fraction 
-      | Intpart "."
+lexical PointFloat    
+      = IntPart? Fraction 
+      | IntPart "."
       ;
 
-lexical Exponentfloat 
-      =  (Intpart | Pointfloat) Exponent
+lexical ExponentFloat 
+      =  (IntPart | PointFloat) Exponent
       ;
 
-lexical Intpart       
+lexical IntPart       
       =  Digit+
       ;
 
@@ -564,10 +564,15 @@ lexical Exponent
       ;
 
 lexical ImagNumber 
-      =  (Floatnumber | Intpart) ("j" | "J")
+      =  (FloatNumber | IntPart) ("j" | "J")
       ;      
       
 // String
+
+lexical String
+      = StringLiteral
+      | BytesLiteral
+      ;
 
 lexical StringLiteral   
       = StringPrefix? (ShortString | LongString)
