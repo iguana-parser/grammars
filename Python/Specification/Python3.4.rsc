@@ -13,11 +13,11 @@ syntax SingleInput
      ;
 
 syntax FileInput 
-     =  (NewLine | Stmt)* EndMarker
+     =  (NewLine | Stmt)*     // =  (NewLine | Stmt)* EndMarker
      ;
 
 syntax EvalInput 
-     =  TestList NewLine* EndMarker
+     =  TestList NewLine*   // TestList NewLine* EndMarker 
      ;
 
 syntax Decorator 
@@ -247,7 +247,7 @@ syntax ExceptClause
 
 syntax Suite 
      =  SimpleStmt 
-     | NewLine INDENT Stmt+ DEDENT
+     | NewLine Stmt+   // NewLine INDENT Stmt+ DEDENT
      ;
 
 
@@ -671,3 +671,7 @@ lexical EscapeSeq
       | [\\] OctInteger OctInteger OctInteger
       | [\\] [x] HexInteger HexInteger 
       ;
+
+lexical NewLine
+     = [\n\r]
+     ;
