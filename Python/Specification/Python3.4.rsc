@@ -42,7 +42,7 @@ syntax Parameters
 
 syntax Typedargslist 
      = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," ( ("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?) 
-     						                                                    | ("**" Tfpdef)
+     						                                         | ("**" Tfpdef)
                                                          )? 
                                                     )?
      | "*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?
@@ -161,7 +161,7 @@ syntax ImportName
 // note below =  the ("." | "...") is necessary because "..." is tokenized as ELLIPSIS
 
 syntax ImportFrom 
-     =  "from" ( (("." | "...")* DottedName) 
+     =  "from" ( (("." | "...")* DottedName)
                | ("." | "...")+
                ) 
         "import" ("*" 
@@ -345,7 +345,7 @@ syntax Atom
      | "[" [TestlistComp] "]" 
      | "{" [Dictorsetmaker] "}" 
      | Name 
-     | NUMBER 
+     | Number 
      | STRING+ 
      | "..." 
      | "None" 
@@ -442,7 +442,7 @@ syntax YieldArg
 // Lexicals
 
 keyword Keyword
-  		    = "False"
+  	  = "False"
       | "class"
       | "finally"
       | "is"
@@ -476,4 +476,89 @@ keyword Keyword
       | "in"
       | "raise"
       ;
+
+// Numbers
+
+lexical Number
+      = Integer
+      | FloatNumber
+      | ImagNumber
+      ;
+
+lexical Integer        
+      = DecimalInteger 
+      | OctInteger 
+      | HexInteger 
+      | BinInteger
+      ;
+
+lexical DecimalInteger 
+      =  NonzeroDigit Digit* 
+      | "0"+
+      ;
+
+lexical NonzeroDigit   
+      =  [1-9]
+      ;
+
+lexical Digit          
+      =  [0-9]
+      ;
+
+lexical OctInteger     
+      =  "0" ("o" | "O") OctDigit+
+      ;
+
+lexical HexInteger     
+      =  "0" ("x" | "X") HexDigit+
+      ;
+
+Lexical BinInteger     
+      =  "0" ("b" | "B") BinDigit+
+      ;
+
+lexical OctDigit       
+      =  [0-7]
+      ;
+
+lexical HexDigit       
+      =  Digit 
+      | [a-f] 
+      | [A-F]
+      ;
+
+lexical BinDigit       
+      =  "0" 
+      | "1"
+      ;
+
+lexical FloatNumber   
+    = PointFloat 
+    | ExponentFloat
+    ;
+
+lexical Pointfloat    
+      = Intpart? Fraction 
+      | Intpart "."
+      ;
+
+lexical Exponentfloat 
+      =  (Intpart | Pointfloat) Exponent
+      ;
+
+lexical Intpart       
+      =  Digit+
+      ;
+
+lexical Fraction      
+      =  "." Digit+
+      ;
+
+lexical Exponent      
+      =  ("e" | "E") ["+" | "-"] Digit+
+      ;
+
+lexical ImagNumber 
+      =  (Floatnumber | Intpart) ("j" | "J")
+      ;      
       
