@@ -593,7 +593,7 @@ lexical LongStringItem
       ;
 
 lexical ShortStringChar 
-	     =  ![] \ [\" \\ \n]
+	     =  ![] \ [\" \' \\ \n \r]
 	     ;
 
 lexical LongStringChar  
@@ -601,6 +601,52 @@ lexical LongStringChar
      ;
 
 lexical StringEscapeSeq 
+      = EscapeSeq
+      | [\\][u] HexInteger HexInteger HexInteger HexInteger
+      | [\\][u] HexInteger HexInteger HexInteger HexInteger HexInteger HexInteger HexInteger HexInteger
+      ;
+      
+lexical BytesLiteral   
+      = BytesPrefix (ShortBytes | LongBytes)
+      ;
+
+lexical BytesPrefix    
+      = "b" | "B" | "br" | "Br" | "bR" | "BR" | "rb" | "rB" | "Rb" | "RB"
+      ;
+
+lexical ShortBytes     
+      = "\'" ShortBytesitem* "\'" 
+      | "\"" ShortBytesitem* "\""
+      ;
+
+lexical LongBytes      
+      = "\'\'\'" LongBytesitem* "\'\'\'" 
+      | "\"\"\"" LongBytesitem* "\"\"\""
+      ;
+
+lexical ShortBytesitem 
+      = ShortBytesChar 
+      | BytesEscapeSeq
+      ;
+
+lexical LongBytesItem  
+      = LongBytesChar 
+      | BytesEscapeSeq
+      ;
+
+lexical ShortBytesChar 
+      =  ![] \ [\" \' \\ \n \r]
+      ;
+
+lexical LongBytesChar  
+      =  ![] \ [\\]
+      ;
+
+lexical BytesEscapeSeq
+      = EscapeSeq
+      ;
+
+lexical EscapeSeq 
       = [\\][n]
       | [\\][\\]       
       | [\\][\']       
@@ -613,6 +659,5 @@ lexical StringEscapeSeq
       | [\\][t]       
       | [\\][v]       
       | [\\] OctInteger OctInteger OctInteger
-      | [\\] [x] HexInteger HexInteger
+      | [\\] [x] HexInteger HexInteger 
       ;
-      
