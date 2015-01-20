@@ -477,6 +477,11 @@ keyword Keyword
       | "raise"
       ;
 
+// Name (Put the full unicode support later)
+lexical Name
+      = [a-zA-Z_][a-zA-Z0-9_]*
+      ;
+
 // Numbers
 
 lexical Number
