@@ -341,9 +341,9 @@ syntax Power
     ;
 
 syntax Atom 
-     = "(" [YieldExpr|TestlistComp] ")" 
-     | "[" [TestlistComp] "]" 
-     | "{" [Dictorsetmaker] "}" 
+     = "(" (YieldExpr | TestlistComp)? ")" 
+     | "[" TestlistComp? "]" 
+     | "{" Dictorsetmaker? "}" 
      | Name 
      | Number 
      | String+ 
@@ -658,10 +658,10 @@ lexical BytesEscapeSeq
 
 lexical EscapeSeq 
       = [\\][n]
-      | [\\][\\]       
-      | [\\][\']       
-      | [\\][\"]       
-      | [\\][a]       
+      | [\\][\\]
+      | [\\][\']
+      | [\\][\"]
+      | [\\][a]
       | [\\][b]
       | [\\][f]       
       | [\\][n]
