@@ -37,10 +37,10 @@ syntax Funcdef
      ;
 
 syntax Parameters 
-     =  "(" [Typedargslist] ")"
+     =  "(" TypedArgsList? ")"
      ;
 
-syntax Typedargslist 
+syntax TypedArgsList 
      = Tfpdef ("=" Test)? ("," Tfpdef ("=" Test)?)* ("," ( ("*" Tfpdef? ("," Tfpdef ("=" Test)?)* ("," "**" Tfpdef)?) 
      						                                         | ("**" Tfpdef)
                                                          )? 
