@@ -1,4 +1,12 @@
-module OCaml
+/**
+ * 
+ * Extracted from the OCaml reference manual 4.00
+ *
+ * Ali Afroozeh 
+ * 
+ */
+
+module ocaml::specification::OCaml
 
 // Top-level     		
 

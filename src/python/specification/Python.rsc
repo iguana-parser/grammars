@@ -2,9 +2,11 @@
  *
  *  Python 3.4 
  *
+ *  Ali Afroozeh
+ *
  **/
  
-module Python
+module python::specification::Python
 
 syntax SingleInput 
      = NewLine 

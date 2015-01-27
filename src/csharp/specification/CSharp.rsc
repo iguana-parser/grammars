@@ -7,7 +7,7 @@
  *  author: Ali Afroozeh
  */
  
-module CSharp5
+module csharp::specification::CSharp
 
 
 // Basic concepts
