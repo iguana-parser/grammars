@@ -63,7 +63,7 @@ syntax TopDecls
 syntax TopDecl	
      =	"type" SimpleType "="TType
 	 |	"data" (Context "=>")? SimpleType ("=" Constrs)? DeriTing?
-	 |	"newtype" (Context "=>")? Simpletype = newconstr DeriTing?
+	 |	"newtype" (Context "=>")? Simpletype = NewConstr DeriTing?
 	 |	"class" (SContext "=>")? TYCLS TYVar ("where" cdecls)?
 	 |	"instance" (SContext =>] QTYCLS Inst ("where" idecls)?
 	 |	"default" {Type ","}*
@@ -99,7 +99,7 @@ syntax IDecl
 	 ;
  
 syntax GenDecl	
-     =	Vars "::" (Context "=>")? Type	    // (type signature)
+     =	Vars "":":" (Context "=>")? Type	    // (type signature)
 	 |	Fixity Integer? Ops	    		    // (fixity declaration)
 	 |										// (empty declaration)
 	 ;
@@ -108,8 +108,8 @@ syntax Ops
      =	{ OP "," }+
      ;
 
-syntax Vars	
-     =	{ Var ","}+
+syntax Vars	"
+ "    =	{ Var ","}+
      ;
 
 syntax Fixity	
@@ -123,7 +123,7 @@ syntax Type
      ;
  
 syntax BType	
-     = Btype? AType	    //(type application)
+     = BType? AType	    //(type application)
      ;
  
 syntax AType	
@@ -131,15 +131,15 @@ syntax AType
 	 |	TYVar
 	 |	"(" Type "," { Type "," }+ ")"	    // (tuple type, k ≥ 2)
 	 |	"[" Type "]"	    				// (list type)
-	 |	"(" Type ")"	  					// (parenthesized constructor)
+	 |	"(" Type ")"	  					// (parenthesized Constructor)
 	 ;
  
 syntax QTYCon	
      =	QTYCon
 	 |	"(" ")"	    		//(unit type)
-	 |	"[" "]"	    		//(list constructor)
-	 |	"(" "->" ")"	    //(function constructor)
- 	 |	"(" ","+ ")"	    //(tupling constructors)
+	 |	"[" "]"	    		//(list Constructor)
+	 |	"(" "->" ")"	    //(function Constructor)
+ 	 |	"(" ","+ ")"	    //(tupling Constructors)
  	 ;
  
 syntax Context	
@@ -169,26 +169,26 @@ syntax Constrs
      =	{ Constr "|" }+
      ;
 
-syntax constr	
-     =	con [!] atype1 … [!] atypek	    (arity con  =  k, k ≥ 0)
-	 |	(btype | ! atype) conop (btype | ! atype)	    (infix conop)
-	 |	con { fielddecl1 , … , fielddecln }	    (n ≥ 0)
+syntax Constr	
+     =	Con ("!"? AType)*       //(arity con  =  k, k ≥ 0)
+	 |	(BType | "!"? AType) ConOp (BType | "!" AType)	    (infix conop)
+	 |	Con "{" { FieldDecl ","}* "}"
 	 ;
 
-syntax newconstr	
-     =	con atype
-	 |	con { var :: type }
+syntax NewConstr	
+     =	Con AType
+	 |	Con "{" Var "::" Type "}"
 	 ;
 
-syntax fielddecl	
-     =	vars :: (type | ! atype)
+syntax FieldDecl	
+     =	Vars "::" (Type | "!" AType)
      ;
 
 syntax Deriving	
-     =	Deriving (dclass | (dclass1, … , dclassn))	    (n ≥ 0)
+     =	"deriving" (DClass | "(" { DClass1 "," }* ")" )	    (n ≥ 0)
      ;
 
-syntax dclass	
+syntax DClass	
      =	QTYCLS
      ;
  
@@ -288,7 +288,7 @@ syntax fexp
  
 syntax aexp	
      =	QVar	    (variable)
-	 |	gcon	    (general constructor)
+	 |	gcon	    (general Constructor)
 	 |	literal
 	 |	( exp )	    (parenthesized expression)
 	 |	( exp1 , … , expk )	    (tuple, k ≥ 2)
@@ -297,7 +297,7 @@ syntax aexp
 	 |	[ exp | qual1 , … , qualn ]	    (list comprehension, n ≥ 1)
 	 |	( infixexp qop )	    (left section)
 	 |	( qop⟨-⟩ infixexp )	    (right section)
- 	 |	qcon { fbind1 , … , fbindn }	    (labeled construction, n ≥ 0)
+ 	 |	qcon { fbind1 , … , fbindn }	    (labeled Construction, n ≥ 0)
 	 |	aexp⟨qcon⟩ { fbind1 , … , fbindn }	    (labeled update, n  ≥  1)
 	 ;
  
@@ -337,7 +337,7 @@ syntax fbind
      ;
  
 syntax pat	
-     =	lpat qconop pat	    (infix constructor)
+     =	lpat qconop pat	    (infix Constructor)
 	 |	lpat
 	 ;
  
@@ -379,11 +379,11 @@ syntax QVar
      ;
 
 syntax con	
-     =	conid | ( consym )	    (constructor)
+     =	conid | ( consym )	    (Constructor)
      ;
 
 syntax qcon	
-     =	qconid | ( gconsym )	    (qualified constructor)
+     =	qconid | ( gconsym )	    (qualified Constructor)
      ;
 
 syntax varop	
@@ -395,11 +395,11 @@ syntax qvarop
      ;
 
 syntax conop	
-     =	consym | `  conid `	    (constructor operator)
+     =	consym | `  conid `	    (Constructor operator)
      ;
 
 syntax qconop	
-     =	gconsym | `  qconid `	    (qualified constructor operator)
+     =	gconsym | `  qconid `	    (qualified Constructor operator)
      ;
 
 syntax op	
