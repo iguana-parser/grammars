@@ -62,9 +62,9 @@ syntax TopDecls
      ;
 
 syntax TopDecl	
-     = "type" SimpleType "=" TType
+     = "type" SimpleType "=" Type
 	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
-	 | "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
+	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr DeriTing?
 	 | "class" (SContext "=\>")? TyCls TyVar ("where" CDecls)?
 	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
 	 | "default" {Type ","}*
@@ -273,7 +273,7 @@ syntax Exp
 	 ;
  
 syntax InfixExp	
-     = LExp QOP InfixExp	    
+     = LExp QOp InfixExp	    
 	 | "-" InfixExp	         
 	 | LExp
 	 ;
@@ -300,8 +300,8 @@ syntax AExp
 	 | "[" { Exp ","}+ "]"
 	 | "[" Exp ("," Exp)? ".." Exp? "]"	    
 	 | "[" Exp "|" { Qual "," }+ "]"
-	 | "(" InfixExp QOP ")"
-	 | "(" QOP \ "-" InfixExp ")" 
+	 | "(" InfixExp QOp ")"
+	 | "(" QOp \ "-" InfixExp ")" 
  	 | QCon "{" { FBind "," }* "}"	    
 	 | AExp \ QCon "{" { FBind "," }+ "}"	    
 	 ;

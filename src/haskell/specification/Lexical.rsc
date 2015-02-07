@@ -271,8 +271,8 @@ lexical Integer
       = Decimal
       | "0o" Octal 
       | "0O" Octal
-      | "0x" HexaDecimal 
-      | "0X" HexaDecimal
+      | "0x" Hexadecimal 
+      | "0X" Hexadecimal
       ;
 
 lexical Float   
@@ -349,7 +349,7 @@ lexical Ascii
       ;
 
 lexical Cntrl   
-      =   AscLarge 
+      = AscLarge 
       | "@" 
       | "[" 
       | "\\" 
@@ -359,6 +359,6 @@ lexical Cntrl
       ;
 
 lexical Gap 
-      =   "\\" Whitechar WhiteChar* "\\"
+      = "\\" WhiteChar WhiteChar* "\\"
       ;
 
