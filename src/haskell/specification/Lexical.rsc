@@ -40,7 +40,11 @@ lexical NewLine
       
 lexical Space
       = " "
-      ;            
+      ;          
+      
+lexical Tab
+      = [\t]
+      ;        
  
 lexical Comment 
       = Dashes (Any \ Symbol Any*)?
@@ -59,14 +63,11 @@ lexical CloseCom
       ;
 
 lexical NComment    
-      = OpenCom ANY Seq (NComment ANY Seq)* CloseCom
+      = OpenCom ANY* (NComment ANY)* CloseCom
       ;
 
-//lexical ANY seq =   {ANY }⟨{ANY } ( opencom | closecom ) {ANY }⟩
-
 lexical ANY 
-      = Graphic 
-      | WhiteChar
+      = (Graphic | WhiteChar) \ OpenCom \ CloseCom
       ;
 
 lexical Any 
