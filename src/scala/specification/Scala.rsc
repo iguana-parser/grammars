@@ -1,3 +1,13 @@
+/**
+ *  Derived from the Scala Language Specification 2.11
+ *
+ *  http://www.scala-lang.org/files/archive/spec/2.11/13-syntax-summary.html
+ *
+ *  author: Ali Afroozeh
+ */
+
+module scala::specification::Scala
+
 syntax Literal           
     =  "-"? IntegerLiteral
     |  "-"? FloatingPointLiteral
@@ -9,11 +19,11 @@ syntax Literal
     ;
 
 syntax QualId            
-    =  { Id "."}+
+    =  { Id "." }+
     ;
 
 syntax Ids               
-    =  { Id ","}+
+    =  { Id "," }+
     ;
 
 syntax Path              
@@ -32,17 +42,17 @@ syntax ClassQualifier
     ;
 
 syntax Type              
-    =  FunctionArgTypes "=>" Type
+    =  FunctionArgTypes "=\>" Type
     |  InfixType ExistentialClause?
     ;
 
 syntax FunctionArgTypes  
     = InfixType
-    | "(" { ParamType "," }* ] ")"
+    | "(" { ParamType "," }* ")"
     ;
 
 syntax ExistentialClause 
-    =  "forSome" "{" { ExistentialDcl semi}+ "}"
+    =  "forSome" "{" { ExistentialDcl Semi}+ "}"
     ;
 
 syntax ExistentialDcl    
@@ -80,7 +90,7 @@ syntax Types
     ;
 
 syntax Refinement        
-    =  NL? "{" { RefineStat semi }+ "}"
+    =  NL? "{" { RefineStat Semi }+ "}"
     ;
 
 syntax RefineStat        
@@ -100,42 +110,42 @@ syntax Ascription
     ;
 
 syntax Expr              
-    =  (Bindings | "implicit"? Id | "_") "=>" Expr
+    =  (Bindings | ("implicit"? Id) | "_") "=\>" Expr
     |  Expr1
     ;
 
 syntax Expr1             
-    =  `if' `(' Expr `)' {nl} Expr [[semi] `else' Expr]
-    |  `while' `(' Expr `)' {nl} Expr
-    |  `try' (`{' Block `}' | Expr) [`catch' `{' CaseClauses `}'] [`finally' Expr]
-    |  `do' Expr [semi] `while' `(' Expr ')'
-    |  `for' (`(' Enumerators `)' | `{' Enumerators `}') {nl} [`yield'] Expr
-    |  `throw' Expr
-    |  `return' [Expr]
-    |  [SimpleExpr `.'] Id `=' Expr
-    |  SimpleExpr1 ArgumentExprs `=' Expr
+    =  "if" "(" Expr ")" NL* Expr (Semi? "else" Expr)?
+    |  "while" "(" Expr ")" NL* Expr
+    |  "try" (("{" Block "}") | Expr) ("catch" "{" CaseClauses "}")? ("finally" Expr)?
+    |  "do" Expr Semi? "while" "(" Expr ")"
+    |  "for" ( ("(" Enumerators ")") | ("{" Enumerators "}")) NL* "yield"? Expr
+    |  "throw" Expr
+    |  "return" Expr?
+    |  (SimpleExpr ".")? Id "=" Expr
+    |  SimpleExpr1 ArgumentExprs "=" Expr
     |  PostfixExpr
     |  PostfixExpr Ascription
-    |  PostfixExpr `match' `{' CaseClauses `}'
+    |  PostfixExpr "match" "{" CaseClauses "}"
     ;
 
 syntax PostfixExpr       
-    =  InfixExpr [Id [nl]]
+    =  InfixExpr (Id NL?)?
     ;
 
 syntax InfixExpr         
     =  PrefixExpr
-    |  InfixExpr Id [nl] InfixExpr
+    |  InfixExpr Id NL? InfixExpr
     ;
 
 syntax PrefixExpr        
-    =  ["-" | "+" | "~" | "!"] SimpleExpr
+    =  ("-" | "+" | "~" | "!")? SimpleExpr
     ;
 
 syntax SimpleExpr        
     =  "new" (ClassTemplate | TemplateBody)
     |  BlockExpr
-    |  SimpleExpr1 ["_"]
+    |  SimpleExpr1 "_"?
     ;
 
 syntax SimpleExpr1       
@@ -150,13 +160,13 @@ syntax SimpleExpr1
     ;
 
 syntax Exprs             
-    =  Expr {"," Expr}
+    =  { Expr ","}+
     ;
 
 syntax ArgumentExprs     
-    =  "(" [Exprs] ")"
-    |  "(" [Exprs ","] PostfixExpr ":" "_" "*" ")"
-    |  [nl] BlockExpr
+    =  "(" Exprs? ")"
+    |  "(" (Exprs ",")? PostfixExpr ":" "_" "*" ")"
+    |  NL? BlockExpr
     ;
 
 syntax BlockExpr         
@@ -165,36 +175,36 @@ syntax BlockExpr
     ;
 
 syntax Block             
-    =  BlockStat {semi BlockStat} [ResultExpr]
+    =  { BlockStat Semi }+ ResultExpr?
     ;
 
 syntax BlockStat         
     =  Import
-    |  {Annotation} ["implicit" | "lazy"] Def
-    |  {Annotation} {LocalModifier} TmplDef
+    |  Annotation* ("implicit" | "lazy")? Def
+    |  Annotation* LocalModifier* TmplDef
     |  Expr1
     |
     ;
 
 syntax ResultExpr        
     =  Expr1
-    |  (Bindings | (["implicit"] Id | "_") ":" CompoundType) "=>" Block
+    |  (Bindings | ((("implicit"? Id) | "_") ":" CompoundType)) "=\>" Block
     ;
 
 syntax Enumerators       
-    =  Generator {semi Generator}
+    =  {Generator Semi}+
     ;
 
 syntax Generator         
-    =  Pattern1 "<-" Expr {[semi] Guard | semi Pattern1 "=" Expr}
+    =  Pattern1 "\<-" Expr ((Semi? Guard) | (Semi Pattern1 "=" Expr))*
     ;
 
 syntax CaseClauses       
-    =  CaseClause { CaseClause }
+    =  CaseClause+
     ;
 
 syntax CaseClause        
-    =  "case" Pattern [Guard] "=>" Block
+    =  "case" Pattern Guard? "=\>" Block
     ;
 
 syntax Guard             
@@ -202,101 +212,101 @@ syntax Guard
     ;
 
 syntax Pattern           
-    =  Pattern1 { "|" Pattern1 }
+    =  { Pattern1 "|" }+
     ;
 
 syntax Pattern1          
-    =  varId ":" TypePat
+    =  VarId ":" TypePat
     |  "_" ":" TypePat
     |  Pattern2
     ;
 
 syntax Pattern2          
-    =  varId ["@" Pattern3]
+    =  VarId ("@" Pattern3)?
     |  Pattern3
     ;
 
 syntax Pattern3          
     =  SimplePattern
-    |  SimplePattern { Id [nl] SimplePattern }
+    |  SimplePattern ( Id NL? SimplePattern )*
     ;
 
 syntax SimplePattern     
     =  "_"
-    |  varId
+    |  VarId
     |  Literal
     |  StableId
-    |  StableId "(" [Patterns ")"
-    |  StableId "(" [Patterns ","] [varId "@"] "_" "*" ")"
-    |  "(" [Patterns] ")"
+    |  StableId "(" Patterns? ")"
+    |  StableId "(" (Patterns ",")? (VarId "@")? "_" "*" ")"
+    |  "(" Patterns? ")"
     |  XmlPattern
     ;
 
 syntax Patterns          
-    =  Pattern ["," Patterns]
+    =  Pattern ("," Patterns)?
     |  "_" *
     ;
 
 syntax TypeParamClause   
-    =  "[" VariantTypeParam {"," VariantTypeParam} "]"
+    =  "[" { VariantTypeParam "," }+ "]"
     ;
 
 syntax FunTypeParamClause
-    =  "[" TypeParam {"," TypeParam} "]"
+    =  "[" { TypeParam "," }+ "]"
     ;
 
 syntax VariantTypeParam  
-    =  {Annotation} ["+" | "-"] TypeParam
+    =  Annotation* ("+" | "-")? TypeParam
     ;
 
 syntax TypeParam         
-    =  (Id | "_") [TypeParamClause] [">:" Type] ["<:" Type] {"<%" Type} {":" Type}
+    =  (Id | "_") TypeParamClause? ("\>:" Type)? ("\<:" Type)? ("\<%" Type)* (":" Type)*
     ;
 
 syntax ParamClauses      
-    =  {ParamClause} [[nl] "(" "implicit" Params ")"]
+    =  ParamClause* (NL? "(" "implicit" Params ")")?
     ;
 
 syntax ParamClause       
-    =  [nl] "(" [Params] ")"
+    =  NL? "(" Params? ")"
     ;
 
 syntax Params            
-    =  Param {"," Param}
+    =  { Param "," }+
     ;
 
 syntax Param             
-    =  {Annotation} Id [":" ParamType] ["=" Expr]
+    =  Annotation* Id (":" ParamType)? ("=" Expr)?
     ;
 
 syntax ParamType         
     =  Type
-    |  "=>" Type
+    |  "=\>" Type
     |  Type "*"
     ;
 
 syntax ClassParamClauses 
-    =  {ClassParamClause} [[nl] "(" "implicit" ClassParams ")"]
+    =  ClassParamClause* (NL? "(" "implicit" ClassParams ")")?
     ;
 
 syntax ClassParamClause  
-    =  [nl] "(" [ClassParams] ")"
+    =  NL? "(" ClassParams? ")"
     ;
 
 syntax ClassParams       
-    =  ClassParam {"," ClassParam}
+    =  {ClassParam ","}+
     ;
 
 syntax ClassParam        
-    =  {Annotation} {Modifier} [(`val' | `var')] Id ":" ParamType ["=" Expr]
+    =  Annotation* Modifier* ("val" | "var")? Id ":" ParamType ("=" Expr)?
     ;
 
 syntax Bindings          
-    =  "(" Binding {"," Binding} ")"
+    =  "(" { Binding "," }+ ")"
     ;
 
 syntax Binding           
-    =  (Id | "_") [":" Type]
+    =  (Id | "_") (":" Type)?
     ;
 
 syntax Modifier          
@@ -314,7 +324,7 @@ syntax LocalModifier
     ;
 
 syntax AccessModifier    
-    =  ("private" | "protected") [AccessQualifier]
+    =  ("private" | "protected") AccessQualifier?
     ;
 
 syntax AccessQualifier   
@@ -322,7 +332,7 @@ syntax AccessQualifier
     ;
 
 syntax Annotation        
-    =  "@" SimpleType {ArgumentExprs}
+    =  "@" SimpleType ArgumentExprs*
     ;
 
 syntax ConstrAnnotation  
@@ -330,24 +340,24 @@ syntax ConstrAnnotation
     ;
 
 syntax TemplateBody      
-    =  [nl] "{" [SelfType] TemplateStat {semi TemplateStat} "}"
+    =  NL? "{" SelfType? { TemplateStat Semi}+ "}"
     ;
 
 syntax TemplateStat      
     =  Import
-    |  {Annotation [nl]} {Modifier} Def
-    |  {Annotation [nl]} {Modifier} Dcl
+    |  (Annotation NL?)* Modifier* Def
+    |  (Annotation NL?)* Modifier* Dcl
     |  Expr
     |
     ;
 
 syntax SelfType          
-    =  Id [":" Type] "=>"
-    |  "this" ":" Type "=>"
+    =  Id (":" Type)? "=\>"
+    |  "this" ":" Type "=\>"
     ;
 
 syntax Import            
-    =  "import" ImportExpr {"," ImportExpr}
+    =  "import" { ImportExpr ","}+
     ;
 
 syntax ImportExpr        
@@ -355,18 +365,18 @@ syntax ImportExpr
     ;
 
 syntax ImportSelectors   
-    =  "{" {ImportSelector ","} (ImportSelector | "_") "}"
+    =  "{" (ImportSelector ",")* (ImportSelector | "_") "}"
     ;
 
 syntax ImportSelector    
-    =  Id ["=>" Id | "=>" "_"]
+    =  Id (("=\>" Id) | ("=\>" "_"))?
     ;
 
 syntax Dcl               
     =  "val" ValDcl
     |  "var" VarDcl
     |  "def" FunDcl
-    |  "type" {nl} TypeDcl
+    |  "type" NL* TypeDcl
     ;
 
 syntax ValDcl            
@@ -378,15 +388,15 @@ syntax VarDcl
     ;
 
 syntax FunDcl            
-    =  FunSig [":" Type]
+    =  FunSig (":" Type)?
     ;
 
 syntax FunSig            
-    =  Id [FunTypeParamClause] ParamClauses
+    =  Id FunTypeParamClause? ParamClauses
     ;
 
 syntax TypeDcl           
-    =  Id [TypeParamClause] [">:" Type] ["<:" Type]
+    =  Id TypeParamClause? ("\>:" Type)? ("\<:" Type)?
     ;
 
 syntax PatVarDef         
@@ -397,12 +407,12 @@ syntax PatVarDef
 syntax Def               
     =  PatVarDef
     |  "def" FunDef
-    |  "type" {nl} TypeDef
+    |  "type" NL* TypeDef
     |  TmplDef
     ;
 
 syntax PatDef            
-    =  Pattern2 {"," Pattern2} [":" Type] "=" Expr
+    =  { Pattern2 "," }+ (":" Type)? "=" Expr
     ;
 
 syntax VarDef            
@@ -411,27 +421,27 @@ syntax VarDef
     ;
 
 syntax FunDef            
-    =  FunSig [":" Type] "=" Expr
-    |  FunSig [nl] "{" Block "}"
-    |  "this" ParamClause ParamClauses ("=" ConstrExpr | [nl] ConstrBlock)
+    =  FunSig (":" Type)? "=" Expr
+    |  FunSig NL? "{" Block "}"
+    |  "this" ParamClause ParamClauses (("=" ConstrExpr) | (NL? ConstrBlock))
     ;
 
 syntax TypeDef           
-    =  Id [TypeParamClause] "=" Type
+    =  Id TypeParamClause? "=" Type
     ;
 
 syntax TmplDef           
-    =  ["case"] "class" ClassDef
-    |  ["case"] "object" ObjectDef
+    =  "case"? "class" ClassDef
+    |  "case"? "object" ObjectDef
     |  "trait" TraitDef
     ;
 
 syntax ClassDef          
-    =  Id [TypeParamClause] {ConstrAnnotation} [AccessModifier] ClassParamClauses ClassTemplateOpt
+    =  Id TypeParamClause? ConstrAnnotation* AccessModifier? ClassParamClauses ClassTemplateOpt
     ;
 
 syntax TraitDef          
-    =  Id [TypeParamClause] TraitTemplateOpt
+    =  Id TypeParamClause? TraitTemplateOpt
     ;
 
 syntax ObjectDef         
@@ -439,39 +449,39 @@ syntax ObjectDef
     ;
 
 syntax ClassTemplateOpt  
-    =  "extends" ClassTemplate | [["extends"] TemplateBody]
+    =  "extends" ClassTemplate | ("extends"? TemplateBody)?
     ;
 
 syntax TraitTemplateOpt  
-    =  "extends" TraitTemplate | [["extends"] TemplateBody]
+    =  "extends" TraitTemplate | ("extends"? TemplateBody)?
     ;
 
 syntax ClassTemplate     
-    =  [EarlyDefs] ClassParents [TemplateBody]
+    =  EarlyDefs? ClassParents TemplateBody?
     ;
 
 syntax TraitTemplate     
-    =  [EarlyDefs] TraitParents [TemplateBody]
+    =  EarlyDefs? TraitParents TemplateBody?
     ;
 
 syntax ClassParents      
-    =  Constr {"with" AnnotType}
+    =  Constr ("with" AnnotType)*
     ;
 
 syntax TraitParents      
-    =  AnnotType {"with" AnnotType}
+    =  AnnotType ("with" AnnotType)*
     ;
 
 syntax Constr            
-    =  AnnotType {ArgumentExprs}
+    =  AnnotType ArgumentExprs*
     ;
 
 syntax EarlyDefs         
-    = "{" [EarlyDef {semi EarlyDef}] "}" "with"
+    = "{" { EarlyDef Semi }* "}" "with"
     ;
 
 syntax EarlyDef          
-    =  {Annotation [nl]} {Modifier} PatVarDef
+    =  (Annotation NL?)* Modifier* PatVarDef
     ;
 
 syntax ConstrExpr        
@@ -480,19 +490,19 @@ syntax ConstrExpr
     ;
 
 syntax ConstrBlock       
-    =  "{" SelfInvocation {semi BlockStat} "}"
+    =  "{" SelfInvocation (Semi BlockStat)* "}"
     ;
 
 syntax SelfInvocation    
-    =  "this" ArgumentExprs {ArgumentExprs}
+    =  "this" ArgumentExprs+
     ;
 
 syntax TopStatSeq        
-    =  TopStat {semi TopStat}
+    =  { TopStat Semi }+
     ;
 
 syntax TopStat           
-    =  {Annotation [nl]} {Modifier} TmplDef
+    =  (Annotation NL?)? Modifier* TmplDef
     |  Import
     |  Packaging
     |  PackageObject
@@ -500,7 +510,7 @@ syntax TopStat
     ;
 
 syntax Packaging         
-    =  "package" QualId [nl] "{" TopStatSeq "}"
+    =  "package" QualId NL? "{" TopStatSeq "}"
     ;
 
 syntax PackageObject     
@@ -508,5 +518,5 @@ syntax PackageObject
     ;
 
 syntax CompilationUnit   
-    =  {"package" QualId semi} TopStatSeq 
+    =  ("package" QualId Semi)* TopStatSeq 
     ;
