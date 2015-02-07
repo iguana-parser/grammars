@@ -39,7 +39,7 @@ lexical NewLine
       ;
       
 lexical Space
-      = ' '
+      = " "
       ;            
  
 lexical Comment 
