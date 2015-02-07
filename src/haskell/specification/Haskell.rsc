@@ -48,8 +48,8 @@ syntax ImpSpec
  
 syntax Import	
      = Var
-	 | TYCON ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	 | TYCLS ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
+	 | TyCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	 | TyCls ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
 	 ;
 
 syntax CName	
@@ -65,7 +65,7 @@ syntax TopDecl
      = "type" SimpleType "=" TType
 	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
 	 | "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
-	 | "class" (SContext "=\>")? TYCLS TyVar ("where" CDecls)?
+	 | "class" (SContext "=\>")? TyCls TyVar ("where" CDecls)?
 	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
@@ -114,9 +114,9 @@ syntax Vars
      ;
 
 syntax Fixity	
-     = InfixL
-     | InfixR 
-     | Infix
+     = "infixl"
+     | "infixr" 
+     | "infix"
      ;
  
 syntax Type	
@@ -135,7 +135,7 @@ syntax AType
 	 | "(" Type ")"	  				    
 	 ;
  
-syntax QTyCon	
+syntax GTyCon	
      = QTyCon
 	 | "(" ")"	    		
 	 | "[" "]"	    		
@@ -163,7 +163,7 @@ syntax SimpleClass
      ;
  
 syntax SimpleType	
-     = TYCON TyVar*
+     = TyCon TyVar*
      ;
 
 syntax Constrs	

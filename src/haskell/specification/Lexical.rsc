@@ -36,7 +36,11 @@ lexical WhiteChar
 
 lexical NewLine
       = [\r \n]
-      ;      
+      ;
+      
+lexical Space
+      = ' '
+      ;            
  
 lexical Comment 
       = Dashes (Any \ Symbol Any*)?
@@ -156,7 +160,7 @@ lexical HexIt
      ;
  
 lexical VarId   
-      =   (Small (Small | Large | Digit | "\'")*) \ ReservedRd
+      =   (Small (Small | Large | Digit | "\'")*) \ ReservedId
       ;
 
 lexical ConId   
