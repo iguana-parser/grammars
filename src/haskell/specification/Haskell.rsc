@@ -1,42 +1,42 @@
 /**
  *  Derived from the Haskell Language Specification
- 
+
  *  https://www.haskell.org/onlinereport/haskell2010/haskellch10.html#x17-17500010
   *
  *  author: Ali Afroozeh
  */
 
-module java::specification::Java
+Module haskell::specification::Haskell
 
 
-syntax module	
-     =	module modid [exports] where body 
-     |	body
+syntax Module	
+     =	"Module" ModId Exports? "where" Body 
+     |	Body
      ;
 
-syntax body	
-     =	{ impdecls ; topdecls }
- 	 |	{ impdecls }
-	 |	{ topdecls }
+syntax Body	
+     =	{ ImpDecls ; TopDecls }
+ 	 |	{ ImpDecls }
+	 |	{ TopDecls }
      ; 
 
-syntax impdecls	
-     =	impdecl1 ; … ; impdecln	    (n ≥ 1)
+syntax ImpDecls	
+     =	{ ImpDecl ";" }+
      ;
  
 syntax exports	
-     =	( export1 , … , exportn [ , ] )	    (n ≥ 0)
+     =	"(" {Export ","}* ","? ")"	    (n ≥ 0)
      ;
  
-syntax export	
-     =	qvar
-	 |	qtycon [(..) | ( cname1 , … , cnamen )]	    (n ≥ 0)
-	 |	qtycls [(..) | ( qvar1 , … , qvarn )]	    (n ≥ 0)
-	 |	module modid
+syntax Export	
+     =	QVar
+	 |	QTYCon ( "(" ".." ")" | "(" { CName "," }* ")" )?
+	 |	QTYCLS ( "(" ".." ")" | "(" { QVar ","}* ")" )?
+	 |	Module ModId
 	 ;
  
 syntax impdecl	
-     =	import [qualified] modid [as modid] [impspec]
+     =	import [qualified] ModId [as ModId] [impspec]
 	 |		    (empty declaration)
 	 ;
  
@@ -47,15 +47,15 @@ syntax impspec
  
 syntax import	
      =	var
-	 |	tycon [ (..) | ( cname1 , … , cnamen )]	    (n ≥ 0)
+	 |	tycon [ (..) | ( CName1 , … , CNamen )]	    (n ≥ 0)
 	 |	tycls [(..) | ( var1 , … , varn )]	    (n ≥ 0)
 
-syntax cname	
+syntax CName	
      =	var 
      | con
      ;
  
-syntax topdecls	
+syntax TopDecls	
      =	topdecl1 ; … ; topdecln	    (n ≥ 0)
      ;
 
@@ -64,7 +64,7 @@ syntax topdecl
 	 |	data [context =>] simpletype [= constrs] [deriving]
 	 |	newtype [context =>] simpletype = newconstr [deriving]
 	 |	class [scontext =>] tycls tyvar [where cdecls]
-	 |	instance [scontext =>] qtycls inst [where idecls]
+	 |	instance [scontext =>] QTYCLS inst [where idecls]
 	 |	default (type1 , … , typen)	    (n ≥ 0)
 	 |	foreign fdecl
 	 |	decl
@@ -134,7 +134,7 @@ syntax atype
 	 ;
  
 syntax gtycon	
-     =	qtycon
+     =	QTYCon
 	 |	()	    (unit type)
 	 |	[]	    (list constructor)
 	 |	(->)	    (function constructor)
@@ -147,8 +147,8 @@ syntax context
 	 ;
 
 syntax class	
-     =	qtycls tyvar
-	 |	qtycls ( tyvar atype1 … atypen )	    (n ≥ 1)
+     =	QTYCLS tyvar
+	 |	QTYCLS ( tyvar atype1 … atypen )	    (n ≥ 1)
 	 ;
 
 syntax scontext	
@@ -157,7 +157,7 @@ syntax scontext
 	 ;
 
 syntax simpleclass	
-     =	qtycls tyvar
+     =	QTYCLS tyvar
      ;
  
 syntax simpletype	
@@ -188,7 +188,7 @@ syntax deriving
      ;
 
 syntax dclass	
-     =	qtycls
+     =	QTYCLS
      ;
  
 syntax inst	
@@ -201,7 +201,7 @@ syntax inst
  
 syntax fdecl	
      =	import callconv [safety] impent var :: ftype	    (define variable)
-	 |	export callconv expent var :: ftype	    (expose variable)
+	 |	Export callconv expent var :: ftype	    (expose variable)
 	 ;
 
 syntax callconv	
@@ -233,7 +233,7 @@ syntax frtype
 	 ;
 
 syntax fatype	
-     =	qtycon atype1 … atypek	    (k  ≥  0)
+     =	QTYCon atype1 … atypek	    (k  ≥  0)
      ;
  
 syntax funlhs	
@@ -286,7 +286,7 @@ syntax fexp
      ;
  
 syntax aexp	
-     =	qvar	    (variable)
+     =	QVar	    (variable)
 	 |	gcon	    (general constructor)
 	 |	literal
 	 |	( exp )	    (parenthesized expression)
@@ -332,7 +332,7 @@ syntax stmt
 	 ;
  
 syntax fbind	
-     =	qvar = exp
+     =	QVar = exp
      ;
  
 syntax pat	
@@ -359,7 +359,7 @@ syntax apat
 	 ;
  
 syntax fpat	
-     =	qvar = pat
+     =	QVar = pat
      ;
  
 syntax gcon	
@@ -373,7 +373,7 @@ syntax var
      =	varid | ( varsym )	    (variable)
      ;
 
-syntax qvar	
+syntax QVar	
      =	qvarid | ( qvarsym )	    (qualified variable)
      ;
 
