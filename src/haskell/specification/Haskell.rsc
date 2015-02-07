@@ -8,6 +8,7 @@
 
 module haskell::specification::Haskell
 
+extend haskell::specification::Lexical;
 
 syntax Module	
      = "module" ModId Exports? "where" Body 
