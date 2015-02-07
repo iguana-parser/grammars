@@ -16,8 +16,8 @@ syntax Module
 
 syntax Body	
      = "{" ImpDecls ";" TopDecls "}"
- 	| "{" ImpDecls "}"
-	| "{" TopDecls "}"
+ 	 | "{" ImpDecls "}"
+	 | "{" TopDecls "}"
      ; 
 
 syntax ImpDecls	
@@ -30,26 +30,26 @@ syntax Exports
  
 syntax Export	
      = QVar
-	| QTYCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	| QTYCLS ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
-	| Module ModId
-	;
+	 | QTYCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	 | QTYCLS ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
+	 | Module ModId
+	 ;
  
 syntax ImpDecl	
      = "import" "qualified"? ModId ("as" ModId)? ImpSpec?
-	|		    											
-	;
+	 |		    											
+	 ;
  
 syntax ImpSpec	
      = "(" {Import ","}* ","? ")"
-	| "hiding" "(" { Import ","}* ","? ")"
-	;
+	 | "hiding" "(" { Import ","}* ","? ")"
+	 ;
  
 syntax Import	
      = Var
-	| TYCON ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	| TYCLS ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
-	;
+	 | TYCON ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	 | TYCLS ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
+	 ;
 
 syntax CName	
      = Var 
@@ -62,14 +62,14 @@ syntax TopDecls
 
 syntax TopDecl	
      = "type" SimpleType "=" TType
-	| "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
-	| "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
-	| "class" (SContext "=\>")? TYCLS TYVar ("where" CDecls)?
-	| "instance" (SContext "=\>")? QTYCLS Inst ("where" IDecls)?
-	| "default" {Type ","}*
-	| "foreign" FDecl
-	| Decl
-	;
+	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
+	 | "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
+	 | "class" (SContext "=\>")? TYCLS TYVar ("where" CDecls)?
+	 | "instance" (SContext "=\>")? QTYCLS Inst ("where" IDecls)?
+	 | "default" {Type ","}*
+	 | "foreign" FDecl
+	 | Decl
+	 ;
  
 syntax Decls	
      = "{" { Decl ";"}* "}"
@@ -77,8 +77,8 @@ syntax Decls
 
 syntax Decl	
      = GenDecl
-	| (FunLHS | Pat) RHS
-	;
+	 | (FunLHS | Pat) RHS
+	 ;
  
 syntax CDecls	
      = "{" {CDecl ";"}* "}"
@@ -86,8 +86,8 @@ syntax CDecls
 
 syntax CDecl	
      = GenDecl
-	| (FunLHS | Var) RHS
-	;
+     | (FunLHS | Var) RHS
+	 ;
  
 syntax IDecls	
      = "{" {IDecl ";"}* "}"	    
@@ -95,14 +95,14 @@ syntax IDecls
 
 syntax IDecl	
      = (FunLHS | Var) RHS
-	|                              
-	;
+	 |                              
+	 ;
  
 syntax GenDecl	
      = Vars "::" (Context "=\>")? Type	    
-	| Fixity Integer? Ops	    		    
-	|							    
-	;
+	 | Fixity Integer? Ops	    		    
+	 |							    
+	 ;
  
 syntax Ops	
      = { OP "," }+
@@ -128,34 +128,34 @@ syntax BType
  
 syntax AType	
      = GTYCon
-	| TYVar
-	| "(" Type "," { Type "," }+ ")"	    
-	| "[" Type "]"	    				    
-	| "(" Type ")"	  				    
-	;
+	 | TYVar
+	 | "(" Type "," { Type "," }+ ")"	    
+	 | "[" Type "]"	    				    
+	 | "(" Type ")"	  				    
+	 ;
  
 syntax QTYCon	
      = QTYCon
-	| "(" ")"	    		
-	| "[" "]"	    		
-	| "(" "-\>" ")"	     
- 	| "(" ","+ ")"	     
- 	;
+	 | "(" ")"	    		
+	 | "[" "]"	    		
+	 | "(" "-\>" ")"	     
+ 	 | "(" ","+ ")"	     
+ 	 ;
  
 syntax Context	
      = Class
-	| "(" {Class ","}* ")"	
-	;
+	 | "(" {Class ","}* ")"	
+	 ;
 
 syntax Class	
      = QTYCLS TYVar
-	| QTYCLS "(" TYVar AType+ ")"	 
-	;
+	 | QTYCLS "(" TYVar AType+ ")"	 
+	 ;
 
 syntax SContext	
      = SimpleClass
-	| "(" { Simpleclass "," }* ")"
-	;
+	 | "(" { Simpleclass "," }* ")"
+	 ;
 
 syntax SimpleClass	
      = QTYCLS TYVar
@@ -171,14 +171,14 @@ syntax Constrs
 
 syntax Constr	
      = Con ("!"? AType)*                                   
-	| (BType | ("!"? AType)) ConOp (BType | ("!" AType))	    
-	| Con "{" { FieldDecl ","}* "}"
-	;
+	 | (BType | ("!"? AType)) ConOp (BType | ("!" AType))	    
+	 | Con "{" { FieldDecl ","}* "}"
+	 ;
 
 syntax NewConstr	
      = Con AType
-	| Con "{" Var "::" Type "}"
-	;
+	 | Con "{" Var "::" Type "}"
+	 ;
 
 syntax FieldDecl	
      = Vars "::" (Type | ("!" AType))
@@ -194,25 +194,25 @@ syntax DClass
  
 syntax Inst	
      = GTYCon
-	| "(" GTYCon TYVar* ")"	              
-	| "(" TYVar "," { TYVar "," }+ ")"	    
-	| "[" TYVar "]"
-	| "(" TYVar "-\>" TYVar ")"	             
-	;
+	 | "(" GTYCon TYVar* ")"	              
+	 | "(" TYVar "," { TYVar "," }+ ")"	    
+	 | "[" TYVar "]"
+	 | "(" TYVar "-\>" TYVar ")"	             
+	 ;
  
 syntax FDecl	
      = "import" CallConv Safety? Impent Var "::" FType	    
-	| "export" CallConv Expent Var "::" FType	         
-	;
+	 | "export" CallConv Expent Var "::" FType	         
+	 ;
 
 syntax CallConv
      = "ccall" 
      | "stdcall" 
      | "cplusplus"
-	| "jvm" 
+	 | "jvm" 
      | "dotnet"
 //	| system-specific calling conventions
-	;
+	 ;
 
 syntax Impent	
      = String?	    
@@ -223,19 +223,19 @@ syntax Expent
      ;
 
 syntax Safety	
-     = "Unsafe" 
-     | "Safe"
+     = "unsafe" 
+     | "safe"
      ;
  
 syntax FType	
      = FRType
-	| FAType  "-\>"  FType
-	;
+	 | FAType  "-\>"  FType
+	 ;
 
 syntax FRType	
      = FAType
-	| "("")"
-	;
+	 | "("")"
+	 ;
 
 syntax FAType	
      = QTYCon AType*
@@ -243,14 +243,14 @@ syntax FAType
  
 syntax FunLHS
      = Var APat Apat*
-	| Pat VarOp Pat
-	| "(" FunLHS ")" APat "{" APat "}"
-	;
+	 | Pat VarOp Pat
+	 | "(" FunLHS ")" APat "{" APat "}"
+	 ;
  
 syntax RHS	
      = "=" Exp ("where" Decls)?
-	| GDRHS ("where" Decls)?
-	;
+	 | GDRHS ("where" Decls)?
+	 ;
  
 syntax GDRHS
      = Guards "=" Exp GDRHS?
@@ -262,29 +262,29 @@ syntax Guards
 
 syntax Guard	
      = Pat "\<-" InfixExp	    
-	| "let" Decls	         
-	| InfixExp	         
-	;
+	 | "let" Decls	         
+	 | InfixExp	         
+	 ;
  
 syntax Exp	
      = InfixExp "::" ( Context "=\>")? Type	    
-	| InfixExp
-	;
+	 | InfixExp
+	 ;
  
 syntax InfixExp	
      = LExp QOP InfixExp	    
-	| "-" InfixExp	         
-	| LExp
-	;
+	 | "-" InfixExp	         
+	 | LExp
+	 ;
  
 syntax LExp	
      = "\\" APat+ "-\>" Exp	                             
-	| "let" Decls "in" Exp                           
-	| "if" Exp ";"? "then" Exp ";"? "else" Exp	    
-	| "case" Exp "of" "{" Alts "}"	              
-	| "do" "{" Stmts "}"	                        
-	| FExp
-	;
+	 | "let" Decls "in" Exp                           
+	 | "if" Exp ";"? "then" Exp ";"? "else" Exp	    
+	 | "case" Exp "of" "{" Alts "}"	              
+	 | "do" "{" Stmts "}"	                        
+	 | FExp
+	 ; 
 
 syntax FExp	
      = FExp? AExp	    
@@ -292,24 +292,24 @@ syntax FExp
  
 syntax AExp	
      = QVar	                             
-	| GCon	                             
-	| Literal
-	| "(" Exp ")"	    
-	| "(" Exp "," { Exp "," }+ ")"	    
-	| "[" { Exp ","}+ "]"
-	| "[" Exp ("," Exp)? ".." Exp? "]"	    
-	| "[" Exp "|" { Qual "," }+ "]"
-	| "(" InfixExp QOP ")"
-	| "(" QOP \ "-" InfixExp ")" 
- 	| QCon "{" { FBind "," }* "}"	    
-	| AExp \ QCon "{" { FBind "," }+ "}"	    
-	;
+	 | GCon	                             
+	 | Literal
+	 | "(" Exp ")"	    
+	 | "(" Exp "," { Exp "," }+ ")"	    
+	 | "[" { Exp ","}+ "]"
+	 | "[" Exp ("," Exp)? ".." Exp? "]"	    
+	 | "[" Exp "|" { Qual "," }+ "]"
+	 | "(" InfixExp QOP ")"
+	 | "(" QOP \ "-" InfixExp ")" 
+ 	 | QCon "{" { FBind "," }* "}"	    
+	 | AExp \ QCon "{" { FBind "," }+ "}"	    
+	 ;
  
 syntax Qual	
      = Pat "\<-" Exp
-	| "let" Decls
-	| Exp	    
-	;
+	 | "let" Decls
+	 | Exp	    
+	 ;
  
 syntax Alts	
      = { Alt ";" }+
@@ -331,10 +331,10 @@ syntax Stmts
 
 syntax Stmt
      = Exp ";"
-	| Pat "\<-" Exp ";"
-	| "let" Decls ";"
-	| ";"
-	;
+	 | Pat "\<-" Exp ";"
+	 | "let" Decls ";"
+	 | ";"
+	 ;
  
 syntax FBind	
      = QVar "=" Exp
@@ -342,26 +342,26 @@ syntax FBind
  
 syntax Pat	
      = LPat QConOp Pat
-	| LPat
-	;
+	 | LPat
+	 ;
  
 syntax LPat	
      = APat
-	| "-" (Integer | Float)
-	| GCon Apat+
-	;
+	 | "-" (Integer | Float)
+	 | GCon Apat+
+	 ;
  
 syntax APat
      = Var ( "@" APat)?
-	| GCon
-	| QCon "{" { FPat "," }* "}"
-	| Literal
-	| "_"
-	| "(" Pat ")"
-	| "(" Pat "," {Pat ","}+ ")"
-	| "[" { Pat "," }+
-	| "~" APat
-	;
+	 | GCon
+	 | QCon "{" { FPat "," }* "}"
+	 | Literal
+	 | "_"
+	 | "(" Pat ")"
+	 | "(" Pat "," {Pat ","}+ ")"
+	 | "[" { Pat "," }+
+	 | "~" APat
+	 ;
  
 syntax FPat	
      = QVar "=" Pat
@@ -369,10 +369,10 @@ syntax FPat
  
 syntax GCon
      = "(" ")"
-	| "[" "]"
-	| "(" ","+ ")"
-	| QCon
-	;
+	 | "[" "]"
+	 | "(" ","+ ")"
+	 | QCon
+	 ;
  
 syntax Var	
      = VarId 
