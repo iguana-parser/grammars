@@ -6,7 +6,7 @@
  *  author: Ali Afroozeh
  */
 
-Module haskell::specification::Haskell
+module haskell::specification::Haskell
 
 
 syntax Module	
@@ -30,8 +30,8 @@ syntax Exports
  
 syntax Export	
      = QVar
-	| QTYCon ( "(" ".." ")" | "(" { CName "," }* ")" )?
-	| QTYCLS ( "(" ".." ")" | "(" { QVar ","}* ")" )?
+	| QTYCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	| QTYCLS ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
 	| Module ModId
 	;
  
@@ -47,8 +47,8 @@ syntax ImpSpec
  
 syntax Import	
      = Var
-	| TYCON ( "(" ".." ")" | "(" { CName "," }* ")" )?
-	| TYCLS ( "(" ".." ")" | "(" { Var "," }* ")" )?
+	| TYCON ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	| TYCLS ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
 	;
 
 syntax CName	
@@ -62,10 +62,10 @@ syntax TopDecls
 
 syntax TopDecl	
      = "type" SimpleType "=" TType
-	| "data" (Context "=>")? SimpleType ("=" Constrs)? DeriTing?
-	| "newtype" (Context "=>")? Simpletype = NewConstr DeriTing?
-	| "class" (SContext "=>")? TYCLS TYVar ("where" CDecls)?
-	| "instance" (SContext "=>")? QTYCLS Inst ("where" IDecls)?
+	| "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
+	| "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
+	| "class" (SContext "=\>")? TYCLS TYVar ("where" CDecls)?
+	| "instance" (SContext "=\>")? QTYCLS Inst ("where" IDecls)?
 	| "default" {Type ","}*
 	| "foreign" FDecl
 	| Decl
@@ -99,7 +99,7 @@ syntax IDecl
 	;
  
 syntax GenDecl	
-     = Vars "::" (Context "=>")? Type	    
+     = Vars "::" (Context "=\>")? Type	    
 	| Fixity Integer? Ops	    		    
 	|							    
 	;
@@ -119,7 +119,7 @@ syntax Fixity
      ;
  
 syntax Type	
-     = BType ("->" Type)?	    
+     = BType ("-\>" Type)?	    
      ;
  
 syntax BType	
@@ -138,7 +138,7 @@ syntax QTYCon
      = QTYCon
 	| "(" ")"	    		
 	| "[" "]"	    		
-	| "(" "->" ")"	     
+	| "(" "-\>" ")"	     
  	| "(" ","+ ")"	     
  	;
  
@@ -171,7 +171,7 @@ syntax Constrs
 
 syntax Constr	
      = Con ("!"? AType)*                                   
-	| (BType | "!"? AType) ConOp (BType | "!" AType)	    
+	| (BType | ("!"? AType)) ConOp (BType | ("!" AType))	    
 	| Con "{" { FieldDecl ","}* "}"
 	;
 
@@ -181,11 +181,11 @@ syntax NewConstr
 	;
 
 syntax FieldDecl	
-     = Vars "::" (Type | "!" AType)
+     = Vars "::" (Type | ("!" AType))
      ;
 
 syntax Deriving	
-     = "deriving" (DClass | "(" { DClass1 "," }* ")" )	    
+     = "deriving" (DClass | ("(" { DClass "," }* ")") )	    
      ;
 
 syntax DClass	
@@ -197,7 +197,7 @@ syntax Inst
 	| "(" GTYCon TYVar* ")"	              
 	| "(" TYVar "," { TYVar "," }+ ")"	    
 	| "[" TYVar "]"
-	| "(" TYVar -> TYVar )	             
+	| "(" TYVar "-\>" TYVar ")"	             
 	;
  
 syntax FDecl	
@@ -210,7 +210,7 @@ syntax CallConv
      | "stdcall" 
      | "cplusplus"
 	| "jvm" 
-     | dotnet
+     | "dotnet"
 //	| system-specific calling conventions
 	;
 
@@ -229,7 +229,7 @@ syntax Safety
  
 syntax FType	
      = FRType
-	| FAType  "->"  FType
+	| FAType  "-\>"  FType
 	;
 
 syntax FRType	
@@ -249,25 +249,25 @@ syntax FunLHS
  
 syntax RHS	
      = "=" Exp ("where" Decls)?
-	| GDRHS ("where" decls)?
+	| GDRHS ("where" Decls)?
 	;
  
 syntax GDRHS
      = Guards "=" Exp GDRHS?
      ;
  
-syntax guards	
+syntax Guards	
      = "|" { Guard "," }+
      ;
 
 syntax Guard	
-     = Pat "<-" InfixExp	    
+     = Pat "\<-" InfixExp	    
 	| "let" Decls	         
 	| InfixExp	         
 	;
  
 syntax Exp	
-     = InfixExp "::" ( Context "=>")? Type	    
+     = InfixExp "::" ( Context "=\>")? Type	    
 	| InfixExp
 	;
  
@@ -278,7 +278,7 @@ syntax InfixExp
 	;
  
 syntax LExp	
-     = "\" Apat+ -> Exp	                             
+     = "\\" APat+ "-\>" Exp	                             
 	| "let" Decls "in" Exp                           
 	| "if" Exp ";"? "then" Exp ";"? "else" Exp	    
 	| "case" Exp "of" "{" Alts "}"	              
@@ -306,7 +306,7 @@ syntax AExp
 	;
  
 syntax Qual	
-     = Pat "<-" Exp
+     = Pat "\<-" Exp
 	| "let" Decls
 	| Exp	    
 	;
@@ -316,13 +316,13 @@ syntax Alts
      ;
 
 syntax Alt
-     = Pat "->" Exp ("where" Decls)?
+     = Pat "-\>" Exp ("where" Decls)?
 	| Pat GDPat ("where" Decls)?
 	|
 	;
  
 syntax GDPat	
-     = Guards "->" Exp GDPat?
+     = Guards "-\>" Exp GDPat?
      ;
  
 syntax Stmts	
@@ -331,7 +331,7 @@ syntax Stmts
 
 syntax Stmt
      = Exp ";"
-	| Pat "<-" Exp ";"
+	| Pat "\<-" Exp ";"
 	| "let" Decls ";"
 	| ";"
 	;
@@ -352,7 +352,7 @@ syntax LPat
 	;
  
 syntax APat
-     = Var ( "@" apat)?
+     = Var ( "@" APat)?
 	| GCon
 	| QCon "{" { FPat "," }* "}"
 	| Literal
