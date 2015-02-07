@@ -1,8 +1,8 @@
 /**
  *  Derived from the Haskell Language Specification
-
+ *
  *  https://www.haskell.org/onlinereport/haskell2010/haskellch10.html#x17-17500010
-  *
+ *
  *  author: Ali Afroozeh
  */
 
@@ -10,46 +10,46 @@ Module haskell::specification::Haskell
 
 
 syntax Module	
-     =	"Module" ModId Exports? "where" Body 
-     |	Body
+     = "module" ModId Exports? "where" Body 
+     | Body
      ;
 
 syntax Body	
-     =	"{" ImpDecls ";" TopDecls "}"
- 	 |	"{" ImpDecls "}"
-	 |	"{" TopDecls "}"
+     = "{" ImpDecls ";" TopDecls "}"
+ 	| "{" ImpDecls "}"
+	| "{" TopDecls "}"
      ; 
 
 syntax ImpDecls	
-     =	{ ImpDecl ";" }+
+     = { ImpDecl ";" }+
      ;
  
-syntax exports	
-     =	"(" {Export ","}* ","? ")"
+syntax Exports	
+     = "(" {Export ","}* ","? ")"
      ;
  
 syntax Export	
-     =	QVar
-	 |	QTYCon ( "(" ".." ")" | "(" { CName "," }* ")" )?
-	 |	QTYCLS ( "(" ".." ")" | "(" { QVar ","}* ")" )?
-	 |	Module ModId
-	 ;
+     = QVar
+	| QTYCon ( "(" ".." ")" | "(" { CName "," }* ")" )?
+	| QTYCLS ( "(" ".." ")" | "(" { QVar ","}* ")" )?
+	| Module ModId
+	;
  
 syntax ImpDecl	
-     =	"import" "qualified"? ModId ("as" ModId)? ImpSpec?
-	 |		    											//(empty declaration)
-	 ;
+     = "import" "qualified"? ModId ("as" ModId)? ImpSpec?
+	|		    											
+	;
  
 syntax ImpSpec	
-     =	"(" {Import ","}* ","? ")"
-	 |	"hiding" "(" { Import ","}* ","? ")"
-	 ;
+     = "(" {Import ","}* ","? ")"
+	| "hiding" "(" { Import ","}* ","? ")"
+	;
  
 syntax Import	
-     =	Var
-	 |	TYCON ( "(" ".." ")" | "(" { CName "," }* ")" )?
-	 |	TYCLS ( "(" ".." ")" | "(" { Var "," }* ")" )?
-	 ;
+     = Var
+	| TYCON ( "(" ".." ")" | "(" { CName "," }* ")" )?
+	| TYCLS ( "(" ".." ")" | "(" { Var "," }* ")" )?
+	;
 
 syntax CName	
      = Var 
@@ -57,59 +57,59 @@ syntax CName
      ;
  
 syntax TopDecls	
-     =	{ TopDecl ";" }*
+     = { TopDecl ";" }*
      ;
 
 syntax TopDecl	
-     =	"type" SimpleType "="TType
-	 |	"data" (Context "=>")? SimpleType ("=" Constrs)? DeriTing?
-	 |	"newtype" (Context "=>")? Simpletype = NewConstr DeriTing?
-	 |	"class" (SContext "=>")? TYCLS TYVar ("where" cdecls)?
-	 |	"instance" (SContext =>] QTYCLS Inst ("where" idecls)?
-	 |	"default" {Type ","}*
-	 |	"foreign" FDecl
-	 |	Decl
-	 ;
+     = "type" SimpleType "=" TType
+	| "data" (Context "=>")? SimpleType ("=" Constrs)? DeriTing?
+	| "newtype" (Context "=>")? Simpletype = NewConstr DeriTing?
+	| "class" (SContext "=>")? TYCLS TYVar ("where" CDecls)?
+	| "instance" (SContext "=>")? QTYCLS Inst ("where" IDecls)?
+	| "default" {Type ","}*
+	| "foreign" FDecl
+	| Decl
+	;
  
 syntax Decls	
-     =	"{" { Decl ";"}* "}"
+     = "{" { Decl ";"}* "}"
      ;
 
 syntax Decl	
-     =	GenDecl
-	 | (FunLHS | Pat) RHS
-	 ;
+     = GenDecl
+	| (FunLHS | Pat) RHS
+	;
  
 syntax CDecls	
-     =	"{" {CDecl ";"}* "}"
+     = "{" {CDecl ";"}* "}"
      ;
 
 syntax CDecl	
-     =	GenDecl
-	 |	(FunLHS | Var) RHS
-	 ;
+     = GenDecl
+	| (FunLHS | Var) RHS
+	;
  
 syntax IDecls	
-     =	"{" {IDecl ";"}* "}"	    
+     = "{" {IDecl ";"}* "}"	    
      ;
 
 syntax IDecl	
-     =	(FunLHS | Var) RHS
-	 |								//(empty)
-	 ;
+     = (FunLHS | Var) RHS
+	|                              
+	;
  
 syntax GenDecl	
-     =	Vars "":":" (Context "=>")? Type	    // (type signature)
-	 |	Fixity Integer? Ops	    		    // (fixity declaration)
-	 |										// (empty declaration)
-	 ;
+     = Vars "::" (Context "=>")? Type	    
+	| Fixity Integer? Ops	    		    
+	|							    
+	;
  
 syntax Ops	
-     =	{ OP "," }+
+     = { OP "," }+
      ;
 
-syntax Vars	"
- "    =	{ Var ","}+
+syntax Vars
+     = { Var ","}+
      ;
 
 syntax Fixity	
@@ -119,297 +119,312 @@ syntax Fixity
      ;
  
 syntax Type	
-     =	BType ("->" Type)?	    //(function type)
+     = BType ("->" Type)?	    
      ;
  
 syntax BType	
-     = BType? AType	    //(type application)
+     = BType? AType	    
      ;
  
 syntax AType	
-     =	GTYCon
-	 |	TYVar
-	 |	"(" Type "," { Type "," }+ ")"	    // (tuple type, k ≥ 2)
-	 |	"[" Type "]"	    				// (list type)
-	 |	"(" Type ")"	  					// (parenthesized Constructor)
-	 ;
+     = GTYCon
+	| TYVar
+	| "(" Type "," { Type "," }+ ")"	    
+	| "[" Type "]"	    				    
+	| "(" Type ")"	  				    
+	;
  
 syntax QTYCon	
-     =	QTYCon
-	 |	"(" ")"	    		//(unit type)
-	 |	"[" "]"	    		//(list Constructor)
-	 |	"(" "->" ")"	    //(function Constructor)
- 	 |	"(" ","+ ")"	    //(tupling Constructors)
- 	 ;
+     = QTYCon
+	| "(" ")"	    		
+	| "[" "]"	    		
+	| "(" "->" ")"	     
+ 	| "(" ","+ ")"	     
+ 	;
  
 syntax Context	
      = Class
-	 | "(" {Class ","}* ")"	
-	 ;
+	| "(" {Class ","}* ")"	
+	;
 
-syntax class	
-     =	QTYCLS TYVar
-	 |	QTYCLS "(" TYVar AType+ ")"	    (n ≥ 1)
-	 ;
+syntax Class	
+     = QTYCLS TYVar
+	| QTYCLS "(" TYVar AType+ ")"	 
+	;
 
 syntax SContext	
-     =	SimpleClass
-	 |	"(" { Simpleclass "," }* ")"
-	 ;
+     = SimpleClass
+	| "(" { Simpleclass "," }* ")"
+	;
 
 syntax SimpleClass	
-     =	QTYCLS TYVar
+     = QTYCLS TYVar
      ;
  
 syntax SimpleType	
-     =	TYCON TYVar*
+     = TYCON TYVar*
      ;
 
 syntax Constrs	
-     =	{ Constr "|" }+
+     = { Constr "|" }+
      ;
 
 syntax Constr	
-     =	Con ("!"? AType)*       //(arity con  =  k, k ≥ 0)
-	 |	(BType | "!"? AType) ConOp (BType | "!" AType)	    (infix conop)
-	 |	Con "{" { FieldDecl ","}* "}"
-	 ;
+     = Con ("!"? AType)*                                   
+	| (BType | "!"? AType) ConOp (BType | "!" AType)	    
+	| Con "{" { FieldDecl ","}* "}"
+	;
 
 syntax NewConstr	
-     =	Con AType
-	 |	Con "{" Var "::" Type "}"
-	 ;
+     = Con AType
+	| Con "{" Var "::" Type "}"
+	;
 
 syntax FieldDecl	
-     =	Vars "::" (Type | "!" AType)
+     = Vars "::" (Type | "!" AType)
      ;
 
 syntax Deriving	
-     =	"deriving" (DClass | "(" { DClass1 "," }* ")" )	    (n ≥ 0)
+     = "deriving" (DClass | "(" { DClass1 "," }* ")" )	    
      ;
 
 syntax DClass	
-     =	QTYCLS
+     = QTYCLS
      ;
  
-syntax inst	
-     =	gtycon
-	 |	( gtycon tyvar1 … tyvark )	    (k ≥ 0, tyvars distinct)
-	 |	( tyvar1 , … , tyvark )	    (k ≥ 2, tyvars distinct)
-	 |	[ TYVar ]
-	 |	( tyvar1 -> tyvar2 )	    tyvar1 and tyvar2 distinct
-	 ;
+syntax Inst	
+     = GTYCon
+	| "(" GTYCon TYVar* ")"	              
+	| "(" TYVar "," { TYVar "," }+ ")"	    
+	| "[" TYVar "]"
+	| "(" TYVar -> TYVar )	             
+	;
  
-syntax fdecl	
-     =	import callconv [safety] impent var :: ftype	    (define variable)
-	 |	Export callconv expent var :: ftype	    (expose variable)
-	 ;
+syntax FDecl	
+     = "import" CallConv Safety? Impent Var "::" FType	    
+	| "export" CallConv Expent Var "::" FType	         
+	;
 
-syntax callconv	
-     =	ccall | stdcall | cplusplus	    (calling convention)
-	 |	jvm | dotnet
-	 |	 system-specific calling conventions
-	 ;
+syntax CallConv
+     = "ccall" 
+     | "stdcall" 
+     | "cplusplus"
+	| "jvm" 
+     | dotnet
+//	| system-specific calling conventions
+	;
 
-syntax impent	
-     =	[string]	    (see Section 8.5.1)
+syntax Impent	
+     = String?	    
      ;
 
-syntax expent	
-     =	[string]	    (see Section 8.5.1)
+syntax Expent
+     = String?	    
      ;
 
-syntax safety	
-     =	unsafe | safe
+syntax Safety	
+     = "Unsafe" 
+     | "Safe"
      ;
  
-syntax ftype	
-     =	frtype
-	 |	fatype  ->  ftype
-	 ;
+syntax FType	
+     = FRType
+	| FAType  "->"  FType
+	;
 
-syntax frtype	
-     =	fatype
-	 | 	()
-	 ;
+syntax FRType	
+     = FAType
+	| "("")"
+	;
 
-syntax fatype	
-     =	QTYCon atype1 … atypek	    (k  ≥  0)
+syntax FAType	
+     = QTYCon AType*
      ;
  
-syntax funlhs	
-     =	var apat { apat }
-	 |	pat varop pat
-	 |	( funlhs ) apat { apat }
-	 ;
+syntax FunLHS
+     = Var APat Apat*
+	| Pat VarOp Pat
+	| "(" FunLHS ")" APat "{" APat "}"
+	;
  
-syntax rhs	
-     =	= exp [where decls]
-	 |	gdrhs [where decls]
-	 ;
+syntax RHS	
+     = "=" Exp ("where" Decls)?
+	| GDRHS ("where" decls)?
+	;
  
-syntax gdrhs	
-     =	guards = exp [gdrhs]
+syntax GDRHS
+     = Guards "=" Exp GDRHS?
      ;
  
 syntax guards	
-     =	| guard1, …, guardn	    (n ≥ 1)
+     = "|" { Guard "," }+
      ;
 
-syntax guard	
-     =	pat <- infixexp	    (pattern guard)
-	 |	let decls	    (local declaration)
-	 |	infixexp	    (boolean guard)
-	 ;
+syntax Guard	
+     = Pat "<-" InfixExp	    
+	| "let" Decls	         
+	| InfixExp	         
+	;
  
-syntax exp	
-     =	infixexp :: [Context =>] type	    (expression type signature)
-	 |	infixexp
-	 ;
+syntax Exp	
+     = InfixExp "::" ( Context "=>")? Type	    
+	| InfixExp
+	;
  
-syntax infixexp	
-     =	lexp qop infixexp	    (infix operator application)
-	 |	- infixexp	    (prefix negation)
-	 |	lexp
-	 ;
+syntax InfixExp	
+     = LExp QOP InfixExp	    
+	| "-" InfixExp	         
+	| LExp
+	;
  
-syntax lexp	
-     =	\ apat1 … apatn -> exp	    (lambda abstraction, n ≥ 1)
-	 |	let decls in exp	    (let expression)
-	 |	if exp [;] then exp [;] else exp	    (conditional)
-	 |	case exp of { alts }	    (case expression)
-	 |	do { stmts }	    (do expression)
-	 |	fexp
-	 ;
+syntax LExp	
+     = "\" Apat+ -> Exp	                             
+	| "let" Decls "in" Exp                           
+	| "if" Exp ";"? "then" Exp ";"? "else" Exp	    
+	| "case" Exp "of" "{" Alts "}"	              
+	| "do" "{" Stmts "}"	                        
+	| FExp
+	;
 
-syntax fexp	
-     =	[fexp] aexp	    (function application)
+syntax FExp	
+     = FExp? AExp	    
      ;
  
-syntax aexp	
-     =	QVar	    (variable)
-	 |	gcon	    (general Constructor)
-	 |	literal
-	 |	( exp )	    (parenthesized expression)
-	 |	( exp1 , … , expk )	    (tuple, k ≥ 2)
-	 |	[ exp1 , … , expk ]	    (list, k ≥ 1)
-	 |	[ exp1 [, exp2] .. [exp3] ]	    (arithmetic sequence)
-	 |	[ exp | qual1 , … , qualn ]	    (list comprehension, n ≥ 1)
-	 |	( infixexp qop )	    (left section)
-	 |	( qop⟨-⟩ infixexp )	    (right section)
- 	 |	qcon { fbind1 , … , fbindn }	    (labeled Construction, n ≥ 0)
-	 |	aexp⟨qcon⟩ { fbind1 , … , fbindn }	    (labeled update, n  ≥  1)
-	 ;
+syntax AExp	
+     = QVar	                             
+	| GCon	                             
+	| Literal
+	| "(" Exp ")"	    
+	| "(" Exp "," { Exp "," }+ ")"	    
+	| "[" { Exp ","}+ "]"
+	| "[" Exp ("," Exp)? ".." Exp? "]"	    
+	| "[" Exp "|" { Qual "," }+ "]"
+	| "(" InfixExp QOP ")"
+	| "(" QOP \ "-" InfixExp ")" 
+ 	| QCon "{" { FBind "," }* "}"	    
+	| AExp \ QCon "{" { FBind "," }+ "}"	    
+	;
  
-syntax qual	
-     =	pat <- exp	    (generator)
-	 |	let decls	    (local declaration)
-	 |	exp	    (guard)
-	 ;
+syntax Qual	
+     = Pat "<-" Exp
+	| "let" Decls
+	| Exp	    
+	;
  
-syntax alts	
-     =	alt1 ; … ; altn	    (n ≥ 1)
-     ;
-
-syntax alt	
-     =	pat -> exp [where decls]
-	 |	pat gdpat [where decls]
-	 |		    (empty alternative)
-	 ;
- 
-syntax gdpat	
-     =	guards -> exp [ gdpat ]
-     ;
- 
-syntax stmts	
-     =	stmt1 … stmtn exp [;]	    (n ≥ 0)
+syntax Alts	
+     = { Alt ";" }+
      ;
 
-syntax stmt	
-     =	exp ;
-	 |	pat <- exp ;
-	 |	let decls ;
-	 |	;	    (empty statement)
-	 ;
+syntax Alt
+     = Pat "->" Exp ("where" Decls)?
+	| Pat GDPat ("where" Decls)?
+	|
+	;
  
-syntax fbind	
-     =	QVar = exp
+syntax GDPat	
+     = Guards "->" Exp GDPat?
      ;
  
-syntax pat	
-     =	lpat qconop pat	    (infix Constructor)
-	 |	lpat
-	 ;
+syntax Stmts	
+     = Stmt* Exp ";"?
+     ;
+
+syntax Stmt
+     = Exp ";"
+	| Pat "<-" Exp ";"
+	| "let" Decls ";"
+	| ";"
+	;
  
-syntax lpat	
-     =	apat
-	 |	- (integer | float)	    (negative literal)
-	 |	gcon apat1 … apatk	    (arity gcon  =  k, k ≥ 1)
-	 ;
- 
-syntax apat	
-     =	var [ @ apat]	    (as pattern)
-	 |	gcon	    (arity gcon  =  0)
-	 |	qcon { fpat1 , … , fpatk }	    (labeled pattern, k ≥ 0)
-	 |	literal
-	 |	_	    (wildcard)
-	 |	( pat )	    (parenthesized pattern)
-	 |	( pat1 , … , patk )	    (tuple pattern, k ≥ 2)
-	 |	[ pat1 , … , patk ]	    (list pattern, k ≥ 1)
-	 |	~ apat	    (irrefutable pattern)
-	 ;
- 
-syntax fpat	
-     =	QVar = pat
+syntax FBind	
+     = QVar "=" Exp
      ;
  
-syntax gcon	
-     =	()
-	 |	[]
-	 |	(,{,})
-	 |	qcon
-	 ;
+syntax Pat	
+     = LPat QConOp Pat
+	| LPat
+	;
  
-syntax var	
-     =	varid | ( varsym )	    (variable)
+syntax LPat	
+     = APat
+	| "-" (Integer | Float)
+	| GCon Apat+
+	;
+ 
+syntax APat
+     = Var ( "@" apat)?
+	| GCon
+	| QCon "{" { FPat "," }* "}"
+	| Literal
+	| "_"
+	| "(" Pat ")"
+	| "(" Pat "," {Pat ","}+ ")"
+	| "[" { Pat "," }+
+	| "~" APat
+	;
+ 
+syntax FPat	
+     = QVar "=" Pat
+     ;
+ 
+syntax GCon
+     = "(" ")"
+	| "[" "]"
+	| "(" ","+ ")"
+	| QCon
+	;
+ 
+syntax Var	
+     = VarId 
+     | "(" VarSym ")"
      ;
 
 syntax QVar	
-     =	qvarid | ( qvarsym )	    (qualified variable)
+     = QVarId 
+     | "(" QVarSym ")"
      ;
 
-syntax con	
-     =	conid | ( consym )	    (Constructor)
+syntax Con	
+     = ConId 
+     | "(" ConSym ")"
      ;
 
-syntax qcon	
-     =	qconid | ( gconsym )	    (qualified Constructor)
+syntax QCon	
+     = QConId 
+     | "(" GConSym ")"
      ;
 
-syntax varop	
-     =	varsym | `  varid `	    (variable operator)
+syntax VarOp
+     = VarSym 
+     | "`"  VarId "`"
      ;
 
-syntax qvarop	
-     =	qvarsym | `  qvarid `	    (qualified variable operator)
+syntax QVarOp	
+     = QVarSym 
+     | "`" QVarId "`"
      ;
 
-syntax conop	
-     =	consym | `  conid `	    (Constructor operator)
+syntax ConOp	
+     = ConSym 
+     | "`" ConId "`"
      ;
 
-syntax qconop	
-     =	gconsym | `  qconid `	    (qualified Constructor operator)
+syntax QConOp
+     = GConSym 
+     | "`" QConId "`"
      ;
 
-syntax op	
-     =	varop | conop	    (operator)
+syntax Op	
+     = VarOp 
+     | ConOp
      ;
 
-syntax qop	
-     =	qvarop | qconop	    (qualified operator)
+syntax QOp	
+     = QVarOp 
+     | QConOp
      ;
 
-syntax gconsym	
-     =	: | qconsym
+syntax GConSym	
+     = ":" 
+     | QConSym
      ;
