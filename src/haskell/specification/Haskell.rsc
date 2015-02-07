@@ -15,9 +15,9 @@ syntax Module
      ;
 
 syntax Body	
-     =	{ ImpDecls ; TopDecls }
- 	 |	{ ImpDecls }
-	 |	{ TopDecls }
+     =	"{" ImpDecls ";" TopDecls "}"
+ 	 |	"{" ImpDecls "}"
+	 |	"{" TopDecls "}"
      ; 
 
 syntax ImpDecls	
@@ -25,7 +25,7 @@ syntax ImpDecls
      ;
  
 syntax exports	
-     =	"(" {Export ","}* ","? ")"	    (n ≥ 0)
+     =	"(" {Export ","}* ","? ")"
      ;
  
 syntax Export	
@@ -35,137 +35,138 @@ syntax Export
 	 |	Module ModId
 	 ;
  
-syntax impdecl	
-     =	import [qualified] ModId [as ModId] [impspec]
-	 |		    (empty declaration)
+syntax ImpDecl	
+     =	"import" "qualified"? ModId ("as" ModId)? ImpSpec?
+	 |		    											//(empty declaration)
 	 ;
  
-syntax impspec	
-     =	( import1 , … , importn [ , ] )	    (n ≥ 0)
-	 |	hiding ( import1 , … , importn [ , ] )	    (n ≥ 0)
+syntax ImpSpec	
+     =	"(" {Import ","}* ","? ")"
+	 |	"hiding" "(" { Import ","}* ","? ")"
 	 ;
  
-syntax import	
-     =	var
-	 |	tycon [ (..) | ( CName1 , … , CNamen )]	    (n ≥ 0)
-	 |	tycls [(..) | ( var1 , … , varn )]	    (n ≥ 0)
+syntax Import	
+     =	Var
+	 |	TYCON ( "(" ".." ")" | "(" { CName "," }* ")" )?
+	 |	TYCLS ( "(" ".." ")" | "(" { Var "," }* ")" )?
+	 ;
 
 syntax CName	
-     =	var 
-     | con
+     = Var 
+     | Con
      ;
  
 syntax TopDecls	
-     =	topdecl1 ; … ; topdecln	    (n ≥ 0)
+     =	{ TopDecl ";" }*
      ;
 
-syntax topdecl	
-     =	type simpletype = type
-	 |	data [context =>] simpletype [= constrs] [deriving]
-	 |	newtype [context =>] simpletype = newconstr [deriving]
-	 |	class [scontext =>] tycls tyvar [where cdecls]
-	 |	instance [scontext =>] QTYCLS inst [where idecls]
-	 |	default (type1 , … , typen)	    (n ≥ 0)
-	 |	foreign fdecl
-	 |	decl
+syntax TopDecl	
+     =	"type" SimpleType "="TType
+	 |	"data" (Context "=>")? SimpleType ("=" Constrs)? DeriTing?
+	 |	"newtype" (Context "=>")? Simpletype = newconstr DeriTing?
+	 |	"class" (SContext "=>")? TYCLS TYVar ("where" cdecls)?
+	 |	"instance" (SContext =>] QTYCLS Inst ("where" idecls)?
+	 |	"default" {Type ","}*
+	 |	"foreign" FDecl
+	 |	Decl
 	 ;
  
-syntax decls	
-     =	{ decl1 ; … ; decln }	    (n ≥ 0)
+syntax Decls	
+     =	"{" { Decl ";"}* "}"
      ;
 
-syntax decl	
-     =	gendecl
-	 |	(funlhs | pat) rhs
+syntax Decl	
+     =	GenDecl
+	 | (FunLHS | Pat) RHS
 	 ;
  
-syntax cdecls	
-     =	{ cdecl1 ; … ; cdecln }	    (n ≥ 0)
+syntax CDecls	
+     =	"{" {CDecl ";"}* "}"
      ;
 
-syntax cdecl	
-     =	gendecl
-	 |	(funlhs | var) rhs
+syntax CDecl	
+     =	GenDecl
+	 |	(FunLHS | Var) RHS
 	 ;
  
-syntax idecls	
-     =	{ idecl1 ; … ; idecln }	    (n ≥ 0)
+syntax IDecls	
+     =	"{" {IDecl ";"}* "}"	    
      ;
 
-syntax idecl	
-     =	(funlhs | var) rhs
-	 |	(empty)
+syntax IDecl	
+     =	(FunLHS | Var) RHS
+	 |								//(empty)
 	 ;
  
-syntax gendecl	
-     =	vars :: [context =>] type	    (type signature)
-	 |	fixity [integer] ops	    (fixity declaration)
-	 |  (empty declaration)
+syntax GenDecl	
+     =	Vars "::" (Context "=>")? Type	    // (type signature)
+	 |	Fixity Integer? Ops	    		    // (fixity declaration)
+	 |										// (empty declaration)
 	 ;
  
-syntax ops	
-     =	op1 , … , opn	    (n ≥ 1)
+syntax Ops	
+     =	{ OP "," }+
      ;
 
-syntax vars	
-     =	var1 , …, varn	    (n ≥ 1)
+syntax Vars	
+     =	{ Var ","}+
      ;
 
-syntax fixity	
-     =	infixl 
-     | infixr 
-     | infix
+syntax Fixity	
+     = InfixL
+     | InfixR 
+     | Infix
      ;
  
-syntax type	
-     =	btype [-> type]	    (function type)
+syntax Type	
+     =	BType ("->" Type)?	    //(function type)
      ;
  
-syntax btype	
-     =	[btype] atype	    (type application)
+syntax BType	
+     = Btype? AType	    //(type application)
      ;
  
-syntax atype	
-     =	gtycon
-	 |	tyvar
-	 |	( type1 , … , typek )	    (tuple type, k ≥ 2)
-	 |	[ type ]	    (list type)
-	 |	( type )	    (parenthesized constructor)
+syntax AType	
+     =	GTYCon
+	 |	TYVar
+	 |	"(" Type "," { Type "," }+ ")"	    // (tuple type, k ≥ 2)
+	 |	"[" Type "]"	    				// (list type)
+	 |	"(" Type ")"	  					// (parenthesized constructor)
 	 ;
  
-syntax gtycon	
+syntax QTYCon	
      =	QTYCon
-	 |	()	    (unit type)
-	 |	[]	    (list constructor)
-	 |	(->)	    (function constructor)
- 	 |	(,{,})	    (tupling constructors)
+	 |	"(" ")"	    		//(unit type)
+	 |	"[" "]"	    		//(list constructor)
+	 |	"(" "->" ")"	    //(function constructor)
+ 	 |	"(" ","+ ")"	    //(tupling constructors)
  	 ;
  
-syntax context	
-     =	class
-	 |	( class1 , … , classn )	    (n ≥ 0)
+syntax Context	
+     = Class
+	 | "(" {Class ","}* ")"	
 	 ;
 
 syntax class	
-     =	QTYCLS tyvar
-	 |	QTYCLS ( tyvar atype1 … atypen )	    (n ≥ 1)
+     =	QTYCLS TYVar
+	 |	QTYCLS "(" TYVar AType+ ")"	    (n ≥ 1)
 	 ;
 
-syntax scontext	
-     =	simpleclass
-	 |	( simpleclass1 , … , simpleclassn )	    (n ≥ 0)
+syntax SContext	
+     =	SimpleClass
+	 |	"(" { Simpleclass "," }* ")"
 	 ;
 
-syntax simpleclass	
-     =	QTYCLS tyvar
+syntax SimpleClass	
+     =	QTYCLS TYVar
      ;
  
-syntax simpletype	
-     =	tycon tyvar1 … tyvark	    (k ≥ 0)
+syntax SimpleType	
+     =	TYCON TYVar*
      ;
 
-syntax constrs	
-     =	constr1 | … | constrn	    (n ≥ 1)
+syntax Constrs	
+     =	{ Constr "|" }+
      ;
 
 syntax constr	
@@ -183,8 +184,8 @@ syntax fielddecl
      =	vars :: (type | ! atype)
      ;
 
-syntax deriving	
-     =	deriving (dclass | (dclass1, … , dclassn))	    (n ≥ 0)
+syntax Deriving	
+     =	Deriving (dclass | (dclass1, … , dclassn))	    (n ≥ 0)
      ;
 
 syntax dclass	
@@ -195,7 +196,7 @@ syntax inst
      =	gtycon
 	 |	( gtycon tyvar1 … tyvark )	    (k ≥ 0, tyvars distinct)
 	 |	( tyvar1 , … , tyvark )	    (k ≥ 2, tyvars distinct)
-	 |	[ tyvar ]
+	 |	[ TYVar ]
 	 |	( tyvar1 -> tyvar2 )	    tyvar1 and tyvar2 distinct
 	 ;
  
@@ -262,7 +263,7 @@ syntax guard
 	 ;
  
 syntax exp	
-     =	infixexp :: [context =>] type	    (expression type signature)
+     =	infixexp :: [Context =>] type	    (expression type signature)
 	 |	infixexp
 	 ;
  
