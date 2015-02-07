@@ -31,8 +31,8 @@ syntax Exports
  
 syntax Export	
      = QVar
-	 | QTYCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	 | QTYCLS ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
+	 | QTyCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
+	 | QTyCls ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
 	 | Module ModId
 	 ;
  
@@ -65,8 +65,8 @@ syntax TopDecl
      = "type" SimpleType "=" TType
 	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
 	 | "newtype" (Context "=\>")? Simpletype "=" NewConstr DeriTing?
-	 | "class" (SContext "=\>")? TYCLS TYVar ("where" CDecls)?
-	 | "instance" (SContext "=\>")? QTYCLS Inst ("where" IDecls)?
+	 | "class" (SContext "=\>")? TYCLS TyVar ("where" CDecls)?
+	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
@@ -128,15 +128,15 @@ syntax BType
      ;
  
 syntax AType	
-     = GTYCon
-	 | TYVar
+     = GTyCon
+	 | TyVar
 	 | "(" Type "," { Type "," }+ ")"	    
 	 | "[" Type "]"	    				    
 	 | "(" Type ")"	  				    
 	 ;
  
-syntax QTYCon	
-     = QTYCon
+syntax QTyCon	
+     = QTyCon
 	 | "(" ")"	    		
 	 | "[" "]"	    		
 	 | "(" "-\>" ")"	     
@@ -149,8 +149,8 @@ syntax Context
 	 ;
 
 syntax Class	
-     = QTYCLS TYVar
-	 | QTYCLS "(" TYVar AType+ ")"	 
+     = QTyCls TyVar
+	 | QTyCls "(" TyVar AType+ ")"	 
 	 ;
 
 syntax SContext	
@@ -159,11 +159,11 @@ syntax SContext
 	 ;
 
 syntax SimpleClass	
-     = QTYCLS TYVar
+     = QTyCls TyVar
      ;
  
 syntax SimpleType	
-     = TYCON TYVar*
+     = TYCON TyVar*
      ;
 
 syntax Constrs	
@@ -190,15 +190,15 @@ syntax Deriving
      ;
 
 syntax DClass	
-     = QTYCLS
+     = QTyCls
      ;
  
 syntax Inst	
-     = GTYCon
-	 | "(" GTYCon TYVar* ")"	              
-	 | "(" TYVar "," { TYVar "," }+ ")"	    
-	 | "[" TYVar "]"
-	 | "(" TYVar "-\>" TYVar ")"	             
+     = GTyCon
+	 | "(" GTyCon TyVar* ")"	              
+	 | "(" TyVar "," { TyVar "," }+ ")"	    
+	 | "[" TyVar "]"
+	 | "(" TyVar "-\>" TyVar ")"	             
 	 ;
  
 syntax FDecl	
@@ -239,7 +239,7 @@ syntax FRType
 	 ;
 
 syntax FAType	
-     = QTYCon AType*
+     = QTyCon AType*
      ;
  
 syntax FunLHS
