@@ -9,6 +9,7 @@
 module scala::specification::Scala
 
 extend scala::specification::Lexical;
+extend scala::specification::XML;
 
 syntax Literal           
     =  "-"? IntegerLiteral
