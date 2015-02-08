@@ -132,8 +132,16 @@ lexical SymbolLiteral
       ;
 
 lexical Comment          
-      = "/*"  "*/"
-      | "//" 
+      = MultiLineComment
+      | SingleLineComment
+      ;
+      
+lexical MultiLineComment
+     = "/*" (![*] | [*] !>> [/] | MultiLineComment)*  "*/"
+     ;      
+      
+lexical SingleLineComment
+      = "//" ![\n]* !>> [\n\r]
       ;
 
 lexical NL
@@ -141,5 +149,6 @@ lexical NL
       ;
 
 lexical Semi
-      = ";" |  NL+
+      = ";" 
+      |  NL+
       ; 
