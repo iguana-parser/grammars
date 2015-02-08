@@ -8,6 +8,8 @@
 
 module scala::specification::Scala
 
+extend scala::specification::Lexical;
+
 syntax Literal           
     =  "-"? IntegerLiteral
     |  "-"? FloatingPointLiteral
