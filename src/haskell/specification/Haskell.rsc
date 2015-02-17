@@ -73,7 +73,7 @@ syntax TopDecl
 	 ;
  
 syntax Decls	
-     = "{" { Decl ";"}* "}"
+     = "{" { Decl ";"}+ "}"
      ;
 
 syntax Decl	
