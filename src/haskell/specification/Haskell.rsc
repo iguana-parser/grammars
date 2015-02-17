@@ -171,7 +171,7 @@ syntax Constrs
 
 syntax Constr	
      = Con ("!"? AType)*                                   
-	 | (BType | ("!"? AType)) ConOp (BType | ("!" AType))	    
+	 | (BType | ("!" AType)) ConOp (BType | ("!" AType))	    
 	 | Con "{" { FieldDecl ","}* "}"
 	 ;
 
