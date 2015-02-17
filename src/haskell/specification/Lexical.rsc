@@ -244,7 +244,7 @@ lexical QTyCon
       ;
 
 lexical QTyCls  
-      = ( ModId ".")? TyCls
+      = (ModId ".")? TyCls
       ;
 
 lexical QVarSym   

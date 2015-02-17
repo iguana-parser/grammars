@@ -31,8 +31,7 @@ syntax Exports
  
 syntax Export	
      = QVar
-	 | QTyCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	 | QTyCls ( ("(" ".." ")") | ("(" { QVar ","}* ")") )?
+	 | ConId ( ("(" ".." ")") | ("(" { (QVar | Con) "," }* ")") )? 
 	 | Module ModId
 	 ;
  
