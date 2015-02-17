@@ -46,7 +46,7 @@ lexical Tab
       ;        
  
 lexical Comment 
-      = Dashes (Any \ Symbol Any*)?
+      = Dashes (Any \ Symbol Any*)? "\n"
       ;
 
 lexical Dashes  
