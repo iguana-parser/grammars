@@ -160,11 +160,11 @@ lexical HexIt
       ;
  
 lexical VarId   
-      = (Small (Small | Large | Digit | "\'")*) \ ReservedId
+      = (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_] \ ReservedId
       ;
 
 lexical ConId   
-      = Large (Small | Large | Digit | "\'")*
+      = Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_]
       ;
 
 lexical ReservedId  
