@@ -1,5 +1,8 @@
 module haskell::specification::Lexical
 
+layout Layout
+     = (Whitespace | Comment)* !>> "{-" !>> "--"
+     ;
 
 lexical Literal 
       = Integer 
@@ -21,10 +24,10 @@ lexical Special
       ;
  
 lexical Whitespace  
-     =   WhiteStuff+
+     =   WhiteStuff+ !>> [\n \r \t \ \u000B]
      ;
 
-lexical Whitestuff  
+lexical WhiteStuff  
       = WhiteChar 
       | Comment 
       | NComment

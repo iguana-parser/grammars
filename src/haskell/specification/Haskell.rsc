@@ -63,8 +63,8 @@ syntax TopDecls
 
 syntax TopDecl	
      = "type" SimpleType "=" Type
-	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? DeriTing?
-	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr DeriTing?
+	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? Deriving?
+	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
 	 | "class" (SContext "=\>")? TyCls TyVar ("where" CDecls)?
 	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
 	 | "default" {Type ","}*
@@ -106,7 +106,7 @@ syntax GenDecl
 	 ;
  
 syntax Ops	
-     = { OP "," }+
+     = { Op "," }+
      ;
 
 syntax Vars
@@ -155,7 +155,7 @@ syntax Class
 
 syntax SContext	
      = SimpleClass
-	 | "(" { Simpleclass "," }* ")"
+	 | "(" { SimpleClass "," }* ")"
 	 ;
 
 syntax SimpleClass	
@@ -243,7 +243,7 @@ syntax FAType
      ;
  
 syntax FunLHS
-     = Var APat Apat*
+     = Var APat APat*
 	 | Pat VarOp Pat
 	 | "(" FunLHS ")" APat "{" APat "}"
 	 ;
@@ -349,7 +349,7 @@ syntax Pat
 syntax LPat	
      = APat
 	 | "-" (Integer | Float)
-	 | GCon Apat+
+	 | GCon APat+
 	 ;
  
 syntax APat
