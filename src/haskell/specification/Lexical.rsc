@@ -198,7 +198,7 @@ lexical VarSym
       ;
 
 lexical ConSym  
-      =  ( ":" Symbol*) \ ReservedOp
+      =  ( ":" Symbol+) \ "::"
       ;
 
 lexical ReservedOp  
