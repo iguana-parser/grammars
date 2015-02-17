@@ -91,7 +91,7 @@ syntax CDecl
 	 ;
  
 syntax IDecls	
-     = "{" {IDecl ";"}* "}"	    
+     = "{" {IDecl ";"}+ "}"
      ;
 
 syntax IDecl	
