@@ -159,12 +159,12 @@ lexical OctIt
       ;
 
 lexical HexIt   
-     =  Digit 
-     | [A-Fa-f]
-     ;
+      =  Digit 
+      |  [A-Fa-f]
+      ;
  
 lexical VarId   
-      =   (Small (Small | Large | Digit | "\'")*) \ ReservedId
+      = (Small (Small | Large | Digit | "\'")*) \ ReservedId
       ;
 
 lexical ConId   

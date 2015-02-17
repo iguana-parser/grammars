@@ -58,7 +58,7 @@ syntax CName
      ;
  
 syntax TopDecls	
-     = { TopDecl ";" }*
+     = { TopDecl ";" }+
      ;
 
 syntax TopDecl	
