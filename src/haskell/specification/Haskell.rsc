@@ -47,8 +47,7 @@ syntax ImpSpec
  
 syntax Import	
      = Var
-	 | TyCon ( ("(" ".." ")") | ("(" { CName "," }* ")") )?
-	 | TyCls ( ("(" ".." ")") | ("(" { Var "," }* ")") )?
+	 | ConId ( ("(" ".." ")") | ("(" { (QVar | Con) "," }* ")") )?
 	 ;
 
 syntax CName	

@@ -53,20 +53,8 @@ lexical Dashes
       =   "--" "-"*
       ;
 
-lexical OpenCom 
-      = "{-"
-      ;
-
-lexical CloseCom    
-      = "-}"
-      ;
-
 lexical NComment    
-      = OpenCom ANY* (NComment ANY)* CloseCom
-      ;
-
-lexical ANY 
-      = (Graphic | WhiteChar) \ OpenCom \ CloseCom
+      = "{-" (![{\-] | NComment | "-" !>> [}] | "{" !>> [\-])* "-}"
       ;
 
 lexical Any 
