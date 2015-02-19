@@ -273,8 +273,7 @@ syntax Exp
 	 ;
  
 syntax InfixExp	
-     = LExp1 \ ([A-Z][A-Za-z_\-0-9]*) "." InfixExp
-     | LExp1 QOp \ "." InfixExp
+     = LExp1 QOp InfixExp
 	 | "-" InfixExp	         
 	 | LExp
 	 ;
