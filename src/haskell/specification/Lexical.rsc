@@ -249,7 +249,7 @@ lexical Decimal
       ;
 
 lexical Octal   
-     =  OctIt OctIt* !>> [0-9]
+     =  OctIt OctIt* !>> [0-7]
      ;
 
 lexical Hexadecimal 

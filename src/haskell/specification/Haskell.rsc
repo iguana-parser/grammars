@@ -32,7 +32,7 @@ syntax Exports
 syntax Export	
      = QVar
 	 | ConId ( ("(" ".." ")") | ("(" { (QVar | Con) "," }* ")") )? 
-	 | Module ModId
+	 | "module" ModId
 	 ;
  
 syntax ImpDecl	
