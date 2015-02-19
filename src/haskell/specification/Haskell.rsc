@@ -129,7 +129,8 @@ syntax BType
 syntax AType	
      = GTyCon
 	 | TyVar
-	 | "(" Type "," { Type "," }+ ")"	    
+	 | "(" Type "," { Type "," }+ ")"
+	 | "(" "#" Type "," { Type "," }+ "#" ")"  // GHC Extension: unboxed tuples	    
 	 | "[" Type "]"	    				    
 	 | "(" Type ")"	  				    
 	 ;
@@ -302,7 +303,8 @@ syntax AExp
 	 | GCon	                             
 	 | Literal
 	 | "(" Exp ")"	    
-	 | "(" Exp "," { Exp "," }+ ")"	    
+	 | "(" Exp "," { Exp "," }+ ")"
+	 | "(" "#" Exp "," { Exp "," }+ "#" ")"   // GHC Extension: Unboxed tuples	    
 	 | "[" { Exp ","}+ "]"
 	 | "[" Exp ("," Exp)? ".." Exp? "]"	    
 	 | "[" Exp "|" { Qual "," }+ "]"
@@ -365,6 +367,7 @@ syntax APat
 	 | "_" !>> [A-Za-z_\-]
 	 | "(" Pat ")"
 	 | "(" Pat "," {Pat ","}+ ")"
+	 | "(" "#" Pat "," {Pat ","}+ "#" ")" // GHC Extension: unboxed types
 	 | "[" { Pat "," }+ "]"
 	 | "~" APat
 	 ;
