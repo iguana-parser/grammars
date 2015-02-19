@@ -241,7 +241,7 @@ syntax FAType
      ;
  
 syntax FunLHS
-     = Var APat APat*
+     = Var APat+
 	 | Pat VarOp Pat
 	 | "(" FunLHS ")" APat "{" APat "}"
 	 ;
@@ -271,7 +271,8 @@ syntax Exp
 	 ;
  
 syntax InfixExp	
-     = LExp1 QOp InfixExp	    
+     = LExp1 \ ([A-Z][A-Za-z_\-0-9]*) "." InfixExp
+     | LExp1 QOp \ "." InfixExp
 	 | "-" InfixExp	         
 	 | LExp
 	 ;
@@ -306,8 +307,7 @@ syntax AExp
 	 | "[" Exp "|" { Qual "," }+ "]"
 	 | "(" InfixExp QOp ")"
 	 | "(" QOp \ "-" InfixExp ")" 
- 	 | QCon "{" { FBind "," }* "}"	    
-	 | AExp \ QCon "{" { FBind "," }+ "}"	    
+	 | AExp "{" { FBind "," }* "}"	    
 	 ;
  
 syntax Qual	
@@ -361,7 +361,7 @@ syntax APat
 	 | GCon
 	 | QCon "{" { FPat "," }* "}"
 	 | Literal
-	 | "_"
+	 | "_" !>> [A-Za-z_\-]
 	 | "(" Pat ")"
 	 | "(" Pat "," {Pat ","}+ ")"
 	 | "[" { Pat "," }+ "]"
