@@ -271,19 +271,25 @@ syntax Exp
 	 ;
  
 syntax InfixExp	
-     = LExp QOp InfixExp	    
+     = LExp1 QOp InfixExp	    
 	 | "-" InfixExp	         
 	 | LExp
 	 ;
  
 syntax LExp	
-     = "\\" APat+ "-\>" Exp	                             
-	 | "let" Decls "in" Exp                           
-	 | "if" Exp ";"? "then" Exp ";"? "else" Exp	    
-	 | "case" Exp "of" "{" Alts "}"	              
-	 | "do" "{" Stmts "}"	                        
+     = "\\" APat+ "-\>" InfixExp
+	 | "let" Decls "in" Exp
+	 | "if" Exp ";"? "then" Exp ";"? "else" Exp
+	 | "case" Exp "of" "{" Alts "}"   
+	 | "do" "{" Stmts "}"                 
 	 | FExp
-	 ; 
+	 ;
+	 
+syntax LExp1	
+     = "case" Exp "of" "{" Alts "}"   
+	 | "do" "{" Stmts "}"                 
+	 | FExp
+	 ;	  
 
 syntax FExp	
      = FExp? AExp	    
@@ -358,7 +364,7 @@ syntax APat
 	 | "_"
 	 | "(" Pat ")"
 	 | "(" Pat "," {Pat ","}+ ")"
-	 | "[" { Pat "," }+
+	 | "[" { Pat "," }+ "]"
 	 | "~" APat
 	 ;
  
