@@ -302,6 +302,7 @@ syntax AExp
      = QVar	                             
 	 | GCon	                             
 	 | Literal
+	 | Literal "#"	 						  // GHC Extension: Unboxed tuples
 	 | "(" Exp ")"	    
 	 | "(" Exp "," { Exp "," }+ ")"
 	 | "(" "#" Exp "," { Exp "," }+ "#" ")"   // GHC Extension: Unboxed tuples	    
@@ -351,6 +352,7 @@ syntax FBind
 syntax Pat	
      = LPat QConOp Pat
 	 | LPat
+	 | "!" Pat				// GHC Extension: Bang patterns
 	 ;
  
 syntax LPat	
@@ -364,6 +366,7 @@ syntax APat
 	 | GCon
 	 | QCon "{" { FPat "," }* "}"
 	 | Literal
+	 | Literal "#"							   // GHC Extension: Unboxed tuples
 	 | "_" !>> [A-Za-z_\-]
 	 | "(" Pat ")"
 	 | "(" Pat "," {Pat ","}+ ")"
@@ -384,7 +387,8 @@ syntax GCon
 	 ;
  
 syntax Var	
-     = VarId 
+     = VarId
+     | VarId "#"     // Unboxed type 
      | "(" VarSym ")"
      ;
 
