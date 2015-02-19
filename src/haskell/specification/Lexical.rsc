@@ -245,15 +245,15 @@ lexical QConSym
       ;
  
 lexical Decimal 
-      = Digit Digit*
+      = Digit Digit* !>> [0-9]
       ;
 
 lexical Octal   
-     =  OctIt OctIt*
+     =  OctIt OctIt* !>> [0-9]
      ;
 
 lexical Hexadecimal 
-      = HexIt HexIt*
+      = HexIt HexIt* !>> [0-9A-Fa-f]
       ;
  
 lexical Integer 
