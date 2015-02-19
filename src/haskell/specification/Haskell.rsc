@@ -65,6 +65,7 @@ syntax TopDecl
 	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
 	 | "class" (SContext "=\>")? TyCls TyVar ("where" CDecls)?
 	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
+	 | "deriving" "instance" (SContext "=\>")? QTyCls Inst // Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
@@ -271,7 +272,7 @@ syntax Exp
 	 ;
  
 syntax InfixExp	
-     = LExp2 \ ([A-Z][A-Za-z_\-0-9]*) "." InfixExp
+     = LExp1 \ ([A-Z][A-Za-z_\-0-9]*) "." InfixExp
      | LExp1 QOp \ "." InfixExp
 	 | "-" InfixExp	         
 	 | LExp
@@ -292,12 +293,6 @@ syntax LExp1
 	 | FExp
 	 ;
 	 
-syntax LExp2	
-     = "case" Exp "of" "{" Alts "}"   
-	 | "do" "{" Stmts "}"                 
-	 | AExp
-	 ;	 	  
-
 syntax FExp	
      = FExp? AExp	    
      ;
