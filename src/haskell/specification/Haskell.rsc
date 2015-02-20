@@ -63,9 +63,9 @@ syntax TopDecl
      = "type" SimpleType "=" Type
 	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? Deriving?
 	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
-	 | "class" (SContext "=\>")? TyCls TyVar ("where" CDecls)?
-	 | "instance" (SContext "=\>")? QTyCls Inst ("where" IDecls)?
-	 | "deriving" "instance" (SContext "=\>")? QTyCls Inst // Extension
+	 | "class" (SContext "=\>")? TyCls TyVar+ ("where" CDecls)?
+	 | "instance" (Context "=\>")? Context ("where" IDecls)?           // Extension
+	 | "deriving" "instance" (SContext "=\>")? QTyCls Inst 				// Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
@@ -134,6 +134,14 @@ syntax AType
 	 | "[" Type "]"	    				    
 	 | "(" Type ")"	  				    
 	 ;
+	 
+syntax AType1	
+     = TyVar
+	 | "(" Type "," { Type "," }+ ")"
+	 | "(" "#" Type "," { Type "," }+ "#" ")"  // GHC Extension: unboxed tuples	    
+	 | "[" Type "]"	    				    
+	 | "(" Type ")"	  				    
+	 ;	 
  
 syntax GTyCon	
      = QTyCon
@@ -149,8 +157,8 @@ syntax Context
 	 ;
 
 syntax Class	
-     = QTyCls TyVar
-	 | QTyCls "(" TyVar AType+ ")"	 
+     = QTyCls "(" TyVar AType+ ")"
+	 | (QTyCls AType1*)+				// To deal with flexible contexts	 
 	 ;
 
 syntax SContext	
@@ -376,6 +384,7 @@ syntax APat
  
 syntax FPat	
      = QVar "=" Pat
+     | ".."					// GHC Extension RecordWildCards
      ;
  
 syntax GCon
