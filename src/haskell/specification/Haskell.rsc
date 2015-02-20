@@ -129,7 +129,7 @@ syntax Fixity
      ;
  
 syntax Type	
-     = BType ("-\>" Type)?  	    
+     = Forall? BType ("-\>" Type)?  	    
      ;
  
 syntax BType	
