@@ -129,7 +129,7 @@ syntax Fixity
      ;
  
 syntax Type	
-     = Forall? BType ("-\>" Type)?  	    
+     = Forall? "!"? BType ("-\>" Type)?  	    
      ;
  
 syntax BType	
@@ -138,7 +138,6 @@ syntax BType
  
 syntax AType	
      = GTyCon
-     | "!" GTyCon
 	 | TyVar
 	 | "(" Type "," { Type "," }+ ")"
 	 | "(" "#" Type "," { Type "," }+ "#" ")"  // GHC Extension: unboxed tuples	    
