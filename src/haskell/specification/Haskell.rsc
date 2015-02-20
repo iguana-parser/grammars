@@ -169,9 +169,9 @@ syntax Context
 
 syntax Class	
      = QTyCls "(" TyVar AType+ ")"
-	 | (QTyCls AType1*)+				// To deal with flexible contexts	 
+	 | (QTyCls AType1* ("~" Class)? )+				// To deal with flexible contexts and type equality
 	 ;
-
+	 
 syntax SContext	
      = SimpleClass
 	 | "(" { SimpleClass "," }* ")"
