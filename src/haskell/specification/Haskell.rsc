@@ -164,7 +164,7 @@ syntax GTyCon
  
 syntax Context	
      = Forall? Class
-	 | "(" {Class ","}* ")"	
+	 | Forall? "(" {Class ","}* ")"	
 	 ;
 
 syntax Class	
@@ -370,7 +370,6 @@ syntax FBind
 syntax Pat	
      = LPat QConOp Pat
 	 | LPat
-	 | "!" Pat				// GHC Extension: Bang patterns
 	 ;
  
 syntax LPat	
@@ -381,6 +380,7 @@ syntax LPat
  
 syntax APat
      = Var ( "@" APat)?
+     | "!" APat				// GHC Extension: Bang patterns
 	 | GCon
 	 | QCon "{" { FPat "," }* "}"
 	 | Literal
