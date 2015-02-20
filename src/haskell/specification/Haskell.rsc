@@ -62,9 +62,10 @@ syntax TopDecls
 syntax TopDecl	
      = "type" SimpleType "=" Type
 	 | "data" (Context "=\>")? SimpleType ("=" Constrs)? Deriving?
+	 | "data" (Context "=\>")? SimpleType "where" GADTDecls      			// Generalized Abstarct Data Types extension
 	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
 	 | "class" (SContext "=\>")? TyCls TyVar+ ("where" CDecls)?
-	 | "instance" (Context "=\>")? Context ("where" IDecls)?           // Extension
+	 | "instance" (Context "=\>")? Context ("where" Decls)?            // Flexible instances
 	 | "deriving" "instance" (SContext "=\>")? QTyCls Inst 				// Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
@@ -103,6 +104,15 @@ syntax GenDecl
 	 | Fixity Integer? Ops	    		    
 	 |							    
 	 ;
+	 
+syntax GADTDecls
+     = "{" { GADTDecl ";" }+ "}"
+     ;
+     
+syntax GADTDecl
+     = TyCon "::" Type
+     | TyCon "::" "{" {(Var ("::" Type)?) ","}+ "}" "-\>" Type
+     ;     	 
  
 syntax Ops	
      = { Op "," }+
@@ -119,7 +129,7 @@ syntax Fixity
      ;
  
 syntax Type	
-     = BType ("-\>" Type)?	    
+     = BType ("-\>" Type)?  	    
      ;
  
 syntax BType	
@@ -128,6 +138,7 @@ syntax BType
  
 syntax AType	
      = GTyCon
+     | "!" GTyCon
 	 | TyVar
 	 | "(" Type "," { Type "," }+ ")"
 	 | "(" "#" Type "," { Type "," }+ "#" ")"  // GHC Extension: unboxed tuples	    
@@ -152,7 +163,7 @@ syntax GTyCon
  	 ;
  
 syntax Context	
-     = Class
+     = Forall? Class
 	 | "(" {Class ","}* ")"	
 	 ;
 
@@ -396,9 +407,9 @@ syntax GCon
  
 syntax Var	
      = VarId
-     | VarId "#"     // Unboxed type 
+     | VarId "#"     			 // Unboxed type 
      | "(" VarSym ")"
-     ;
+     ;     
 
 syntax QVar	
      = QVarId 
@@ -449,3 +460,7 @@ syntax GConSym
      = ":" 
      | QConSym
      ;
+
+syntax Forall
+     = "forall" Var+ "." 
+     ;     
