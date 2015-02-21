@@ -129,11 +129,11 @@ syntax Fixity
      ;
  
 syntax Type	
-     = Forall? "!"? BType ("-\>" Type)?  	    
+     = Forall? BType ("-\>" Type)?  	    
      ;
  
 syntax BType	
-     = BType? AType	    
+     = BType? "!"? AType	    
      ;
  
 syntax AType	
@@ -190,7 +190,7 @@ syntax Constrs
 
 syntax Constr	
      = Con ("!"? AType)*                                   
-	 | (BType | ("!" AType)) ConOp (BType | ("!" AType))	    
+	 | BType ConOp BType	    
 	 | Con "{" { FieldDecl ","}* "}"
 	 ;
 
@@ -200,7 +200,7 @@ syntax NewConstr
 	 ;
 
 syntax FieldDecl	
-     = Vars "::" (Type | ("!" AType))
+     = Vars "::" Type
      ;
 
 syntax Deriving	
