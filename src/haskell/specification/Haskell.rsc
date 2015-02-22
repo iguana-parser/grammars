@@ -177,14 +177,6 @@ syntax AType
 	 | "(" Type ")"	  				    
 	 ;
 	 
-syntax AType1	
-     = TyVar
-	 | "(" Type "," { Type "," }+ ")"
-	 | "(" "#" Type "," { Type "," }+ "#" ")"  // GHC Extension: unboxed tuples	    
-	 | "[" Type "]"	    				    
-	 | "(" Type ")"	  				    
-	 ;	 
- 
 syntax GTyCon	
      = QTyCon
 	 | "(" ")"	    		
@@ -199,8 +191,7 @@ syntax Context
 	 ;
 
 syntax Class	
-     = QTyCls "(" TyVar AType+ ")"
-	 | (QTyCls AType1* ("~" Class)? )+				// To deal with flexible contexts and type equality
+     = QTyCls AType* ("~" Class)? // To deal with flexible contexts and type equality
 	 ;
 	 
 syntax SContext	
