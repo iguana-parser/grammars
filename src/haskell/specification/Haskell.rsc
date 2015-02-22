@@ -64,7 +64,7 @@ syntax TopDecl
 	 | "data" (Context "=\>")? SimpleType "where" GADTDecls      			// Generalized Abstarct Data Types extension
 	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
 	 | "class" (SContext "=\>")? TyCls TyVar+ ("where" CDecls)?
-	 | "instance" (Context "=\>")? Context ("where" Decls)?            // Flexible instances
+	 | "instance" (Context "=\>")? Context ("where" CDecls)?            // Flexible instances
 	 | "deriving" "instance" (SContext "=\>")? QTyCls Inst 				// Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
@@ -87,8 +87,45 @@ syntax CDecls
 syntax CDecl	
      = GenDecl
      | (FunLHS | Var) RHS
-     | "type" Type ("::" Kind)?  									// Associated type instances
+     | AssociatedTypeDecl
 	 ;
+ 
+syntax GenDecl	
+     = Vars "::" (Context "=\>")? Type	    
+	 | Fixity Integer? Ops
+	 |							    
+	 ;
+	 
+syntax GADTDecls
+     = "{" { GADTDecl ";" }+ "}"
+     ;
+     
+syntax GADTDecl
+     = TyCon "::" Type
+     | TyCon "::" "{" {(Var ("::" Type)?) ","}+ "}" "-\>" Type
+     ;
+     
+     
+// Associated type declarations
+syntax AssociatedTypeDecl
+     = "type" "family"? Type ("::" Kind)?
+     | "type" "instance"? TypeFamilyInstEqn
+     ;
+     
+syntax TypeFamilyInstEqn
+     = Type "=" CType
+     ;
+     
+syntax CType
+     = "forall" TVBinder* "." CType
+     | Context "=\>" CType
+     | Type
+     ;     
+     
+syntax TVBinder
+     = TyVar                  
+	 | "(" TyVar "::" Kind ")"
+	 ;     
 	 
 syntax Kind
      = AKind* ("-\>" Kind)?
@@ -107,30 +144,7 @@ syntax PKind
      | "(" Kind "," { Kind "," }+ ")"
      | "[" Kind "]"
      ;
-      
-syntax IDecls	
-     = "{" {IDecl ";"}+ "}"
-     ;
-
-syntax IDecl	
-     = (FunLHS | Var) RHS
-	 |                              
-	 ;
- 
-syntax GenDecl	
-     = Vars "::" (Context "=\>")? Type	    
-	 | Fixity Integer? Ops	    		    
-	 |							    
-	 ;
-	 
-syntax GADTDecls
-     = "{" { GADTDecl ";" }+ "}"
-     ;
      
-syntax GADTDecl
-     = TyCon "::" Type
-     | TyCon "::" "{" {(Var ("::" Type)?) ","}+ "}" "-\>" Type
-     ;     	 
  
 syntax Ops	
      = { Op "," }+
