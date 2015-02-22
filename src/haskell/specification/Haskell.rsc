@@ -22,7 +22,7 @@ syntax Body
      ; 
 
 syntax ImpDecls	
-     = { ImpDecl ";" }+
+     = ImpDecl (";" ImpDecl?)*
      ;
  
 syntax Exports	
@@ -37,7 +37,6 @@ syntax Export
  
 syntax ImpDecl	
      = "import" "qualified"? ModId ("as" ModId)? ImpSpec?
-	 |		    											
 	 ;
  
 syntax ImpSpec	
@@ -317,7 +316,7 @@ syntax FExp
  
 syntax AExp	
      = QVar	                             
-	 | GCon	                             
+	 | GCon !>> "."        
 	 | Literal
 	 | Literal "#"	 						  // GHC Extension: Unboxed tuples
 	 | "(" Exp ")"	    
