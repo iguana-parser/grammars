@@ -87,8 +87,27 @@ syntax CDecls
 syntax CDecl	
      = GenDecl
      | (FunLHS | Var) RHS
+     | "type" Type ("::" Kind)?  									// Associated type instances
 	 ;
- 
+	 
+syntax Kind
+     = AKind* ("-\>" Kind)?
+     ;
+
+syntax AKind
+     = "*"
+     | "(" Kind ")"
+     | PKind
+     | TyVar
+     ;
+
+syntax PKind
+     = QTyCon
+     | "(" ")"
+     | "(" Kind "," { Kind "," }+ ")"
+     | "[" Kind "]"
+     ;
+      
 syntax IDecls	
      = "{" {IDecl ";"}+ "}"
      ;
@@ -262,7 +281,7 @@ syntax FAType
 syntax FunLHS
      = Var APat+
 	 | Pat VarOp Pat
-	 | "(" FunLHS ")" APat "{" APat "}"
+	 | "(" FunLHS ")" APat+
 	 ;
  
 syntax RHS	
@@ -316,7 +335,7 @@ syntax FExp
  
 syntax AExp	
      = QVar	                             
-	 | GCon !>> "."        
+	 | GCon !>> "."							   // To disambiguate with "." in QualifiedNames        
 	 | Literal
 	 | Literal "#"	 						  // GHC Extension: Unboxed tuples
 	 | "(" Exp ")"	    
