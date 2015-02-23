@@ -179,6 +179,7 @@ lexical ReservedId
       | "type" 
       | "where" 
       | "_"
+      | "family"
       ;
  
 lexical VarSym  
