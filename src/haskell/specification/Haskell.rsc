@@ -342,7 +342,6 @@ syntax AExp
      = QVar	                             
 	 | GCon !>> "."							   // To disambiguate with "." in QualifiedNames        
 	 | Literal
-	 | Literal "#"	 						  // GHC Extension: Unboxed tuples
 	 | "(" Exp ")"	    
 	 | "(" Exp "," { Exp "," }+ ")"
 	 | "(" "#" Exp "," { Exp "," }+ "#" ")"   // GHC Extension: Unboxed tuples	    
@@ -406,7 +405,6 @@ syntax APat
 	 | GCon
 	 | QCon "{" { FPat "," }* "}"
 	 | Literal
-	 | Literal "#"							   // GHC Extension: Unboxed tuples
 	 | "_" !>> [A-Za-z_\-]
 	 | "(" Pat ")"
 	 | "(" Pat "," {Pat ","}+ ")"
@@ -429,7 +427,6 @@ syntax GCon
  
 syntax Var	
      = VarId
-     | VarId "#"     			 // Unboxed type 
      | "(" VarSym ")"
      ;     
 
