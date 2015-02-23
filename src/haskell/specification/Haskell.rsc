@@ -19,6 +19,7 @@ syntax Body
      = "{" ImpDecls ";" TopDecls "}"
  	 | "{" ImpDecls "}"
 	 | "{" TopDecls "}"
+	 | "{" "}"
      ; 
 
 syntax ImpDecls	
@@ -55,7 +56,7 @@ syntax CName
      ;
  
 syntax TopDecls	
-     = { TopDecl ";" }+
+     = TopDecl ( ";" TopDecl? )*
      ;
 
 syntax TopDecl	
@@ -71,7 +72,7 @@ syntax TopDecl
 	 ;
  
 syntax Decls	
-     = "{" { Decl ";"}+ "}"
+     = "{" { Decl? ";"}+ "}"
      ;
 
 syntax Decl	
@@ -81,7 +82,7 @@ syntax Decl
 	 ;
  
 syntax CDecls	
-     = "{" {CDecl ";"}+ "}"
+     = "{" {CDecl? ";"}+ "}"
      ;
 
 syntax CDecl	
@@ -93,7 +94,6 @@ syntax CDecl
 syntax GenDecl	
      = Vars "::" CType	    
 	 | Fixity Integer? Ops
-	 |							    
 	 ;
 	 
 syntax GADTDecls
