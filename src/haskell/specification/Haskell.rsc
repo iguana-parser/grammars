@@ -399,15 +399,15 @@ syntax LPat
  
 syntax APat
      = Var ( "@" APat)?
-     | "!" APat				// GHC Extension: Bang patterns
+     | "!" APat						 // GHC Extension: Bang patterns
 	 | GCon
 	 | QCon "{" { FPat "," }* "}"
 	 | Literal
 	 | "_" !>> [A-Za-z_\-]
-	 | "(" "#"? {Pat ","}+ "#"? ")" // GHC Extension: unboxed types
+	 | "(" "#"? {Pat ","}+ "#"? ")"  // GHC Extension: unboxed types
 	 | "[" { Pat "," }+ "]"
 	 | "~" APat
-	 | "(" Var "::" AType ")"
+	 | "(" Var "::" CType ")"        // Scoped Type Variables
 	 ;
  
 syntax FPat	
