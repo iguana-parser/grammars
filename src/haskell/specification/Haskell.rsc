@@ -69,6 +69,7 @@ syntax TopDecl
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
+	 | "$(" Exp ")"					// Template Haskell
 	 ;
  
 syntax Fds 
@@ -364,7 +365,9 @@ syntax AExp
 	 | "[" Exp "|" { Qual "," }+ "]"
 	 | "(" InfixExp QOp ")"
 	 | "(" QOp \ "-" InfixExp ")" 
-	 | AExp "{" { FBind "," }* "}"	    
+	 | AExp "{" { FBind "," }* "}"
+	 | "[|" Exp "|]"
+	 | "[||" Exp "||]"	    
 	 ;
  
 syntax Qual	
