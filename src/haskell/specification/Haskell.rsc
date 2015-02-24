@@ -60,16 +60,20 @@ syntax TopDecls
      ;
 
 syntax TopDecl	
-     = "data" (Context "=\>")? SimpleType ("=" Constrs)? Deriving?
-	 | "data" (Context "=\>")? SimpleType "where" GADTDecls      			// Generalized Abstarct Data Types extension
-	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
-	 | "class" (SContext "=\>")? TyCls TyVar+ ("where" CDecls)?
+     = "data" (Context "=\>")? Type ("=" Constrs)? Deriving?
+	 | "data" (Context "=\>")? Type "where" GADTDecls      			// Generalized Abstarct Data Types extension
+	 | "newtype" (Context "=\>")? Type "=" NewConstr Deriving?
+	 | "class" (Context "=\>")? Type Fds? ("where" CDecls)?
 	 | "instance" CType ("where" CDecls)?            // Flexible instances
 	 | "deriving" "instance" (Context "=\>")? QTyCls Inst 				// Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
 	 ;
+ 
+syntax Fds 
+     = "|" {(VarId "-\>" VarId) ","}+
+     ;                                        
  
 syntax Decls	
      = "{" { Decl? ";"}+ "}"
@@ -114,7 +118,6 @@ syntax AssociatedTypeDecl
      
 syntax TypeFamilyInstEqn
      = Type "=" CType
-     | Pat VarOp Pat "=" CType
      ;
      
 syntax CType
@@ -164,7 +167,8 @@ syntax Fixity
 syntax Type	
      = BType 
      | BType "-\>" CType 
-     | BType "~" BType   
+     | BType "~" BType
+     | BType Op  Type    
      ;
  
 syntax BType	
@@ -175,7 +179,8 @@ syntax AType
      = GTyCon
 	 | TyVar
 	 | "(" "#"? { CType "," }+ "#"? ")"  // GHC Extension: unboxed tuples	    
-	 | "[" CType "]"	    				    
+	 | "[" CType "]"
+	 | "(" CType "::" Kind ")"	    				    
 	 ;
 	 
 syntax GTyCon	
@@ -183,7 +188,12 @@ syntax GTyCon
 	 | "(" ")"	    		
 	 | "[" "]"	    		
 	 | "(" "-\>" ")"	     
- 	 | "(" ","+ ")"	     
+ 	 | "(" ","+ ")"	
+ 	 | "(#" ","+ "#)"
+ 	 | "[:" ":]" 
+ 	 | "(" "~#" ")"
+ 	 | "(" "~" ")"   
+ 	 | "(" QTyConSym ")" 
  	 ;
  
 syntax Context	
@@ -204,10 +214,6 @@ syntax SimpleClass
      = QTyCls TyVar
      ;
  
-syntax SimpleType	
-     = TyCon TyVar*
-     ;
-
 syntax Constrs	
      = { Constr "|" }+
      ;
@@ -311,8 +317,14 @@ syntax Guard
 	 ;
  
 syntax Exp	
-     = InfixExp "::" CType	    
+     = InfixExp1 "::" CType	    
 	 | InfixExp
+	 ;
+ 
+syntax InfixExp1
+     = LExp1 QOp InfixExp
+	 | "-" InfixExp	         
+	 | LExp1
 	 ;
  
 syntax InfixExp	
@@ -342,7 +354,7 @@ syntax FExp
  
 syntax AExp	
      = QVar	                             
-	 | GCon !>> "."							   // To disambiguate with "." in QualifiedNames        
+	 | GCon !>> "."							   			// To disambiguate with "." in QualifiedNames        
 	 | Literal
 	 | "(" "#"? ","? { Exp "," }+ ","? "#"? ")"		   // GHC Extension: Unboxed tuples
 	 | "[" { Exp ","}+ "]"
@@ -480,3 +492,8 @@ syntax GConSym
      = ":" 
      | QConSym
      ;
+     
+syntax QTyConSym
+     = "*"
+     | QConSym
+     ;   
