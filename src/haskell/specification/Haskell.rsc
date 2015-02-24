@@ -342,7 +342,7 @@ syntax AExp
      = QVar	                             
 	 | GCon !>> "."							   // To disambiguate with "." in QualifiedNames        
 	 | Literal
-	 | "(" "#"? ","? { Exp "," }+ "#"? ")"		   // GHC Extension: Unboxed tuples
+	 | "(" "#"? ","? { Exp "," }+ ","? "#"? ")"		   // GHC Extension: Unboxed tuples
 	 | "[" { Exp ","}+ "]"
 	 | "[" Exp ("," Exp)? ".." Exp? "]"	    
 	 | "[" Exp "|" { Qual "," }+ "]"
@@ -363,9 +363,9 @@ syntax Alts
 
 syntax Alt
      = Pat "-\>" Exp ("where" Decls)?
-	| Pat GDPat ("where" Decls)?
-	|
-	;
+	 | Pat GDPat ("where" Decls)?
+	 |
+	 ;
  
 syntax GDPat	
      = Guards "-\>" Exp GDPat?
@@ -407,7 +407,7 @@ syntax APat
 	 | "(" "#"? {Pat ","}+ "#"? ")"  // GHC Extension: unboxed types
 	 | "[" { Pat "," }+ "]"
 	 | "~" APat
-	 | "(" Var "::" CType ")"        // Scoped Type Variables
+	 | "(" (Var | "_") "::" CType ")"        // Scoped Type Variables
 	 ;
  
 syntax FPat	
