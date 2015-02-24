@@ -214,7 +214,7 @@ syntax Constrs
 syntax Constr	
      = Con ("!"? AType)*                                   
 	 | BType ConOp BType	    
-	 | Con "{" { FieldDecl ","}* "}"
+	 | ("forall" TVBinder* ".")? Con "{" { FieldDecl ","}* "}"
 	 ;
 
 syntax NewConstr	
