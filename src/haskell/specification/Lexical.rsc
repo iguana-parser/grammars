@@ -1,7 +1,7 @@
 module haskell::specification::Lexical
 
 lexical Literal 
-      = Integer "#"? 
+      = Integer !>> "." "#"?    // !>> "." is added to disambiguate 2.2
       | Float "#"?
       | Char "#"?
       | String "#"?
@@ -180,6 +180,7 @@ lexical ReservedId
       | "where" 
       | "_"
       | "family"
+      | "forall"
       ;
  
 lexical VarSym  
