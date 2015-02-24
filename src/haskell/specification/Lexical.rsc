@@ -152,15 +152,25 @@ lexical HexIt
       =  Digit 
       |  [A-Fa-f]
       ;
+      
+lexical QuasiVarId
+     =  [a-zA-Z0-9_] !<< "\'" Small (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+     ;
+      
+lexical QuasiConId
+     =  [a-zA-Z0-9_] !<< "\'" Large (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+     ;
  
 lexical VarId   
       = [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId !>> "#"
       | [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId "#"
+      | QuasiVarId
       ;
 
 lexical ConId   
       = [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] !>> "#"
       | [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] "#"
+      | QuasiConId
       ;
 
 lexical ReservedId  
