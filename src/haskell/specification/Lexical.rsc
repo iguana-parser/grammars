@@ -154,13 +154,13 @@ lexical HexIt
       ;
  
 lexical VarId   
-      = [a-zA-Z0-9_\'] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId !>> "#"
-      | [a-zA-Z0-9_\'] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId "#"
+      = [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId !>> "#"
+      | [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId "#"
       ;
 
 lexical ConId   
-      = [a-zA-Z0-9_\'] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] !>> "#"
-      | [a-zA-Z0-9_\'] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] "#"
+      = [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] !>> "#"
+      | [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] "#"
       ;
 
 lexical ReservedId  
@@ -277,7 +277,7 @@ lexical Float
       ;
 
 lexical Exponent    
-      = [eE] [+\-] Decimal
+      = [eE] [+\-]? Decimal
       ;
  
 lexical Char    

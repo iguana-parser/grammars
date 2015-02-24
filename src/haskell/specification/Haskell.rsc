@@ -61,7 +61,7 @@ syntax TopDecls
 
 syntax TopDecl	
      = "data" (Context "=\>")? Type ("=" Constrs)? Deriving?
-	 | "data" (Context "=\>")? Type "where" GADTDecls      			// Generalized Abstarct Data Types extension
+	 | "data" (Context "=\>")? Type ("::" Kind)? "where" GADTDecls      			// Generalized Abstarct Data Types extension
 	 | "newtype" (Context "=\>")? Type "=" NewConstr Deriving?
 	 | "class" (Context "=\>")? Type Fds? ("where" CDecls)?
 	 | "instance" CType ("where" CDecls)?            // Flexible instances
@@ -168,7 +168,7 @@ syntax Type
      = BType 
      | BType "-\>" CType 
      | BType "~" BType
-     | BType Op  Type    
+     | BType Op \ "." Type    
      ;
  
 syntax BType	
@@ -197,8 +197,8 @@ syntax GTyCon
  	 ;
  
 syntax Context	
-     = Class
-	 | "(" {Class ","}* ")"	
+     = BType "~" BType
+	 | BType	
 	 ;
 
 syntax Class	
@@ -261,7 +261,9 @@ syntax CallConv
      | "cplusplus"
 	 | "jvm" 
      | "dotnet"
-//	| system-specific calling conventions
+     | "javascript"
+     | "capi"
+     | "prim"
 	 ;
 
 syntax Impent	
@@ -436,25 +438,21 @@ syntax GCon
  
 syntax Var	
      = VarId
-     | "\'" Var
      | "(" VarSym ")"
      ;     
 
 syntax QVar	
      = QVarId 
-     | "\'" QVar
      | "(" QVarSym ")"
      ;
 
 syntax Con	
      = ConId 
-     | "\'" Con
      | "(" ConSym ")"
      ;
 
 syntax QCon	
      = QConId 
-     | "\'" QCon
      | "(" GConSym ")"
      ;
 
@@ -496,4 +494,5 @@ syntax GConSym
 syntax QTyConSym
      = "*"
      | QConSym
+     | QVarSym
      ;   
