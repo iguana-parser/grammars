@@ -64,7 +64,7 @@ syntax TopDecl
 	 | "data" (Context "=\>")? SimpleType "where" GADTDecls      			// Generalized Abstarct Data Types extension
 	 | "newtype" (Context "=\>")? SimpleType "=" NewConstr Deriving?
 	 | "class" (SContext "=\>")? TyCls TyVar+ ("where" CDecls)?
-	 | "instance" (Context "=\>")? Context ("where" CDecls)?            // Flexible instances
+	 | "instance" CType ("where" CDecls)?            // Flexible instances
 	 | "deriving" "instance" (Context "=\>")? QTyCls Inst 				// Extension
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
@@ -114,6 +114,7 @@ syntax AssociatedTypeDecl
      
 syntax TypeFamilyInstEqn
      = Type "=" CType
+     | Pat VarOp Pat "=" CType
      ;
      
 syntax CType
@@ -423,21 +424,25 @@ syntax GCon
  
 syntax Var	
      = VarId
+     | "\'" Var
      | "(" VarSym ")"
      ;     
 
 syntax QVar	
      = QVarId 
+     | "\'" QVar
      | "(" QVarSym ")"
      ;
 
 syntax Con	
      = ConId 
+     | "\'" Con
      | "(" ConSym ")"
      ;
 
 syntax QCon	
      = QConId 
+     | "\'" QCon
      | "(" GConSym ")"
      ;
 
