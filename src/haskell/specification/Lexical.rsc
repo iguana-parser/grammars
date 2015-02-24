@@ -179,8 +179,6 @@ lexical ReservedId
       | "type" 
       | "where" 
       | "_"
-      | "family"
-      | "forall"
       ;
  
 lexical VarSym  
@@ -205,8 +203,8 @@ lexical ReservedOp
       | "=\>"
       ;
 
-lexical TyVar   
-     =  VarId
+lexical TyVar
+     =  VarId  \ "family" \ "forall"
      ;
 
 lexical TyCon   
@@ -351,4 +349,4 @@ lexical Cntrl
 lexical Gap 
       = "\\" WhiteChar WhiteChar* "\\"
       ;
-
+      

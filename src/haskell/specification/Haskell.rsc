@@ -342,7 +342,7 @@ syntax AExp
      = QVar	                             
 	 | GCon !>> "."							   // To disambiguate with "." in QualifiedNames        
 	 | Literal
-	 | "(" "#"? { Exp "," }+ "#"? ")"		   // GHC Extension: Unboxed tuples
+	 | "(" "#"? ","? { Exp "," }+ "#"? ")"		   // GHC Extension: Unboxed tuples
 	 | "[" { Exp ","}+ "]"
 	 | "[" Exp ("," Exp)? ".." Exp? "]"	    
 	 | "[" Exp "|" { Qual "," }+ "]"
