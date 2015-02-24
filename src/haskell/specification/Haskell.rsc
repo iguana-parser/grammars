@@ -354,6 +354,7 @@ syntax AExp
  
 syntax Qual	
      = Pat "\<-" Exp
+     | (Var | "_") "::" CType "\<-" Exp
 	 | "let" Decls
 	 | Exp	    
 	 ;
@@ -377,10 +378,7 @@ syntax Stmts
      ;
 
 syntax Stmt
-     = Exp ";"
-	 | Pat "\<-" Exp ";"
-	 | "let" Decls ";"
-	 | ";"
+     = Qual? ";"
 	 ;
  
 syntax FBind	
