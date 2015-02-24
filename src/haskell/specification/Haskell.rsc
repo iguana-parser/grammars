@@ -16,10 +16,10 @@ syntax Module
      ;
 
 syntax Body	
-     = "{" ImpDecls ";" TopDecls "}"
- 	 | "{" ImpDecls "}"
-	 | "{" TopDecls "}"
-	 | "{" "}"
+     = "{" ";"* ImpDecls ";" TopDecls "}"
+ 	 | "{" ";"* ImpDecls "}"
+	 | "{" ";"* TopDecls "}"
+	 | "{" ";"* "}"
      ; 
 
 syntax ImpDecls	
