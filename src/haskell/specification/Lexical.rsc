@@ -320,7 +320,7 @@ lexical Ascii
       | "VT" 
       | "FF" 
       | "CR" 
-      | "SO" 
+      | "SO" !>> "H" 
       | "SI" 
       | "DLE"
       | "DC1" 
