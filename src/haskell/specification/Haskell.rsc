@@ -77,7 +77,7 @@ syntax Decls
 
 syntax Decl	
      = GenDecl
-	 | (FunLHS | Pat) RHS
+	 | FunLHS RHS
 	 | AssociatedTypeDecl
 	 ;
  
@@ -87,7 +87,7 @@ syntax CDecls
 
 syntax CDecl	
      = GenDecl
-     | (FunLHS | Var) RHS
+     | FunLHS RHS
      | AssociatedTypeDecl
 	 ;
  
@@ -108,7 +108,7 @@ syntax GADTDecl
      
 // Associated type declarations
 syntax AssociatedTypeDecl
-     = "type" "family"? Type ("::" Kind)?
+     = "type" "family"? Type ("::" Kind)?  ("where" CDecls)? 
      | "type" "instance"? TypeFamilyInstEqn
      ;
      
@@ -215,6 +215,7 @@ syntax Constr
      = Con ("!"? AType)*                                   
 	 | BType ConOp BType	    
 	 | ("forall" TVBinder* ".")? Con "{" { FieldDecl ","}* "}"
+	 | "forall" TVBinder* "." CType
 	 ;
 
 syntax NewConstr	
@@ -285,7 +286,7 @@ syntax FAType
  
 syntax FunLHS
      = Var APat+
-	 | Pat VarOp \ "!" Pat
+	 | Pat ( VarOp \ "!" Pat)?
 	 | "(" FunLHS ")" APat+
 	 ;
  
