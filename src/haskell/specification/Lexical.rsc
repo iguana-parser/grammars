@@ -154,11 +154,11 @@ lexical HexIt
       ;
       
 lexical QuasiVarId
-     =  [a-zA-Z0-9_] !<< "\'" Small (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+     =  [a-zA-Z0-9_] !<< "\'" "\'"? Small (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
      ;
       
 lexical QuasiConId
-     =  [a-zA-Z0-9_] !<< "\'" Large (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+     =  [a-zA-Z0-9_] !<< "\'" "\'"? Large (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
      ;
  
 lexical VarId   

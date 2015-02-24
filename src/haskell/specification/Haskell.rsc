@@ -69,7 +69,7 @@ syntax TopDecl
 	 | "default" {Type ","}*
 	 | "foreign" FDecl
 	 | Decl
-	 | "$(" Exp ")"					// Template Haskell
+	 | InfixExp
 	 ;
  
 syntax Fds 
@@ -334,6 +334,7 @@ syntax InfixExp
      = LExp1 QOp InfixExp
 	 | "-" InfixExp	         
 	 | LExp
+	 | "$(" Exp ")"					// Template Haskell
 	 ;
  
 syntax LExp	
