@@ -32,7 +32,7 @@ syntax Exports
  
 syntax Export	
      = QVar
-	 | ConId ( ("(" ".." ")") | ("(" { (QVar | Con) "," }* ")") )? 
+	 | QCon ( ("(" ".." ")") | ("(" { (QVar | Con) "," }* ")") )? 
 	 | "module" ModId
 	 ;
  
@@ -285,7 +285,7 @@ syntax FAType
  
 syntax FunLHS
      = Var APat+
-	 | Pat VarOp Pat
+	 | Pat VarOp \ "!" Pat
 	 | "(" FunLHS ")" APat+
 	 ;
  

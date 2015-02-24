@@ -1,10 +1,14 @@
 module haskell::specification::Lexical
 
 lexical Literal 
-      = Integer !>> "." "#"?    // !>> "." is added to disambiguate 2.2
-      | Float "#"?
-      | Char "#"?
-      | String "#"?
+      = Integer !>> "." !>> "#"    // !>> "." is added to disambiguate 2.2
+      | Integer "#"
+      | Float !>> "#"
+      | Float "#"
+      | Char  !>> "#"
+	  | Char "#"      
+      | String !>> "#"
+      | String "#"
       ;
 
 lexical Special 
@@ -148,11 +152,13 @@ lexical HexIt
       ;
  
 lexical VarId   
-      = [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_] \ ReservedId "#"? !>> "#"
+      = [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_] \ ReservedId !>> "#"
+      | [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_] \ ReservedId "#"
       ;
 
 lexical ConId   
-      = [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_] "#"? !>> "#"
+      = [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_] !>> "#"
+      | [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_] "#"
       ;
 
 lexical ReservedId  
