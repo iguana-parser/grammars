@@ -200,7 +200,7 @@ lexical ReservedId
       ;
  
 lexical VarSym  
-      = ( Symbol \ ":" Symbol* ) !>> [! # $ % & ⋆ + * / \< = \> ? @ \\ ^ | \- ~ :] \ ReservedOp \ Dashes
+      = ( Symbol \ ":" Symbol* ) !>> [! # $ % & . + * / \< = \> ? @ \\ ^ | \- ~ :] \ ReservedOp \ Dashes
       ;
 
 lexical ConSym  

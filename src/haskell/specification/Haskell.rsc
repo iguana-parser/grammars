@@ -342,7 +342,7 @@ syntax InfixExp
 	 ;
  
 syntax LExp	
-     = "\\" APat+ "-\>" InfixExp
+     = "\\" APat+ "-\>" Exp
 	 | "let" Decls "in" Exp
 	 | "if" Exp ";"? "then" Exp ";"? "else" Exp
 	 | "case" Exp "of" "{" Alts "}"   
