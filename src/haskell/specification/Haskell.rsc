@@ -368,7 +368,10 @@ syntax AExp
 	 | "(" QOp \ "-" InfixExp ")" 
 	 | AExp "{" { FBind "," }* "}"
 	 | "[|" Exp "|]"
-	 | "[||" Exp "||]"	    
+	 | "[||" Exp "||]"
+	 | "[t|" CType "|]"
+	 | "[p|" InfixExp "|]"
+	 | "[d|" TopDecls "|]"
 	 ;
  
 syntax Qual	
