@@ -219,6 +219,10 @@ lexical ReservedOp
       | "@" 
       | "~" 
       | "=\>"
+      | "-\<"
+	  | "\>-"
+	  | "-\<\<" 
+	  | "\>\>-" 
       ;
 
 lexical TyVar

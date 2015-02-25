@@ -320,7 +320,11 @@ syntax Guard
 	 ;
  
 syntax Exp	
-     = InfixExp1 "::" CType	    
+     = InfixExp1 "::" CType
+     | InfixExp1 "-\<" Exp
+     | InfixExp1 "\>-" Exp 
+     | InfixExp1 "-\<\<" Exp 
+     | InfixExp1 "\>\>-" Exp
 	 | InfixExp
 	 ;
  
@@ -342,7 +346,8 @@ syntax LExp
 	 | "let" Decls "in" Exp
 	 | "if" Exp ";"? "then" Exp ";"? "else" Exp
 	 | "case" Exp "of" "{" Alts "}"   
-	 | "do" "{" Stmts "}"                 
+	 | "do" "{" Stmts "}"
+	 | "proc" AExp "-\>" Exp         // Arrow notation extension                 
 	 | FExp
 	 ;
 	 
@@ -401,6 +406,7 @@ syntax Stmts
 
 syntax Stmt
      = Qual? ";"
+     | "rec" "{" Stmts "}"				// Arrow notation extension
 	 ;
  
 syntax FBind	
