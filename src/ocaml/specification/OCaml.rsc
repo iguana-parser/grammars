@@ -20,15 +20,9 @@ syntax TopLevelPhrase
    	 ;
    	 
 syntax CompiliationUnit
-     = Interface
-     | Implementation
+     = ModuleItems?
      ;    	 
-   	 
-syntax Interface = (Specification ";;"?)*; 
-    	 
-syntax Implementation = ModuleItems?;
-   	      		
- 
+   	  
 // Names
 syntax ValuePath 
 	 = valuePath: (ModulePath ".")? ValueName;
@@ -328,6 +322,7 @@ syntax Definition
      | TypeDefinition
      | ExceptionDefinition
      | ClassDefinition
+     | ClassSpecification
      | ClassTypeDefinition
      | "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
      | "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
@@ -354,16 +349,10 @@ syntax ModuleItems
      ;     
      
 // ModuleTypes
- 	
-syntax Specification 
-	 = ClassSpecification
-     | Definition
-     ;
-     
      
 syntax ModuleType 
      = modTypePath:       ModTypePath
-     | sig:               "sig" ( Specification ";;"? )* "end"
+     | sig:               "sig" ( Definition ";;"? )* "end"
      | modTypeOf:         "module" "type" "of" ModuleExpr
      | modTypeWith:       ModuleType "with" ModConstraint ("and" ModConstraint)*
      | bracketModType2:   ModuleType !modTypeWith "(" ModuleType ")"
