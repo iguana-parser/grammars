@@ -12,16 +12,21 @@ extend ocaml::specification::Lexical;
 
 // Top-level     		
 
-start syntax TopLevel = TopLevelPhrase*;
+syntax TopLevel = TopLevelPhrase*;
 
 syntax TopLevelPhrase 
 	 = Definition
    	 | Expr
    	 ;
    	 
-start syntax Interface = (Specification ";;"?)*; 
+syntax CompiliationUnit
+     = Interface
+     | Implementation
+     ;    	 
+   	 
+syntax Interface = (Specification ";;"?)*; 
     	 
-start syntax Implementation = ModuleItems?;
+syntax Implementation = ModuleItems?;
    	      		
  
 // Names
@@ -70,9 +75,13 @@ syntax InstVarName
      = LowercaseIdentifier
      ;
 
-syntax MethodName = LowercaseIdentifier;
+syntax MethodName 
+     = LowercaseIdentifier
+     ;
 
-syntax ModTypeName = Ident;
+syntax ModTypeName 
+     = Ident
+     ;
 
 syntax ModulePath 
      = modulePath: (ModuleName ".")* ModuleName
@@ -398,9 +407,9 @@ syntax TypeEquation
      ;
           
 syntax TypeRepresentation 
- 	= constrDecls: "=" "private"? "|"? {ConstrDecl "|"}+
-    | fieldDecls: "=" "private"? "{" {FieldDecl ";"}+ ";"? "}"
-    ;
+ 	 = constrDecls: "=" "private"? "|"? {ConstrDecl "|"}+
+     | fieldDecls: "=" "private"? "{" {FieldDecl ";"}+ ";"? "}"
+     ;
 
 syntax TypeParams 
      = singleTypeParam: TypeParam
@@ -473,34 +482,41 @@ syntax ClassField
      ;
      
 syntax ClassDefinition 
-	 = classDefinition: "class" {ClassBinding "and"}+;     
+	 = classDefinition: "class" {ClassBinding "and"}+
+	 ;     
      
 syntax ClassBody 
-	 = classBody: ("(" Pattern (":" Typexpr)? ")")? ClassField*;
+	 = classBody: ("(" Pattern (":" Typexpr)? ")")? ClassField*
+	 ;
 
 syntax ClassBinding 
-	 = classBinding: "virtual"? ("[" TypeParameters "]")? ClassName Parameter* (":" ClassType)? "=" ClassExpr;
+	 = classBinding: "virtual"? ("[" TypeParameters "]")? ClassName Parameter* (":" ClassType)? "=" ClassExpr
+	 ;
 
 syntax TypeParameters 
-	 = typeParameters: "\'" Ident ("," "\'" Ident)*;
+	 = typeParameters: "\'" Ident ("," "\'" Ident)*
+	 ;
 	 
 syntax ClassSpecification 
-	 = classSpecification: "class" ClassSpec ("and" ClassSpec)*;
+	 = classSpecification: "class" ClassSpec ("and" ClassSpec)*
+	 ;
 
 syntax ClassSpec 
-	 = classSpec: "virtual"? ("[" TypeParameters "]")? ClassName ":" ClassType;
+	 = classSpec: "virtual"? ("[" TypeParameters "]")? ClassName ":" ClassType
+	 ;
 
 syntax ClassTypeDefinition 
-	 = classTypeDefinition: "class" "type" ClasstypeDef ("and" ClasstypeDef)*;
+	 = classTypeDefinition: "class" "type" ClasstypeDef ("and" ClasstypeDef)*
+	 ;
 
 syntax ClasstypeDef 
-	 = classTypeDef: "virtual"? ("[" TypeParameters "]")? ClassName "=" ClassBodyType;
-
+	 = classTypeDef: "virtual"? ("[" TypeParameters "]")? ClassName "=" ClassBodyType
+	 ;
      
 syntax ExternalDeclaration 
-     = externalDecl: StringLiteral1+;	 
+     = externalDecl: StringLiteral1+
+     ;	 
      
-
 
 // Extensions
 
