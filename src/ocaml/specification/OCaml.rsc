@@ -8,6 +8,8 @@
 
 module ocaml::specification::OCaml
 
+extend ocaml::specification::Lexical;
+
 // Top-level     		
 
 start syntax TopLevel = TopLevelPhrase*;
@@ -32,44 +34,74 @@ syntax ValueName
 	| "(" ("mod"| "lsl" | "lsr" | "asr" | "mod" | "land" | "lor" | "lxor") ")" 
 	;   
 
-syntax TagName = Ident;
+syntax TagName 
+     = Ident
+     ;
 
-syntax TypeconstrName = LowercaseIdentifier;
+syntax TypeconstrName 
+     = LowercaseIdentifier
+     ;
 
-syntax TypeConstr = typeConstr: (ExtendedModulePath ".")? TypeconstrName;
+syntax TypeConstr 
+     = typeConstr: (ExtendedModulePath ".")? TypeconstrName
+     ;
 
-syntax ConstrName = CapitalizedIdentifier;
+syntax ConstrName 
+     = CapitalizedIdentifier
+     ;
 
-syntax LabelName = LowercaseIdentifier;
+syntax LabelName 
+     = LowercaseIdentifier
+     ;
 
-syntax ModuleName = CapitalizedIdentifier;
+syntax ModuleName 
+     = CapitalizedIdentifier
+     ;
 
-syntax FieldName = LowercaseIdentifier;
+syntax FieldName 
+     = LowercaseIdentifier
+     ;
 
-syntax ClassName = LowercaseIdentifier;
+syntax ClassName 
+     = LowercaseIdentifier
+     ;
 
-syntax InstVarName = LowercaseIdentifier;
+syntax InstVarName 
+     = LowercaseIdentifier
+     ;
 
 syntax MethodName = LowercaseIdentifier;
 
 syntax ModTypeName = Ident;
 
-syntax ModulePath = modulePath: (ModuleName ".")* ModuleName;
+syntax ModulePath 
+     = modulePath: (ModuleName ".")* ModuleName
+     ;
 
-syntax Constr = const: (ModulePath ".")? ConstrName !>> (Dot ());
+syntax Constr 
+     = const: (ModulePath ".")? ConstrName 
+     ;
 
-lexical Dot = [\ \r\n\t]*[.][\ \r\n\t]*[A-Z];
+syntax Field 
+     = field_name: (ModulePath ".")? FieldName
+     ;
 
-syntax Field = field_name: (ModulePath ".")? FieldName;
+syntax ClassPath 
+     = classPath: (ModulePath "." )? ClassName
+     ;
 
-syntax ClassPath = classPath: (ModulePath "." )? ClassName;
+syntax ModTypePath 
+     = modTypePath: (ExtendedModulePath "." )? ModTypName
+     ;
 
-syntax ModTypePath = modTypePath: (ExtendedModulePath "." )? ModTypName;
+syntax ModTypName 
+     = Ident
+     ;
 
-syntax ModTypName = Ident;
-
-syntax ExtendedModulePath = extendedModulePath1: (ExtendedModulePath ".")? ModuleName
-                          | extendedModulePath2: ExtendedModulePath "(" ExtendedModulePath ")";
+syntax ExtendedModulePath 
+     = extendedModulePath1: (ExtendedModulePath ".")? ModuleName
+     | extendedModulePath2: ExtendedModulePath "(" ExtendedModulePath ")"
+     ;
 
 
 // Type expressions
@@ -160,7 +192,7 @@ syntax Expr
      )
      > right infix8: 		Expr InfixSymbol8 Expr
      > ifThenElse: 	 		"if" Expr  "then" Expr !sep "else" Expr
-     | ifThen: 		 		"if"  Expr "then" Expr !>> (Else ())
+     | ifThen: 		 		"if"  Expr "then" Expr !>>> "else"
      //> semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
      > match: 		 		"match" Expr "with" PatternMatching
@@ -187,13 +219,11 @@ syntax Expr
      | moduleExpr: 	 		"(" "module" ModuleExpr  (":" PackageType)? ")"  
      //| valuePath: 	 		ValuePath
      | 						ValueName
-	 | constant: 			Constant
+	 | constant: 			Constant 
 	 //| 						InstVarName
      ; 
      
-     
-lexical Else = ([\ \r \n \t]| ("(*" (![*] | "*" !>> [)])* "*)"))* "else";
-
+  
      
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
@@ -210,10 +240,8 @@ syntax Arg
      ;
            
 syntax PatternMatching 
-     =  "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>> (Bar ()) 
+     =  "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>>> "|" 
      ;
-     
-lexical Bar = [\ \n \r \t]*[|];     
      
 syntax InnerPatternMatching
 	 = ";"? "|" Pattern ("when" Expr)? "-\>" Expr
@@ -484,98 +512,3 @@ syntax PackageType
 syntax PackageConstraint
      = packageConstraint: "type" TypeConstr "="  Typexpr
      ;
-
-
-// Lexical
-
-lexical Ident = LowercaseIdentifier | CapitalizedIdentifier; 
-
-// underscore is considered a lower case identifier
-lexical LowercaseIdentifier = ([a-zA-Z_0-9] !<< [a-z_] [A-Za-z0-9_\']* !>> [A-Za-z0-9_\']) \ Keywords;
-
-lexical CapitalizedIdentifier = ([a-zA-Z_0-9] !<< [A-Z] [A-Za-z0-9_\']* !>> [A-Za-z0-9_\']) \ Keywords;
-
-lexical Int32Literal = SpecialInt [l];  
- 
-lexical Int64Literal = SpecialInt [L];  
- 
-lexical NativeIntLiteral =	SpecialInt [n];
-
-lexical SpecialInt = [0-9] [0-9_]* !>> [0-9_.eE]
-				   | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
-				   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
-				   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
-				   ;
-
-lexical IntegerLiteral = [0-9] [0-9_]* !>> [0-9_.eElLn]
-					   | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
- 					   | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
- 					   | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
- 					   ;
- 					   
-lexical NegativeIntegerLiteral = [\-] IntegerLiteral; 					   
-
-lexical FloatLiteral =  [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
-				     |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
-                     |  [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
-					 ;
-					 
-lexical CharLiteral = [\'] (RegularChar | EscapeSequence) [\'];
-                            
-lexical EscapeSequence = ([\\] [\\ \" \' n t b r])
-	                   | ([\\] [0-9][0-9][0-9])
-	                   | ([\\][x] [0-9A-Fa-f][0-9A-Fa-f]);
-                            
-lexical StringLiteral1 = [\"] StringCharacter* [\"];
-
-lexical StringCharacter = RegularCharStr |  EscapeSequence | [\\][\n] | [\\][\ ];
-
-lexical RegularChar = ![\'\\];
-
-lexical RegularCharStr = ![\"\\];
-
-lexical OperatorChar = [! $ % & * + \- . / : \< = \> ? @ ^ | ~];
-
-lexical PrefixSymbol = ([!] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "!="
-   	                 | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
-	                 ;
-
-lexical Label =	"~" LowercaseIdentifier !>> ":";                 
-lexical LabelColon =	"~" LowercaseIdentifier ":";
-lexical OptLabel = "?" LowercaseIdentifier !>> ":";
-lexical OptLabelColon = "?" LowercaseIdentifier ":";	                 
-
-lexical InfixSymbol1 = ("lsl" | "lsr" | "asr") !>> [a-z0-9] | ([*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol1Exclude;
-lexical InfixSymbol2 = ("mod" | "land"| "lor" | "lxor") !>> [a-z0-9] 
-                     | ([/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol2Exclude; 
-lexical InfixSymbol3 = ([+ \-] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol3Exclude;
-lexical InfixSymbol4 = [@ ^] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~];
-lexical InfixSymbol5 = ([= \< \> | & $] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol5Exclude;
-lexical InfixSymbol6 =  "&" !>> [&] | "&&";                      
-lexical InfixSymbol7 =  "||" | "or" !>> [a-z0-9];
-lexical InfixSymbol8 =  ":=";
-
-keyword InfixSymbol1Exclude = ")";
-keyword InfixSymbol2Exclude = "**";
-keyword InfixSymbol3Exclude = "-\>";
-keyword InfixSymbol5Exclude = "|" | "||" | "&&" | "&" | "\<-";
-
-keyword Keywords = "_" |
-        "and"|       "as"|           "assert"|      "asr"|           "begin"|    
-        "class"|     "constraint"|   "do"|          "done"|          "downto"|   
-        "else"|      "end"|          "exception"|   "external"|      "false"|    
-        "for"|       "fun"|          "function"|    "functor"|       "if"|       
-        "in"|        "include"|      "inherit"|     "initializer"|   "land"|     
-        "lazy"|      "let"|          "lor"|         "lsl"|           "lsr"|     
-        "lxor"|      "match"|        "method"|      "mod"|           "module"|   
-        "mutable"|   "new"|          "object"|      "of"|            "open"|     
-        "or"|        "private"|      "rec"|         "sig"|           "struct"|   
-        "then"|      "to"|           "true"|        "try"|           "type"|     
-        "val"|       "virtual"|      "when"|        "while"|         "with";
-
-
-lexical Comment = "(*" (![(*] | Comment | "*" !>> [)] | "(" !>> [*])* "*)";         
-	
-lexical Whitespace = [\ \t\n\r \u0009-\u000D];
-	
-layout Layout = (Comment | Whitespace)* !>> [\ \t\n\r \u0009-\u000D] !>> "(*";
