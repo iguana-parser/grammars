@@ -48,7 +48,7 @@ syntax TypeconstrName
      ;
 
 syntax TypeConstr 
-     = typeConstr: (ExtendedModulePath ".")? TypeconstrName
+     = (ExtendedModulePath ".")? TypeconstrName
      ;
 
 syntax ConstrName 
@@ -84,23 +84,23 @@ syntax ModTypeName
      ;
 
 syntax ModulePath 
-     = modulePath: (ModuleName ".")* ModuleName
+     = (ModuleName ".")* ModuleName
      ;
 
 syntax Constr 
-     = const: (ModulePath ".")? ConstrName 
+     = (ModulePath ".")? ConstrName 
      ;
 
 syntax Field 
-     = field_name: (ModulePath ".")? FieldName
+     = (ModulePath ".")? FieldName
      ;
 
 syntax ClassPath 
-     = classPath: (ModulePath "." )? ClassName
+     = (ModulePath "." )? ClassName
      ;
 
 syntax ModTypePath 
-     = modTypePath: (ExtendedModulePath "." )? ModTypName
+     = (ExtendedModulePath "." )? ModTypName
      ;
 
 syntax ModTypName 
@@ -108,8 +108,8 @@ syntax ModTypName
      ;
 
 syntax ExtendedModulePath 
-     = extendedModulePath1: (ExtendedModulePath ".")? ModuleName
-     | extendedModulePath2: ExtendedModulePath "(" ExtendedModulePath ")"
+     = (ExtendedModulePath ".")? ModuleName
+     | ExtendedModulePath "(" ExtendedModulePath ")"
      ;
 
 
@@ -138,28 +138,28 @@ syntax Typexpr
 
     
 syntax PolymorphicVariantType
- 	 = polymorphicVariantType1: "[" "|"? {TagSpec "|"}* "]"
-     | polymorphicVariantType2: "[\>" {TagSpec "|"}* "]"
-     | polymorphicVariantType3: "[\<"  "|"? {TagSpecFull "|"}+ ("\>" ("`" TagName)+ )?  "]"
+ 	 = "[" "|"? {TagSpec "|"}* "]"
+     | "[\>" {TagSpec "|"}* "]"
+     | "[\<"  "|"? {TagSpecFull "|"}+ ("\>" ("`" TagName)+ )?  "]"
      ;
        
 syntax PolyTypExpr 
-	 = polytype1: Typexpr
-     | polytype2: ("\'" Ident)+ "." Typexpr
+	 = Typexpr
+     | ("\'" Ident)+ "." Typexpr
      ;
        
 syntax MethodType 
-	= methodType: MethodName ":" PolyTypExpr;
+	= MethodName ":" PolyTypExpr;
        
        
 syntax TagSpec
-     = tagSpec1: "`" TagName ("of" Typexpr)?
-	 | tagSpec2: Typexpr
+     = "`" TagName ("of" Typexpr)?
+	 | Typexpr
 	 ;
 
 syntax TagSpecFull 
-	 = tagSpecFull1: "`" TagName ("of" Typexpr)? ("&" Typexpr)*
-     | tagSpecFull2: Typexpr
+	 = "`" TagName ("of" Typexpr)? ("&" Typexpr)*
+     | Typexpr
      ;
 
 
@@ -322,31 +322,31 @@ syntax Constant
 // ModuleExpressions 
 
 syntax Definition 
-	 = defVal:       "val" ValueName ":" Typexpr
-	 | letDef:       "let" "rec"? LetBinding  ("and" LetBinding)* 
-     | external:     "external" ValueName ":" Typexpr "=" ExternalDeclaration
-     | typeDef:      TypeDefinition
-     | exceptionDef: ExceptionDefinition
-     | classDef:     ClassDefinition
-     | classTypeDef: ClassTypeDefinition
-     | moduleDef1:   "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
-     | moduleDef2:   "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
-     | modType1:     "module" "type" ModTypeName "=" ModuleType
-     | modType2:     "module" "type" ModTypeName
-     | modRec1:      "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
-     | modRec2:      "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
-     | open:         "open" ModulePath
-     | include:      "include" ModuleExpr
+     = "let" "rec"? LetBinding  ("and" LetBinding)* 
+     | "val" ValueName ":" Typexpr
+     | "external" ValueName ":" Typexpr "=" ExternalDeclaration
+     | TypeDefinition
+     | ExceptionDefinition
+     | ClassDefinition
+     | ClassTypeDefinition
+     | "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
+     | "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
+     | "module" "type" ModTypeName "=" ModuleType
+     | "module" "type" ModTypeName
+     | "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
+     | "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
+     | "open" ModulePath
+     | "include" ModuleExpr
      ;
      
 syntax ModuleExpr 
-     = 					 ModulePath
-     | struct1:          "struct" ModuleItems? "end"
-     | functor: 	     "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
-     | modApp:			 ModuleExpr "(" ModuleExpr ")"
-     | modExprBrackets:  "(" ModuleExpr ")"
-     | moduleExprType:   "(" ModuleExpr ":" ModuleType ")"
-     | moduleExprVal:    "(" "val" Expr  (":" PackageType)? ")" 
+     = ModulePath
+     | "struct" ModuleItems? "end"
+     | "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
+     | ModuleExpr "(" ModuleExpr ")"
+     | "(" ModuleExpr ")"
+     | "(" ModuleExpr ":" ModuleType ")"
+     | "(" "val" Expr  (":" PackageType)? ")" 
      ;      
      
 syntax ModuleItems
@@ -356,19 +356,8 @@ syntax ModuleItems
 // ModuleTypes
  	
 syntax Specification 
-	 = specificationVal: "val" ValueName ":" Typexpr
-     | external: 		 "external" ValueName ":" Typexpr "=" ExternalDeclaration
-     | typeDef: 		 TypeDefinition
-     | exceptionDef:	 ExceptionDefinition
-     | classSpec: 		 ClassSpecification
-     | classDef: 		 ClassDefinition
-     | classTypeDef: 	 ClassTypeDefinition
-     | moduleDef1: 		 "module" ModuleName ( "(" ModuleName ":" ModuleType ")" )* ( ":" ModuleType )? "=" ModuleExpr
-     | moduleDef2: 		 "module" ModuleName ("(" ModuleName ":" ModuleType ")")* ":" ModuleType
-     | modType1: 		 "module" "type" ModTypeName "=" ModuleType
-     | modType2: 		 "module" "type" ModTypeName
-     | open: 			 "open" ModulePath
-     | includeSpec: 	 "include" ModuleType
+	 = ClassSpecification
+     | Definition
      ;
      
      
@@ -384,10 +373,10 @@ syntax ModuleType
 
 
 syntax ModConstraint 
-	 = modConsType1: "type" TypeParams? TypeConstr "=" Typexpr
-	 | modConsType2: "type" TypeParameters?  TypeconstrName ":="  TypeParameters?  TypeConstr
-     | modeConsModule1: "module" ModulePath "=" ExtendedModulePath
- 	 | modeConsModule2: "module" ModuleName ":="  ExtendedModulePath  
+	 = "type" TypeParams? TypeConstr "=" Typexpr
+	 | "type" TypeParameters?  TypeconstrName ":="  TypeParameters?  TypeConstr
+     | "module" ModulePath "=" ExtendedModulePath
+ 	 | "module" ModuleName ":="  ExtendedModulePath  
      ; 	
 
 
@@ -397,71 +386,72 @@ syntax TypeDefinition
      = typeDefinition: "type" {TypeDef "and"}+;
      
 syntax TypeDef 
-     = typeDef: TypeParams? TypeconstrName TypeInformation;
+     = TypeParams? TypeconstrName TypeInformation
+     ;
 
 syntax TypeInformation 
-     = typeInformation: TypeEquation? TypeRepresentation? TypeConstraint*;
+     = TypeEquation? TypeRepresentation? TypeConstraint*
+     ;
 
 syntax TypeEquation 
-     = typeEquation: "=" Typexpr
+     = "=" Typexpr
      ;
           
 syntax TypeRepresentation 
- 	 = constrDecls: "=" "private"? "|"? {ConstrDecl "|"}+
-     | fieldDecls: "=" "private"? "{" {FieldDecl ";"}+ ";"? "}"
+ 	 = "=" "private"? "|"? {ConstrDecl "|"}+
+     | "=" "private"? "{" {FieldDecl ";"}+ ";"? "}"
      ;
 
 syntax TypeParams 
-     = singleTypeParam: TypeParam
-     | typeParamList: "(" {TypeParam ","}+ ")"
+     = TypeParam
+     | "(" {TypeParam ","}+ ")"
      ;
 
 syntax TypeParam 
-     = typeParam1: Variance? "\'" Ident
-     | typeParam2: Variance? "_" !>> [a-zA-Z0-9]
+     = Variance? "\'" Ident
+     | Variance? "_" !>> [a-zA-Z0-9]
      ;     
      
 syntax Variance 
-     = posVariance: "+" 
-     | negVariance: "-";
+     = "+" 
+     | "-";
      
 syntax ConstrDecl 
-     = constDecl1: ConstrName ("of" { Typexpr !star !arrow1 "*"}+)?
-     | constDecl2: ConstrName ":" { Typexpr !star !arrow1 "*" }+ "-\>"  Typexpr
+     = ConstrName ("of" { Typexpr !star !arrow1 "*"}+)?
+     | ConstrName ":" { Typexpr !star !arrow1 "*" }+ "-\>"  Typexpr
      ;
 
 syntax FieldDecl 
-	 = fieldDecl: "mutable"? FieldName ":" PolyTypExpr
+	 = "mutable"? FieldName ":" PolyTypExpr
 	 ;
 
-
 syntax TypeConstraint 
-	 = typeConstraint: "constraint" "\'" Ident "=" Typexpr;
+	 = "constraint" "\'" Ident "=" Typexpr;
      
 syntax ExceptionDefinition 
-	 = exception1: "exception" ConstrName ("of" Typexpr !star !arrow1 ("*" Typexpr !star !arrow1)* )?
-     | exception2: "exception" ConstrName "=" Constr
+	 = "exception" ConstrName ("of" Typexpr !star !arrow1 ("*" Typexpr !star !arrow1)* )?
+     | "exception" ConstrName "=" Constr
      ;
      
 // Classes
 
 syntax ClassType 
-     = classType: (("?"? LabelName ":")? Typexpr "-\>")* ClassBodyType;
+     = (("?"? LabelName ":")? Typexpr "-\>")* ClassBodyType;
 
 syntax ClassBodyType 
-     = classBodyType1: "object" ("(" Typexpr ")")? ClassFieldSpec* "end"
-     | classBodyType2: ("[" Typexpr ("," Typexpr)* "]")? ClassPath
+     = "object" ("(" Typexpr ")")? ClassFieldSpec* "end"
+     | ("[" Typexpr ("," Typexpr)* "]")? ClassPath
      ;
 
 syntax ClassFieldSpec 
-     = fieldSpec1: "inherit" ClassType
-     | fieldSpec2: "val" "mutable"? "virtual"? InstVarName ":" PolyTypExpr
-     | fieldSpec3: "method" "private"? "virtual"? MethodName ":" PolyTypExpr
-     | fieldSpec4: "constraint" Typexpr "=" Typexpr
+     = "inherit" ClassType
+     | "val" "mutable"? "virtual"? InstVarName ":" PolyTypExpr
+     | "method" "private"? "virtual"? MethodName ":" PolyTypExpr
+     | "constraint" Typexpr "=" Typexpr
      ;
      
 syntax ClassExpr 
-     = classPath: ClassPath
+     = ClassPath
 	 | classExprBrackets1: "[" Typexpr ("," Typexpr)* "]" ClassPath
 	 | classExprBrackets2: "(" ClassExpr ")"
 	 | classExprBrackets3: "(" ClassExpr ":" ClassType ")"
@@ -472,59 +462,59 @@ syntax ClassExpr
 	 ;
 
 syntax ClassField 
-     = inheritance:      ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
-     | classValue:       ("val"|"val!") "mutable"? InstVarName (":" Typexpr)? "=" Expr
-     | virtualValue:     "val" "mutable"? "virtual" InstVarName ":" Typexpr
-     |                   ("method" | "method!") "private"? MethodName Parameter* (":" PolyTypExpr)? "=" Expr     
-     | method3:          "method" "private"? "virtual" MethodName ":" PolyTypExpr
-     | classConstraint:  "constraint" Typexpr "=" Typexpr
-     | classInitializer: "initializer" Expr
+     = ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
+     | ("val"|"val!") "mutable"? InstVarName (":" Typexpr)? "=" Expr
+     | "val" "mutable"? "virtual" InstVarName ":" Typexpr
+     | ("method" | "method!") "private"? MethodName Parameter* (":" PolyTypExpr)? "=" Expr     
+     | "method" "private"? "virtual" MethodName ":" PolyTypExpr
+     | "constraint" Typexpr "=" Typexpr
+     | "initializer" Expr
      ;
      
 syntax ClassDefinition 
-	 = classDefinition: "class" {ClassBinding "and"}+
+	 = "class" {ClassBinding "and"}+
 	 ;     
      
 syntax ClassBody 
-	 = classBody: ("(" Pattern (":" Typexpr)? ")")? ClassField*
+	 = ("(" Pattern (":" Typexpr)? ")")? ClassField*
 	 ;
 
 syntax ClassBinding 
-	 = classBinding: "virtual"? ("[" TypeParameters "]")? ClassName Parameter* (":" ClassType)? "=" ClassExpr
+	 = "virtual"? ("[" TypeParameters "]")? ClassName Parameter* (":" ClassType)? "=" ClassExpr
 	 ;
 
 syntax TypeParameters 
-	 = typeParameters: "\'" Ident ("," "\'" Ident)*
+	 = "\'" Ident ("," "\'" Ident)*
 	 ;
 	 
 syntax ClassSpecification 
-	 = classSpecification: "class" ClassSpec ("and" ClassSpec)*
+	 = "class" ClassSpec ("and" ClassSpec)*
 	 ;
 
 syntax ClassSpec 
-	 = classSpec: "virtual"? ("[" TypeParameters "]")? ClassName ":" ClassType
+	 = "virtual"? ("[" TypeParameters "]")? ClassName ":" ClassType
 	 ;
 
 syntax ClassTypeDefinition 
-	 = classTypeDefinition: "class" "type" ClasstypeDef ("and" ClasstypeDef)*
+	 = "class" "type" ClasstypeDef ("and" ClasstypeDef)*
 	 ;
 
 syntax ClasstypeDef 
-	 = classTypeDef: "virtual"? ("[" TypeParameters "]")? ClassName "=" ClassBodyType
+	 = "virtual"? ("[" TypeParameters "]")? ClassName "=" ClassBodyType
 	 ;
      
 syntax ExternalDeclaration 
-     = externalDecl: StringLiteral1+
+     = StringLiteral1+
      ;	 
      
 
 // Extensions
 
 syntax PackageType
-	 =	packageType1: ModTypePath  
-	 |	packageType2: ModTypePath "with"  PackageConstraint  ("and" PackageConstraint)*
+	 =	ModTypePath  
+	 |	ModTypePath "with"  PackageConstraint  ("and" PackageConstraint)*
  	 ;  
 
 syntax PackageConstraint
-     = packageConstraint: "type" TypeConstr "="  Typexpr
+     = "type" TypeConstr "="  Typexpr
      ;
