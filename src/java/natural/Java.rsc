@@ -429,15 +429,6 @@ syntax LocalVariableDeclarationStatement
      ;
 
 syntax Statement
-     = StatementWithoutTrailingSubstatement 
-     | Identifier ":" Statement
-     | "if" "(" Expression ")" Statement
-     | "if" "(" Expression ")" StatementNoShortIf "else" Statement
-     | "while" "(" Expression ")" Statement
-     | ForStatement
-     ;
-
-syntax StatementWithoutTrailingSubstatement
      = Block
      | ";" 
      | StatementExpression ";"
@@ -450,19 +441,12 @@ syntax StatementWithoutTrailingSubstatement
      | "synchronized" "(" Expression ")" Block 
      | "throw" Expression ";" 
      | "try" Block (CatchClause+ | (CatchClause* Finally))
-     | "try" ResourceSpecification Block CatchClause* Finally?
-     ;
-     
-syntax StatementNoShortIf
-     = StatementWithoutTrailingSubstatement
-     | Identifier ":" StatementNoShortIf
-     | "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
-     | "while" "(" Expression ")" StatementNoShortIf
-     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" StatementNoShortIf
-     ;
-     
-syntax ForStatement
-     = "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement 
+     | "try" ResourceSpecification Block CatchClause* Finally? 
+     | Identifier ":" Statement
+     | "if" "(" Expression ")" Statement !>>> "else"
+     | "if" "(" Expression ")" Statement "else" Statement
+     | "while" "(" Expression ")" Statement
+     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement
      | "for" "(" FormalParameter ":" Expression ")" Statement
      ;
 
