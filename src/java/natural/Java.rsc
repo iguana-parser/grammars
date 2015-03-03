@@ -523,6 +523,8 @@ syntax ForUpdate
 syntax Expression
      = Expression "." Identifier
      | Expression "." "this"
+	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
      | Expression "." "super" SuperSuffix
      | Type "." "class"
      | "void" "." "class"
@@ -616,3 +618,10 @@ syntax SuperSuffix
      =  Arguments 
      | "." Identifier Arguments?
      ;
+
+ syntax ExplicitGenericInvocationSuffix 
+ 	  = "super" SuperSuffix
+ 	  | Identifier Arguments
+ 	  ;
+     
+     
