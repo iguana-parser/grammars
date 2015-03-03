@@ -521,7 +521,7 @@ syntax ForUpdate
  ***********************************************************************************************************************/
 
 syntax Expression
-     = Expression "." Identifier
+     = Expression !io "." Identifier
      | Expression "." "this"
 	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
 	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
@@ -555,7 +555,7 @@ syntax Expression
      | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
      |       Expression "\<=" Expression
      |       Expression "\>=" Expression
-     |       Expression "instanceof" Type ) 
+     | io:   Expression "instanceof" Type ) 
      > left( Expression "==" Expression
      |       Expression "!=" Expression )
      > left  Expression "&" !>> "&" Expression
