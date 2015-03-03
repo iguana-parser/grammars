@@ -530,15 +530,16 @@ syntax Expression
      | Expression !newArray "[" Expression "]"
      > Expression "++"
      | Expression "--"
-     > "+" !>> "+" Expression
-     | "-" !>> "-" Expression
+     > up: "+" !>> "+" Expression
+     | um: "-" !>> "-" Expression
      | "++" Expression
      | "--" Expression 
      | "!" Expression
      | "~" Expression
      | "new" ClassInstanceCreationExpression
      | newArray: "new" ArrayCreationExpression
-     | "(" Type ")" Expression
+     | "(" PrimitiveType ")" Expression
+     | "(" ReferenceType ")" Expression !up !um 
      > left( Expression "*" Expression 
      |       Expression "/" Expression
      |       Expression "%" Expression )
@@ -552,7 +553,7 @@ syntax Expression
      | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
      |       Expression "\<=" Expression
      |       Expression "\>=" Expression
-     |       Expression "instanceof" Expression ) 
+     |       Expression "instanceof" Type ) 
      > left( Expression "==" Expression
      |       Expression "!=" Expression )
      > left  Expression "&" !>> "&" Expression
