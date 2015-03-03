@@ -527,7 +527,7 @@ syntax Expression
      | Type "." "class"
      | "void" "." "class"
 	 | Expression !brackets "(" ArgumentList? ")"     
-     | Expression "[" Expression "]"
+     | Expression !newArray "[" Expression "]"
      > Expression "++"
      | Expression "--"
      > "+" !>> "+" Expression
@@ -537,7 +537,7 @@ syntax Expression
      | "!" Expression
      | "~" Expression
      | "new" ClassInstanceCreationExpression
-     | "new" ArrayCreationExpression
+     | newArray: "new" ArrayCreationExpression
      | "(" Type ")" Expression
      > left( Expression "*" Expression 
      |       Expression "/" Expression
