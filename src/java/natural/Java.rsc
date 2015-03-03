@@ -160,15 +160,9 @@ syntax ConstructorDeclarator
      ;
      
 syntax ConstructorBody
-     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+     = Block
      ;
      
-syntax ExplicitConstructorInvocation
-     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
-     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     ;          
-
 syntax NonWildTypeArguments
      = "\<" { ReferenceType ","}+ "\>"
      ;
