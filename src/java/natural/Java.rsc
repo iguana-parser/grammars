@@ -530,7 +530,9 @@ syntax Expression
      = Expression "." Identifier
      | Expression "." "this"
      | Expression "." "super" SuperSuffix
-	 | Expression "(" ArgumentList? ")"     
+     | Type "." "class"
+     | "void" "." "class"
+	 | Expression !brackets "(" ArgumentList? ")"     
      | Expression "[" Expression "]"
      > Expression "++"
      | Expression "--"
@@ -565,16 +567,14 @@ syntax Expression
      > left  Expression "||" Expression
      | right Expression "?" Expression ":" Expression 
      > right Expression AssignmentOperator Expression
+     | brackets: "(" Expression ")"
      | Primary
      ;
      
 syntax Primary
 	 = Literal
-     | Type "." "class"
-     | "void" "." "class"
      | "this"
      | "super"
-     | "(" Expression ")"
      | Identifier
      ;     
 
