@@ -3,7 +3,7 @@
  *
  *  author: Ali Afroozeh
  */
-module java::specification::Java
+module java::natural::Java
 
 extend java::specification::Lexical;
 
@@ -379,7 +379,7 @@ syntax ElementValuePair
     ;
 
 syntax ElementValue 
-    = ConditionalExpression
+    = Expression
     | Annotation
     | ElementValueArrayInitializer
     ;
@@ -473,14 +473,8 @@ syntax ForStatement
      ;
 
 syntax StatementExpression
-     = Assignment 
-     | PreIncrementExpression 
-     | PreDecrementExpression 
-     | PostIncrementExpression 
-     | PostDecrementExpression 
-     | MethodInvocation 
-     | ClassInstanceCreationExpression
-    ;
+     = Expression
+     ;
     
 syntax CatchClause 
     = "catch" "(" VariableModifier* CatchType Identifier ")" Block
@@ -532,28 +526,61 @@ syntax ForUpdate
  * Expressions
  ***********************************************************************************************************************/
 
-syntax Primary
-	 =  PrimaryNoNewArray 
-	 |  ArrayCreationExpression
-	 ;
-
-syntax PrimaryNoNewArray 
-     = Literal
-     | Type "." "class"
-     | "void" "." "class"
-     | "this" 
-     | ClassName "." "this"   
-     | "(" Expression ")" 
-     | ClassInstanceCreationExpression 
-     | FieldAccess
-     | MethodInvocation 
-     | ArrayAccess
+syntax Expression
+     = Expression "." Identifier
+     | Expression "." "this"
+     | Expression "." "super" SuperSuffix
+	 | Expression "(" ArgumentList? ")"     
+     | Expression "[" Expression "]"
+     > Expression "++"
+     | Expression "--"
+     > "+" !>> "+" Expression
+     | "-" !>> "-" Expression
+     | "++" Expression
+     | "--" Expression 
+     | "!" Expression
+     | "~" Expression
+     | "new" ClassInstanceCreationExpression
+     | "new" ArrayCreationExpression
+     | "(" Type ")" Expression
+     > left( Expression "*" Expression 
+     |       Expression "/" Expression
+     |       Expression "%" Expression )
+     > left( Expression "+" !>> "+" Expression
+     |       Expression "-" !>> "-" Expression )
+     > left( Expression "\<\<" Expression 
+     |       Expression "\>\>" !>> "\>" Expression
+     |       Expression "\>\>\>" Expression )
+     > left( Expression "\<" !>> "=" !>> "\<" Expression
+     |       Expression "\>" !>> "=" !>> "\>" Expression 
+     |       Expression "\<=" Expression
+     |       Expression "\>=" Expression
+     |       Expression "instanceof" Expression ) 
+     > left( Expression "==" Expression
+     |       Expression "!=" Expression )
+     > left  Expression "&" !>> "&" Expression
+     > left  Expression "^" Expression
+     > left  Expression "|" !>> "|" Expression 
+     > left  Expression "&&" Expression
+     > left  Expression "||" Expression
+     | right Expression "?" Expression ":" Expression 
+     | right Expression AssignmentOperator Expression
+     | Primary
      ;
      
+syntax Primary
+	 = Literal
+     | Type "." "class"
+     | "void" "." "class"
+     | "this"
+     | "super"
+     | "(" Expression ")"
+     | Identifier
+     ;     
+
 syntax ClassInstanceCreationExpression
-     = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
-     | (Primary | QualifiedIdentifier) "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
-     ; // Check if it's a good idea to add Identifier to primary?
+     =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     ;
      
 syntax TypeArgumentsOrDiamond 
      = "\<" "\>" 
@@ -565,165 +592,12 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	     = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
-	     | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
+	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
-     
+
 syntax DimExpr
      = "[" Expression "]"
-     ;
-     
-syntax FieldAccess
-     = Primary "." Identifier
-     | "super" "." Identifier
-     | ClassName "." "super" "." Identifier
-     ;
-     
-syntax MethodInvocation
-     = MethodName "(" ArgumentList? ")"
-     | Primary "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | ClassName "." "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | TypeName "." NonWildTypeArguments Identifier "(" ArgumentList? ")"
-     ;
-     
-syntax ArrayAccess
-     = ExpressionName "[" Expression "]" 
-     | PrimaryNoNewArray "[" Expression "]"
-     ;
- 
-syntax PostfixExpression
-     = Primary
-     | ExpressionName 
-     | PostIncrementExpression 
-     | PostDecrementExpression
-     ;
-
-syntax PostIncrementExpression
-     = PostfixExpression "++"
-     ;
-
-syntax PostDecrementExpression
-     = PostfixExpression "--"
-     ;
-     
-syntax UnaryExpression
-     = PreIncrementExpression 
-     | PreDecrementExpression 
-     | "+" !>> "+" UnaryExpression
-     | "-" !>> "-" UnaryExpression
-     | UnaryExpressionNotPlusMinus
-     ;
-     
-     
-syntax PreIncrementExpression
-     = "++" UnaryExpression
-     ;
-     
-     
-syntax PreDecrementExpression
-     = "--" UnaryExpression
-     ;
-     
-syntax UnaryExpressionNotPlusMinus
-     = PostfixExpression
-     | "~" UnaryExpression
-     | "!" UnaryExpression 
-     | CastExpression
-     ;
-
-syntax CastExpression
-     = "(" PrimitiveType ")" UnaryExpression
-     | "(" ReferenceType ")" UnaryExpressionNotPlusMinus
-     ;
-     
-syntax MultiplicativeExpression
-     = UnaryExpression
-     | MultiplicativeExpression "*" UnaryExpression 
-     | MultiplicativeExpression "/" UnaryExpression
-     | MultiplicativeExpression "%" UnaryExpression
-     ;
-     
-syntax AdditiveExpression
-     = MultiplicativeExpression
-     | AdditiveExpression "+" !>> "+" MultiplicativeExpression
-     | AdditiveExpression "-" !>> "-" MultiplicativeExpression     
-     ;
-     
-syntax ShiftExpression
-     = AdditiveExpression
-     | ShiftExpression "\<\<" AdditiveExpression
-     | ShiftExpression "\>\>" AdditiveExpression
-     | ShiftExpression "\>\>\>" AdditiveExpression
-     ;
-     
-
-syntax RelationalExpression
-     = ShiftExpression
-     | RelationalExpression "\<" ShiftExpression 
-     | RelationalExpression "\>" ShiftExpression 
-     | RelationalExpression "\<=" ShiftExpression 
-     | RelationalExpression "\>=" ShiftExpression 
-     | RelationalExpression "instanceof" ReferenceType
-     ;
-
-
-syntax EqualityExpression
-     = RelationalExpression
-     | EqualityExpression "==" RelationalExpression
-     | EqualityExpression "!=" RelationalExpression
-     ;
-     
-syntax AndExpression
-     = EqualityExpression
-     | AndExpression "&" EqualityExpression
-     ;
-     
-syntax ExclusiveOrExpression
-     = AndExpression
-     | ExclusiveOrExpression "^" AndExpression
-     ;
-     
-syntax InclusiveOrExpression
-     = ExclusiveOrExpression
-     | InclusiveOrExpression "|" ExclusiveOrExpression
-     ;
-     
-syntax ConditionalAndExpression
-     = InclusiveOrExpression
-     | ConditionalAndExpression "&&" InclusiveOrExpression
-     ;
-     
-syntax ConditionalOrExpression
-     = ConditionalAndExpression
-     | ConditionalOrExpression "||" ConditionalAndExpression
-     ;
-     
-
-syntax ConditionalExpression
-     = ConditionalOrExpression
-     | ConditionalOrExpression "?" Expression ":" ConditionalExpression
-     ;
-     
-syntax AssignmentExpression
-     = ConditionalExpression 
-     | Assignment
-     ;
-     
-     
-syntax Assignment
-     = LeftHandSide AssignmentOperator AssignmentExpression
-     ;
-     
-syntax LeftHandSide
-     = ExpressionName
-     | "(" LeftHandSide ")" 
-     | FieldAccess 
-     | ArrayAccess
-     ;
-
-syntax Expression
-     = AssignmentExpression
      ;
      
 syntax ConstantExpression
@@ -734,10 +608,6 @@ syntax ClassName
 	 = QualifiedIdentifier
 	 ;
 	 
-syntax ExpressionName
-     = QualifiedIdentifier
-     ;
-     
 syntax MethodName
      = QualifiedIdentifier
      ;
@@ -749,9 +619,4 @@ syntax TypeDeclSpecifier
 syntax SuperSuffix 
      =  Arguments 
      | "." Identifier Arguments?
-     ;
-
-syntax ExplicitGenericInvocationSuffix 
-     = "super" SuperSuffix
-     | Identifier Arguments
      ;

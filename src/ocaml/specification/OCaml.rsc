@@ -111,7 +111,7 @@ syntax ExtendedModulePath
 
 syntax Typexpr 
 	 = typexprConstr1: Typexpr TypeConstr
-	 > non-assoc star: Typexpr "*" {Typexpr !star !arrow1 "*"}+
+	 > non-assoc star: Typexpr "*" {Typexpr_ "*"}+
 	 > right (arrow1: Typexpr "-\>" Typexpr
 	 |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
 	 > typexprAsId: Typexpr "as" "\'" Ident 
@@ -128,6 +128,10 @@ syntax Typexpr
   	 | typexprHash2: Typexpr "#" ClassPath
   	 | typexprHash3: "(" {Typexpr ","}+ ")" "#" ClassPath
   	 | typexprPackage: "(" "module" PackageType ")"  
+     ;
+
+syntax Typexpr_
+     = Typexpr !star !arrow1
      ;
 
     
@@ -168,7 +172,7 @@ syntax Expr
 	 > hash: 				Expr "#" MethodName
      > non-assoc 
      (
-     functionApplication: 	Expr  Arg+
+     functionApplication: 	Expr !comma  Arg+
      //| constrExp: 			Constr Expr    To avoid ambiguities with Expr Arg+ as Expr can derive Constr
      //| polyVariant:	 		"`" TagName Expr  To Avoid ambiguities with Constant("`" TagName) Arg(Expr)
      | lazy: 				"lazy" Expr
@@ -184,7 +188,7 @@ syntax Expr
      | left  uneq:   		Expr "!=" Expr
      > right infix6: 		Expr InfixSymbol6 Expr
      > right infix7: 		Expr InfixSymbol7 Expr
-     > non-assoc comma: 	Expr ("," Expr !comma !sep)+
+     > non-assoc comma: 	Expr ("," Expr_2)+
      > right 
      (
        assign1: 			Expr "." Field "\<-" Expr
@@ -194,7 +198,7 @@ syntax Expr
      | assign5:		 		InstVarName "\<-" Expr
      )
      > right infix8: 		Expr InfixSymbol8 Expr
-     > ifThenElse: 	 		"if" Expr  "then" Expr !sep "else" Expr
+     > ifThenElse: 	 		"if" Expr  "then" Expr_1 "else" Expr
      | ifThen: 		 		"if"  Expr "then" Expr !>>> "else"
      //> semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
@@ -210,11 +214,11 @@ syntax Expr
   	 | brackets1: 	 		"(" Expr ":" Typexpr ")"
   	 | brackets2:	 		"(" Expr ":\>"  Typexpr ")"  
  	 | brackets3: 	 		"(" Expr ":"  Typexpr ":\>"  Typexpr ")"  
- 	 | brackets4: 	 		"{\<" InstVarName "=" Expr !sep  (";" InstVarName "="  Expr)*  ";"? "\>}"  
-  	 | tupl: 		 		"["  {Expr !sep ";"}+ ";"? "]"
-     | array: 		 		"[|" {Expr !sep ";"}+ ";"? "|]"
-     | record1:	     		"{" Field ("=" Expr !sep)? (";" Field ("=" Expr !sep)?)* ";"? "}"
-     | record2: 	 		"{" Expr "with" Field ("=" Expr !sep )? (";" Field ("=" Expr !sep)?)* ";"? "}"
+ 	 | brackets4: 	 		"{\<" InstVarName "=" Expr_1  (";" InstVarName "="  Expr)*  ";"? "\>}"  
+  	 | tupl: 		 		"["  {Expr_1 ";"}+ ";"? "]"
+     | array: 		 		"[|" {Expr_1 ";"}+ ";"? "|]"
+     | record1:	     		"{" Field ("=" Expr_1)? (";" Field ("=" Expr_1)?)* ";"? "}"
+     | record2: 	 		"{" Expr "with" Field ("=" Expr_1 )? (";" Field ("=" Expr_1)?)* ";"? "}"
      | whileloop: 	 		"while" Expr "do" Expr ";"? "done"
      | forloop: 			"for" Ident "=" Expr ("to" | "downto") Expr "do" Expr ";"? "done"
      | new: 				"new" ClassPath
@@ -226,6 +230,13 @@ syntax Expr
 	 //| 						InstVarName
      ; 
      
+syntax Expr_1 
+     = Expr !sep
+     ;
+
+syntax Expr_2
+     = Expr !sep !comma
+     ;     
   
      
 syntax Arg 
@@ -277,7 +288,7 @@ syntax Pattern
 	 = constrPattern: 		  Constr Pattern
 	 > tagNamePattern: 		  "`" TagName Pattern
 	 > right listCons: 		  Pattern "::" Pattern
-	 > non-assoc patterns: 	  Pattern "," {Pattern !patterns !patternBar !patternAs !lazyPattern ","}+
+	 > non-assoc patterns: 	  Pattern "," {Pattern_ ","}+
 	 > left patternBar: 	  Pattern "|" Pattern
 	 > patternAs: 			  Pattern "as" ValueName
 	 | patternValueName: 	  ValueName
@@ -293,7 +304,11 @@ syntax Pattern
      | patternArray: 		  "[|" {Pattern ";"}+ ";"? "|]"
      | lazyPattern: 		  "lazy" Pattern
      | patternPackage: 		  "(" "module" ModuleName  (":" PackageType)? ")"  
-     ;       
+     ;
+     
+syntax Pattern_
+     = Pattern !patterns !patternBar !patternAs !lazyPattern
+     ;            
          
 syntax Constant 
      = posInt: 			IntegerLiteral
@@ -406,8 +421,8 @@ syntax Variance
      | "-";
      
 syntax ConstrDecl 
-     = ConstrName ("of" { Typexpr !star !arrow1 "*"}+)?
-     | ConstrName ":" { Typexpr !star !arrow1 "*" }+ "-\>"  Typexpr
+     = ConstrName ("of" { Typexpr_ "*"}+)?
+     | ConstrName ":" { Typexpr_ "*" }+ "-\>"  Typexpr
      ;
 
 syntax FieldDecl 
@@ -418,7 +433,7 @@ syntax TypeConstraint
 	 = "constraint" "\'" Ident "=" Typexpr;
      
 syntax ExceptionDefinition 
-	 = "exception" ConstrName ("of" Typexpr !star !arrow1 ("*" Typexpr !star !arrow1)* )?
+	 = "exception" ConstrName ("of" Typexpr_ ("*" Typexpr_ )* )?
      | "exception" ConstrName "=" Constr
      ;
      
