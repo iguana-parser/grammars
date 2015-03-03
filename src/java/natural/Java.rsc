@@ -564,7 +564,7 @@ syntax Expression
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      | right Expression "?" Expression ":" Expression 
-     | right Expression AssignmentOperator Expression
+     > right Expression AssignmentOperator Expression
      | Primary
      ;
      
