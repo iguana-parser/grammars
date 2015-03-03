@@ -563,7 +563,7 @@ syntax Expression
      > left  Expression "|" !>> "|" Expression 
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
-     | right Expression "?" Expression ":" Expression 
+     > right Expression "?" Expression ":" Expression 
      > right Expression !lt !gt AssignmentOperator Expression
      | brackets: "(" Expression ")"
      | Primary
