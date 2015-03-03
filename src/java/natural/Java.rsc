@@ -467,7 +467,7 @@ syntax ForStatement
      ;
 
 syntax StatementExpression
-     = Expression
+     = Expression !lt !gt
      ;
     
 syntax CatchClause 
@@ -547,8 +547,9 @@ syntax Expression
      > left( Expression "\<\<" Expression 
      |       Expression "\>\>" !>> "\>" Expression
      |       Expression "\>\>\>" Expression )
-     > left( Expression "\<" !>> "=" !>> "\<" Expression
-     |       Expression "\>" !>> "=" !>> "\>" Expression 
+     > left( 
+       lt:   Expression "\<" !>> "=" !>> "\<" Expression
+     | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
      |       Expression "\<=" Expression
      |       Expression "\>=" Expression
      |       Expression "instanceof" Expression ) 
