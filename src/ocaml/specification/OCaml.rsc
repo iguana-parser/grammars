@@ -361,7 +361,7 @@ syntax ModuleExpr
      ;      
      
 syntax ModuleItems
-     = ";;"? ( (Definition ";"?) | Expr) ((";;"? Definition ";"?) | (";;" Expr))* ";;"?
+     = ";;"? ( (Definition ";"?) | (Expr ";"?)) ((";;"? Definition ";"?) | (";;" Expr ";"?))* ";;"?
      ;     
      
 // ModuleTypes
