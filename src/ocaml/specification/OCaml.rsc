@@ -170,7 +170,7 @@ syntax TagSpecFull
 
 syntax Expr 
      = prefix: 				PrefixSymbol Expr !valuePath
-     > non-assoc field: 			Expr "." Field  
+     > non-assoc field: 			Expr "." Ident  
      | non-assoc dotBracket1: 		Expr ".(" Expr ")"
      | non-assoc dotBracket2: 		Expr ".[" Expr "]"
      | non-assoc dotBracket3: 		Expr ".{" Expr "}"
@@ -194,14 +194,7 @@ syntax Expr
      > right infix6: 		Expr InfixSymbol6 Expr
      > right infix7: 		Expr InfixSymbol7 Expr
      > non-assoc comma: 	Expr ("," Expr_2)+
-     > right 
-     (
-       assign1: 			Expr "." Field "\<-" Expr
-     | assign2:		 		Expr ".(" Expr ")" "\<-" Expr
-     | assign3: 	 		Expr ".[" Expr "]" "\<-" Expr
-     | assign4: 	 		Expr ".{" Expr "}" "\<-" Expr
-     | assign5:		 		InstVarName "\<-" Expr
-     )
+     > right assign: 	    Expr "\<-" Expr
      > right infix8: 		Expr InfixSymbol8 Expr
      > ifThenElse: 	 		"if" Expr  "then" Expr_1 "else" Expr
      | ifThen: 		 		"if"  Expr "then" Expr !>>> "else"
@@ -231,7 +224,8 @@ syntax Expr
      | moduleExpr: 	 		"(" "module" ModuleExpr  (":" PackageType)? ")"  
      //| valuePath: 	 		ValuePath
      | 						ValueName
-	 | constant: 			Constant 
+	 | constant: 			Constant !constr   // To avoid ambiguities with Expr "." Field
+	 |                      ConstrName
      //| 						InstVarName
      ; 
      
@@ -246,15 +240,15 @@ syntax Expr_2
      
 syntax Arg 
  	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
+ 	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
  	                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule 
  	| label: 		  Label
      | labelColon:    LabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
+ 	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
  	                       			  !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      | optlabel:      OptLabel
      | optlabelColon: OptLabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 !assign5 
+ 	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
  	                       				 !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      ;
            
@@ -325,12 +319,12 @@ syntax Constant
      | falseConstant: 	"false"
      | trueConstant: 	"true"
      | emptyParenthesis: "(" ")"
-	| emptyBrackets:	"[" "]"
-	| emptyArray: 		"[|" "|]"
-	| emptyCurly: 		"{\<" "\>}"
+     | emptyBrackets:	"[" "]"
+     | emptyArray: 		"[|" "|]"
+     | emptyCurly: 		"{\<" "\>}"
      | 					"`" TagName
      | int32: 			Int32Literal  
-	| int64: 			Int64Literal  
+	 | int64: 			Int64Literal  
      | nativeInt: 		NativeIntLiteral
      ;
 
