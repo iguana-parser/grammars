@@ -285,7 +285,8 @@ syntax Parameter
 // Patterns
 
 syntax Pattern 
-     = constrPattern: 		  Constr Pattern
+     = lazyPattern:           "lazy" Pattern 
+     > constrPattern: 		  Constr Pattern
      > tagNamePattern: 		  "`" TagName Pattern
      > right listCons: 		  Pattern "::" Pattern
      > non-assoc patterns: 	  Pattern "," {Pattern_ ","}+
@@ -302,30 +303,29 @@ syntax Pattern
      | patternRec: 			  "{" Field ("=" Pattern)? (";" Field "=" Pattern)* ";"? "}"
      | patternTuple: 		  "["  {Pattern ";"}+ ";"? "]"
      | patternArray: 		  "[|" {Pattern ";"}+ ";"? "|]"
-     | lazyPattern: 		  "lazy" Pattern
      | patternPackage: 		  "(" "module" ModuleName  (":" PackageType)? ")"  
      ;
      
 syntax Pattern_
-     = Pattern !patterns !patternBar !patternAs !lazyPattern
+     = Pattern !patterns !patternBar !patternAs
      ;            
          
 syntax Constant 
-     = posInt: 			IntegerLiteral
-     | floatLiteral: 	FloatLiteral
-     | charLiteral: 	CharLiteral
-     | stringLiteral: 	StringLiteral1
-     | constr: 			Constr
-     | falseConstant: 	"false"
-     | trueConstant: 	"true"
+     = posInt: 			 IntegerLiteral
+     | floatLiteral: 	 FloatLiteral
+     | charLiteral: 	 CharLiteral
+     | stringLiteral: 	 StringLiteral1
+     | constr: 			 Constr
+     | falseConstant: 	 "false"
+     | trueConstant: 	 "true"
      | emptyParenthesis: "(" ")"
-     | emptyBrackets:	"[" "]"
-     | emptyArray: 		"[|" "|]"
-     | emptyCurly: 		"{\<" "\>}"
-     | 					"`" TagName
-     | int32: 			Int32Literal  
-	 | int64: 			Int64Literal  
-     | nativeInt: 		NativeIntLiteral
+     | emptyBrackets:	 "[" "]"
+     | emptyArray: 		 "[|" "|]"
+     | emptyCurly: 		 "{\<" "\>}"
+     | 					 "`" TagName
+     | int32: 			 Int32Literal  
+	 | int64: 			 Int64Literal  
+     | nativeInt: 		 NativeIntLiteral
      ;
 
 // ModuleExpressions 
