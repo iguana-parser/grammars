@@ -125,6 +125,7 @@ syntax Typexpr
      | "_" !>> [a-zA-Z0-9]
      | "(" Typexpr ")"
      | TypeConstr
+     | TypeConstr  Typexpr						// Revised syntax for types
      | "(" Typexpr ("," Typexpr)+ ")" TypeConstr
      | PolymorphicVariantType
      | "\<" ".."? "\>"
@@ -157,11 +158,11 @@ syntax MethodType
        
 syntax TagSpec
      = "`" TagName ("of" Typexpr)?
-	| Typexpr
-	;
+     | Typexpr
+     ;
 
 syntax TagSpecFull 
-	= "`" TagName ("of" Typexpr)? ("&" Typexpr)*
+     = "`" TagName ("of" Typexpr)? ("&" Typexpr)*
      | Typexpr
      ;
 
@@ -384,10 +385,10 @@ syntax ModuleType
 
 
 syntax ModConstraint 
-	= "type" TypeParams? TypeConstr "=" Typexpr
-	| "type" TypeParameters?  TypeconstrName ":="  TypeParameters?  TypeConstr
+     = "type" TypeParams? TypeConstr "=" Typexpr
+     | "type" TypeParameters?  TypeconstrName ":="  TypeParameters?  TypeConstr
      | "module" ModulePath "=" ExtendedModulePath
- 	| "module" ModuleName ":="  ExtendedModulePath  
+     | "module" ModuleName ":="  ExtendedModulePath  
      ; 	
 
 
@@ -411,7 +412,7 @@ syntax TypeEquation
      ;
           
 syntax TypeRepresentation 
- 	= "=" "private"? "|"? {ConstrDecl "|"}+
+     = "=" "private"? "|"? {ConstrDecl "|"}+
      | "=" "private"? "{" {FieldDecl ";"}+ ";"? "}"
      | "=" "[" {ConstrDecl "|"}* "]"   // Revised syntax
      ;
@@ -452,7 +453,8 @@ syntax ExceptionDefinition
 // Classes
 
 syntax ClassType 
-     = (("?"? LabelName ":")? Typexpr "-\>")* ClassBodyType;
+     = (("?"? LabelName ":")? Typexpr "-\>")* ClassBodyType
+     ;
 
 syntax ClassBodyType 
      = "object" ("(" Typexpr ")")? ClassFieldSpec* "end"
@@ -468,14 +470,14 @@ syntax ClassFieldSpec
      
 syntax ClassExpr 
      = ClassPath
-	| classExprBrackets1: "[" Typexpr ("," Typexpr)* "]" ClassPath
-	| classExprBrackets2: "(" ClassExpr ")"
-	| classExprBrackets3: "(" ClassExpr ":" ClassType ")"
-	| classArgs: ClassExpr ! classArgs Arg+
-	| classFun: "fun" Parameter+ "-\>" ClassExpr
-	| letClass: "let" "rec"? LetBinding ("and" LetBinding)* "in" ClassExpr
-	| object: "object" ClassBody "end"
-	;
+     | classExprBrackets1: "[" Typexpr ("," Typexpr)* "]" ClassPath
+     | classExprBrackets2: "(" ClassExpr ")"
+     | classExprBrackets3: "(" ClassExpr ":" ClassType ")"
+     | classArgs: ClassExpr ! classArgs Arg+
+     | classFun: "fun" Parameter+ "-\>" ClassExpr
+     | letClass: "let" "rec"? LetBinding ("and" LetBinding)* "in" ClassExpr
+     | object: "object" ClassBody "end"
+     ;
 
 syntax ClassField 
      = ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
@@ -527,9 +529,9 @@ syntax ExternalDeclaration
 // Extensions
 
 syntax PackageType
-     =	ModTypePath  
-	|	ModTypePath "with"  PackageConstraint  ("and" PackageConstraint)*
- 	;  
+     = ModTypePath  
+     | ModTypePath "with"  PackageConstraint  ("and" PackageConstraint)*
+     ;  
 
 syntax PackageConstraint
      = "type" TypeConstr "="  Typexpr
