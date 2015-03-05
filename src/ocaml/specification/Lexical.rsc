@@ -17,30 +17,30 @@ lexical CapitalizedIdentifier
       ;
 
 lexical Int32Literal 
-      = SpecialInt [l]
+      =  [\-]? SpecialInt [l]
       ;  
  
 lexical Int64Literal 
-      = SpecialInt [L]
+      = [\-]? SpecialInt [L]
       ;  
  
 lexical NativeIntLiteral 
-     =  SpecialInt [n]
+     =  [\-]? SpecialInt [n]
      ;
 
 lexical SpecialInt 
       = [0-9] [0-9_]* !>> [0-9_.eE]
-	      | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
-	      | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
-	      | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
-	      ;
+      | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
+      | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
+      | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
+      ;
 
 lexical IntegerLiteral 
       = [0-9] [0-9_]* !>> [0-9_.eElLn]
       | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
- 	     | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
+      | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
       | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
- 	     ;
+ 	  ;
  					   
 lexical NegativeIntegerLiteral 
       = [\-] IntegerLiteral
@@ -48,9 +48,9 @@ lexical NegativeIntegerLiteral
 
 lexical FloatLiteral 
       =  [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
-	      |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
+	  |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
       |  [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
-	      ;
+	  ;
 					 
 lexical CharLiteral 
       = [\'] (RegularChar | EscapeSequence) [\']
@@ -58,9 +58,9 @@ lexical CharLiteral
                             
 lexical EscapeSequence 
       = ([\\] [\\ \" \' n t b r])
-	      | ([\\] [0-9][0-9][0-9])
-	      | ([\\][x] [0-9A-Fa-f][0-9A-Fa-f])
-	      ;
+	  | ([\\] [0-9][0-9][0-9])
+	  | ([\\][x] [0-9A-Fa-f][0-9A-Fa-f])
+	  ;
                             
 lexical StringLiteral1 
       = [\"] StringCharacter* [\"]
