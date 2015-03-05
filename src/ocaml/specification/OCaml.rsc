@@ -116,10 +116,10 @@ syntax ExtendedModuleName
 // Type expressions
 
 syntax Typexpr 
-     = Typexpr TypeConstr
+     = non-assoc "?"? LabelName ":" Typexpr 
+     > Typexpr TypeConstr
      > non-assoc star: Typexpr "*" {Typexpr_ "*"}+
-     > right (arrow1: Typexpr "-\>" Typexpr
-     |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
+     > right arrow: Typexpr "-\>" Typexpr
      > Typexpr "as" "\'" Ident 
      > "private" Typexpr
      | "\'" Ident
@@ -137,7 +137,7 @@ syntax Typexpr
      ;
 
 syntax Typexpr_
-     = Typexpr !star !arrow1
+     = Typexpr !star !arrow
      ;
     
 syntax PolymorphicVariantType
@@ -346,12 +346,12 @@ syntax Definition
      | "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
      | "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
      | "open" ModulePath
-     | "include" ModuleExpr
+     | "include" ModuleExpr !modulePath
      | "include" ModuleType
      ;
      
 syntax ModuleExpr 
-     = ModulePath
+     = modulePath: ModulePath
      | "struct" ModuleItems? "end"
      | "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
      | ModuleExpr "(" ModuleExpr ")"
@@ -444,7 +444,7 @@ syntax ExceptionDefinition
 // Classes
 
 syntax ClassType 
-     = (("?"? LabelName ":")? Typexpr "-\>")* ClassBodyType
+     = ( Typexpr_ "-\>")* ClassBodyType
      ;
 
 syntax ClassBodyType 
