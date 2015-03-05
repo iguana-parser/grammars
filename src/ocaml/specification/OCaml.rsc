@@ -115,24 +115,24 @@ syntax ExtendedModuleName
 // Type expressions
 
 syntax Typexpr 
-	= Typexpr TypeConstr
-	> non-assoc star: Typexpr "*" {Typexpr_ "*"}+
+     = Typexpr TypeConstr
+     > non-assoc star: Typexpr "*" {Typexpr_ "*"}+
      > right (arrow1: Typexpr "-\>" Typexpr
-	|        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
-	> Typexpr "as" "\'" Ident 
-	> "private" Typexpr
-	| "\'" Ident
+     |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
+     > Typexpr "as" "\'" Ident 
+     > "private" Typexpr
+     | "\'" Ident
      | "_" !>> [a-zA-Z0-9]
      | "(" Typexpr ")"
      | TypeConstr
-  	| "(" Typexpr ("," Typexpr)+ ")" TypeConstr
-  	| PolymorphicVariantType
-  	| "\<" ".."? "\>"
-  	| "\<" {MethodType ";"}+ (";" "..")? "\>"
-  	| "#" ClassPath
-  	| Typexpr "#" ClassPath
-  	| "(" {Typexpr ","}+ ")" "#" ClassPath
-  	| "(" "module" PackageType ")"  
+     | "(" Typexpr ("," Typexpr)+ ")" TypeConstr
+     | PolymorphicVariantType
+     | "\<" ".."? "\>"
+     | "\<" {MethodType ";"}+ (";" "..")? "\>"
+     | "#" ClassPath
+     | Typexpr "#" ClassPath
+     | "(" {Typexpr ","}+ ")" "#" ClassPath
+     | "(" "module" PackageType ")"  
      ;
 
 syntax Typexpr_
@@ -432,6 +432,7 @@ syntax Variance
      
 syntax ConstrDecl 
      = ConstrName ("of" { Typexpr_ "*"}+)?
+     | ConstrName ("of" { Typexpr_ "and"}+)?          // Revised syntax: using and instead of *
      | ConstrName ":" { Typexpr_ "*" }+ "-\>"  Typexpr
      ;
 
