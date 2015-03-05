@@ -19,7 +19,7 @@ syntax TopLevelPhrase
    	 | Expr
    	 ;
    	 
-syntax CompiliationUnit
+syntax CompilationUnit
      = ModuleItems?
      ;    	 
    	  
@@ -102,32 +102,35 @@ syntax ModTypName
      ;
 
 syntax ExtendedModulePath 
-     = (ExtendedModulePath ".")? ModuleName
-     | ExtendedModulePath "(" ExtendedModulePath ")"
+     = { ExtendedModuleName  "." }+
      ;
+     
+syntax ExtendedModuleName
+     = ModuleName ("(" ExtendedModulePath ")")*
+     ;     
 
 
 // Type expressions
 
 syntax Typexpr 
-	 = typexprConstr1: Typexpr TypeConstr
+	 = Typexpr TypeConstr
 	 > non-assoc star: Typexpr "*" {Typexpr_ "*"}+
 	 > right (arrow1: Typexpr "-\>" Typexpr
 	 |        arrow2: "?"? LabelName ":" Typexpr !arrow1 "-\>" Typexpr)
-	 > typexprAsId: Typexpr "as" "\'" Ident 
-	 > typexprPrivate: "private" Typexpr
-	 | tagg: "\'" Ident
-     | anyTypexpr: "_" !>> [a-zA-Z0-9]
-     | typeExprBrackets: "(" Typexpr ")"
-     | typexprConstr2: TypeConstr
-  	 | typeExprBrackets2: "(" Typexpr ("," Typexpr)+ ")" TypeConstr
-  	 | polymorphicVariantType: PolymorphicVariantType
-  	 | typexprEmptyAngleBrackets: "\<" ".."? "\>"
-  	 | typexprAngleBrackets: "\<" {MethodType ";"}+ (";" "..")? "\>"
-  	 | typexprHash1: "#" ClassPath
-  	 | typexprHash2: Typexpr "#" ClassPath
-  	 | typexprHash3: "(" {Typexpr ","}+ ")" "#" ClassPath
-  	 | typexprPackage: "(" "module" PackageType ")"  
+	 > Typexpr "as" "\'" Ident 
+	 > "private" Typexpr
+	 | "\'" Ident
+     | "_" !>> [a-zA-Z0-9]
+     | "(" Typexpr ")"
+     | TypeConstr
+  	 | "(" Typexpr ("," Typexpr)+ ")" TypeConstr
+  	 | PolymorphicVariantType
+  	 | "\<" ".."? "\>"
+  	 | "\<" {MethodType ";"}+ (";" "..")? "\>"
+  	 | "#" ClassPath
+  	 | Typexpr "#" ClassPath
+  	 | "(" {Typexpr ","}+ ")" "#" ClassPath
+  	 | "(" "module" PackageType ")"  
      ;
 
 syntax Typexpr_
@@ -205,7 +208,7 @@ syntax Expr
      > match: 		 		"match" Expr "with" PatternMatching
      | function: 	 		"function" PatternMatching
      | fun: 		 		"fun" MultipleMatching
-     | tryBlock: 	 		"try" Expr "with" PatternMatching     
+     | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching     
      | letbinding: 	 		"let" "rec"? {LetBinding "and"}+ "in" Expr
      | letModule:	 		"let" "module" ModuleName "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
@@ -347,6 +350,7 @@ syntax Definition
      | "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
      | "open" ModulePath
      | "include" ModuleExpr
+     | "include" ModuleType
      ;
      
 syntax ModuleExpr 
@@ -387,7 +391,8 @@ syntax ModConstraint
 // Type And Exceptions
 
 syntax TypeDefinition 
-     = typeDefinition: "type" {TypeDef "and"}+;
+     = "type" {TypeDef "and"}+
+     ;
      
 syntax TypeDef 
      = TypeParams? TypeconstrName TypeInformation
@@ -430,7 +435,8 @@ syntax FieldDecl
 	 ;
 
 syntax TypeConstraint 
-	 = "constraint" "\'" Ident "=" Typexpr;
+	 = "constraint" "\'" Ident "=" Typexpr
+	 ;
      
 syntax ExceptionDefinition 
 	 = "exception" ConstrName ("of" Typexpr_ ("*" Typexpr_ )* )?
