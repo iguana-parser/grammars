@@ -399,6 +399,7 @@ syntax TypeDefinition
      
 syntax TypeDef 
      = TypeParams? TypeconstrName TypeInformation
+     | TypeconstrName TypeParams? TypeInformation   // Revised syntax for types
      ;
 
 syntax TypeInformation 
