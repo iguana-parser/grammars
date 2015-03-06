@@ -353,7 +353,7 @@ syntax Definition
      
 syntax ModuleExpr 
      = modulePath: ModulePath
-     | "struct" ModuleItems? "end"
+     | "struct" ";;"? ModuleItems? "end"
      | "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
      | "functor" "(" ")" "-\>" ModuleExpr
      | ModuleExpr "(" ModuleExpr? ")"
