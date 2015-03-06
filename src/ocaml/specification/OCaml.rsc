@@ -205,7 +205,7 @@ syntax Expr
      | function: 	 		"function" PatternMatching
      | fun: 		 		"fun" MultipleMatching
      | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching     
-     | letbinding: 	 		"let" "rec"? {LetBinding "and"}+ "in" Expr
+     | letbinding: 	 		"let" "rec"? LetBinding ";"? ("and" LetBinding ";"?)* "in" Expr
      | letModule:	 		"let" "module" ModuleExpr "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
      | brackets: 			"(" Expr ";"? ")"
