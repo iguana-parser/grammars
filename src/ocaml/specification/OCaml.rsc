@@ -478,6 +478,7 @@ syntax ClassField
      | "method" "private"? "virtual" MethodName ":" PolyTypExpr
      | "constraint" Typexpr "=" Typexpr
      | "initializer" Expr
+     | ("method"|"method!") "private"? MethodName ":" "type"  TypeconstrName+ "."  Typexpr "="  Expr   // Extensions §7.13
      ;
      
 syntax ClassDefinition 
