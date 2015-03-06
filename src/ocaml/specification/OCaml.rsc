@@ -206,7 +206,7 @@ syntax Expr
      | fun: 		 		"fun" MultipleMatching
      | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching     
      | letbinding: 	 		"let" "rec"? {LetBinding "and"}+ "in" Expr
-     | letModule:	 		"let" "module" ModuleName "="  ModuleExpr "in"  Expr 
+     | letModule:	 		"let" "module" ModuleExpr "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
      | brackets: 			"(" Expr ")"
   	 | beginEnd: 	 		"begin" Expr ";"? "end"
@@ -326,6 +326,7 @@ syntax Constant
      | int32: 			 [\-] !<< Int32Literal  
 	 | int64: 			 [\-] !<< Int64Literal  
      | nativeInt: 		 [\-] !<< NativeIntLiteral
+     |                   "begin" "end"     // An alias for "(" ")"
      ;
 
 // ModuleExpressions 
@@ -354,7 +355,9 @@ syntax ModuleExpr
      = modulePath: ModulePath
      | "struct" ModuleItems? "end"
      | "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
-     | ModuleExpr "(" ModuleExpr ")"
+     | "functor" "(" ")" "-\>" ModuleExpr
+     | ModuleExpr "(" ModuleExpr? ")"
+     | ModuleExpr "(" ModuleExpr ":" ModuleType ")"
      | "(" ModuleExpr ")"
      | "(" ModuleExpr ":" ModuleType ")"
      | "(" "val" Expr  (":" PackageType)? ")" 
