@@ -93,7 +93,7 @@ syntax Field
      ;
 
 syntax ClassPath 
-     = (ModulePath "." )? ClassName
+     = (ExtendedModulePath "." )? ClassName
      ;
 
 syntax ModTypePath 
