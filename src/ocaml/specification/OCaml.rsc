@@ -458,7 +458,9 @@ syntax ClassBodyType
 syntax ClassFieldSpec 
      = "inherit" ClassType
      | "val" "mutable"? "virtual"? InstVarName ":" PolyTypExpr
+     | "val" "virtual" "mutable" InstVarName ":" PolyTypExpr
      | "method" "private"? "virtual"? MethodName ":" PolyTypExpr
+     | "method" "virtual" "private" MethodName ":" PolyTypExpr
      | "constraint" Typexpr "=" Typexpr
      ;
      
@@ -477,8 +479,10 @@ syntax ClassField
      = ("inherit" | "inherit!") ClassExpr ("as" ValueName)?
      | ("val"|"val!") "mutable"? InstVarName (":" Typexpr)? "=" Expr
      | "val" "mutable"? "virtual" InstVarName ":" Typexpr
+     | "val" "virtual" "mutable" InstVarName ":" Typexpr
      | ("method" | "method!") "private"? MethodName Parameter* (":" PolyTypExpr)? "=" Expr     
      | "method" "private"? "virtual" MethodName ":" PolyTypExpr
+     | "method" "virtual" "private"  MethodName ":" PolyTypExpr
      | "constraint" Typexpr "=" Typexpr
      | "initializer" Expr
      | ("method"|"method!") "private"? MethodName ":" "type"  TypeconstrName+ "."  Typexpr "="  Expr   // Extensions §7.13
