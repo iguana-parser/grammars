@@ -36,20 +36,16 @@ lexical SpecialInt
       ;
 
 lexical IntegerLiteral 
-      = [0-9] [0-9_]* !>> [0-9_.eElLn]
-      | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
-      | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
-      | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
+      = [\-]? [0-9] [0-9_]* !>> [0-9_.eElLn]
+      | [\-]? ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
+      | [\-]? ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
+      | [\-]? ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
  	  ;
  					   
-lexical NegativeIntegerLiteral 
-      = [\-] IntegerLiteral
-      ; 					   
-
 lexical FloatLiteral 
-      =  [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
-	  |  [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
-      |  [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
+      = [\-]? [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
+	  | [\-]? [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
+      | [\-]? [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
 	  ;
 					 
 lexical CharLiteral 
@@ -129,7 +125,7 @@ lexical InfixSymbol5
       ;
       
 lexical InfixSymbol6 
-	  =  "&" !>> [&] 
+	  = "&" !>> [&] 
       | "&&"
       ;
                             

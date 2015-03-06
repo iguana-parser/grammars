@@ -183,7 +183,8 @@ syntax Expr
      | lazy: 				"lazy" Expr
      | assertExpr: 			"assert" Expr
      )
-     > unaryMinus: 			"-"  Expr | floatUnaryMinus: "-." Expr
+     > unaryMinus: 			"-"  Expr 
+     | floatUnaryMinus:     "-." Expr
      > right infix1: 		Expr InfixSymbol1 Expr
      > left  infix2: 		Expr InfixSymbol2 Expr
      > left  infix3: 		Expr InfixSymbol3 Expr   // to disambiguate [|   5.2026032092;     19132e-10;  -39e-10 |];
@@ -218,7 +219,7 @@ syntax Expr
      | record1:	     		"{" Field ("=" Expr_1)? (";" Field ("=" Expr_1)?)* ";"? "}"
      | record2: 	 		"{" Expr "with" Field ("=" Expr_1 )? (";" Field ("=" Expr_1)?)* ";"? "}"
      | whileloop: 	 		"while" Expr "do" Expr ";"? "done"
-     | forloop: 			"for" Ident "=" Expr ("to" | "downto") Expr "do" Expr ";"? "done"
+     | forloop: 			"for" ValueName "=" Expr ("to" | "downto") Expr "do" Expr ";"? "done"
      | new: 				"new" ClassPath
      | object: 		 		"object" ClassBody "end"  
      | moduleExpr: 	 		"(" "module" ModuleExpr  (":" PackageType)? ")"  
@@ -295,7 +296,6 @@ syntax Pattern
      | patternValueName: 	  ValueName
      | anyPattern: 			  "_" !>> [a-zA-Z0-9]   // To enforce longest match with identifiers
      | patternConstant: 	  Constant
-     |                        NegativeIntegerLiteral
      | patternRange: 		  CharLiteral ".." CharLiteral   // Extensions
      | patternBrackets: 	  "(" Pattern ")"
      | patternTypxprBrackets: "(" Pattern ":" Typexpr ")"
@@ -311,8 +311,8 @@ syntax Pattern_
      ;            
          
 syntax Constant 
-     = posInt: 			 IntegerLiteral
-     | floatLiteral: 	 FloatLiteral
+     = posInt: 			 [\-] !<< IntegerLiteral
+     | floatLiteral: 	 [\-] !<< FloatLiteral
      | charLiteral: 	 CharLiteral
      | stringLiteral: 	 StringLiteral1
      | constr: 			 Constr
@@ -323,9 +323,9 @@ syntax Constant
      | emptyArray: 		 "[|" "|]"
      | emptyCurly: 		 "{\<" "\>}"
      | 					 "`" TagName
-     | int32: 			 Int32Literal  
-	 | int64: 			 Int64Literal  
-     | nativeInt: 		 NativeIntLiteral
+     | int32: 			 [\-] !<< Int32Literal  
+	 | int64: 			 [\-] !<< Int64Literal  
+     | nativeInt: 		 [\-] !<< NativeIntLiteral
      ;
 
 // ModuleExpressions 
