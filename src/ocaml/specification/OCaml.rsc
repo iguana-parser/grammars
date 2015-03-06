@@ -208,7 +208,7 @@ syntax Expr
      | letbinding: 	 		"let" "rec"? {LetBinding "and"}+ "in" Expr
      | letModule:	 		"let" "module" ModuleExpr "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
-     | brackets: 			"(" Expr ")"
+     | brackets: 			"(" Expr ";"? ")"
   	 | beginEnd: 	 		"begin" Expr ";"? "end"
   	 | brackets1: 	 		"(" Expr ":" Typexpr ")"
   	 | brackets2:	 		"(" Expr ":\>"  Typexpr ")"  
