@@ -493,7 +493,7 @@ syntax ClassDefinition
 	;     
      
 syntax ClassBody 
-	= ("(" Pattern (":" Typexpr)? ")")? ClassField*
+	= ("(" Pattern (":" Typexpr)? ")")? (ClassField ";"?)*
 	;
 
 syntax ClassBinding 
