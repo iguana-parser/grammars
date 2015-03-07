@@ -427,8 +427,8 @@ syntax Variance
      | "-";
      
 syntax ConstrDecl 
-     = ConstrName ("of" { Typexpr_ "*" }+)?    
-     | ConstrName ":" { Typexpr_ "*" }+ "-\>"  Typexpr
+     = (ConstrName | ("(" ")")) ("of" { Typexpr_ "*" }+)?    
+     | ConstrName ":" { Typexpr_ "*" }+ ("-\>"  Typexpr)?
      ;
 
 syntax FieldDecl 
