@@ -300,7 +300,7 @@ syntax Pattern
      | patternBrackets: 	  "(" Pattern ")"
      | patternTypxprBrackets: "(" Pattern ":" Typexpr ")"
      | patternHash: 		  "#" TypeconstrName
-     | patternRec: 			  "{" Field ("=" Pattern)? (";" Field ("=" Pattern)?)* ";"? "}"
+     | patternRec: 			  "{" Field ("=" Pattern)? (";" Field ("=" Pattern)?)* (";" "_")? ";"? "}"
      | patternTuple: 		  "["  {Pattern ";"}+ ";"? "]"
      | patternArray: 		  "[|" {Pattern ";"}+ ";"? "|]"
      | patternPackage: 		  "(" "module" ModuleName  (":" PackageType)? ")"  
