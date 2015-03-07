@@ -332,7 +332,7 @@ syntax Constant
 // ModuleExpressions 
 
 syntax Definition 
-     = "let" "rec"? LetBinding  ("and" LetBinding)* 
+     = "let" "rec"? LetBinding (";"? "and" LetBinding)* 
      | "val" ValueName ":" Typexpr
      | "external" ValueName ":" Typexpr "=" ExternalDeclaration
      | TypeDefinition
