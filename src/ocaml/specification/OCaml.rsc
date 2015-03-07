@@ -418,13 +418,14 @@ syntax TypeParams
      ;
 
 syntax TypeParam 
-     = Variance? "\'" Ident
+     = Variance? "#"? "\'" Ident
      | Variance? "_" !>> [a-zA-Z0-9]
      ;     
      
 syntax Variance 
      = "+" 
-     | "-";
+     | "-"
+     ;
      
 syntax ConstrDecl 
      = (ConstrName | ("(" ")")) ("of" { Typexpr_ "*" }+)?    
