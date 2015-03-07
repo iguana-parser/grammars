@@ -347,20 +347,20 @@ syntax Definition
      | "module" "rec" ModuleName ":"  ModuleType "="  ModuleExpr  ("and" ModuleName ":"  ModuleType "="  ModuleExpr)*
      | "module" "rec" ModuleName ":"  ModuleType  ("and" ModuleName ":"  ModuleType)*
      | "open" ModulePath
-     | "include" ModuleExpr !modulePath
+     | "include" ModuleExpr !modulePath 
      | "include" ModuleType
      ;
      
 syntax ModuleExpr 
      = modulePath: ModulePath
-     | "struct" ";;"? ModuleItems? "end"
-     | "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
-     | "functor" "(" ")" "-\>" ModuleExpr
-     | ModuleExpr "(" ModuleExpr? ")"
-     | ModuleExpr "(" ModuleExpr ":" ModuleType ")"
-     | "(" ModuleExpr ")"
-     | "(" ModuleExpr ":" ModuleType ")"
-     | "(" "val" Expr  (":" PackageType)? ")" 
+     |             "struct" ";;"? ModuleItems? "end"
+     | 			   "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
+     |  		   "functor" "(" ")" "-\>" ModuleExpr
+     | 		       ModuleExpr "(" ModuleExpr? ")"
+     |   		   ModuleExpr "(" ModuleExpr ":" ModuleType ")"
+     |             "(" ModuleExpr ")"
+     | 			   "(" ModuleExpr ":" ModuleType ")"
+     | 			   "(" "val" Expr  (":" PackageType)? ")" 
      ;      
      
 syntax ModuleItems
@@ -382,7 +382,7 @@ syntax ModuleType
 
 syntax ModConstraint 
      = "type" TypeParams? TypeConstr "=" Typexpr
-     | "type" TypeParameters?  TypeconstrName ":="  TypeParameters?  TypeConstr
+     | "type" TypeParameters?  TypeConstr ":="  TypeParameters?  TypeConstr
      | "module" ModulePath "=" ExtendedModulePath
      | "module" ModuleName ":="  ExtendedModulePath  
      ; 	
