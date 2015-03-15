@@ -100,20 +100,31 @@ lexical OptLabel
       
 lexical OptLabelColon 
       = "?" LowercaseIdentifier ":"
-      ;	                 
-
+      ;	
+      
+lexical InfixSymbol
+      = InfixSymbol1
+      | InfixSymbol2
+      | InfixSymbol3
+      | InfixSymbol4
+      | InfixSymbol5
+      | InfixSymbol6
+      | InfixSymbol7
+      | InfixSymbol8   
+      ;      
+      
 lexical InfixSymbol1 
-     = ("lsl" | "lsr" | "asr") !>> [a-z0-9] 
-     | ([*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol1Exclude
-     ;
+      = "lsl" | "lsr" | "asr" 
+      | [*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      ;
      
 lexical InfixSymbol2 
-      = ("mod" | "land"| "lor" | "lxor") !>> [a-z0-9] 
-      | ([/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol2Exclude
+      = "mod" | "land"| "lor" | "lxor" 
+      | [/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
       ;
        
 lexical InfixSymbol3 
-      = ([+ \-] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol3Exclude
+      = [+ \-] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
       ;
       
 lexical InfixSymbol4 
@@ -121,7 +132,7 @@ lexical InfixSymbol4
       ;
       
 lexical InfixSymbol5 
-      = ([= \< \> | & $] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]) \ InfixSymbol5Exclude
+      = [= \< \> | & $] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
       ;
       
 lexical InfixSymbol6 
@@ -130,37 +141,16 @@ lexical InfixSymbol6
       ;
                             
 lexical InfixSymbol7 
-      =  "||" 
-      | "or" !>> [a-z0-9]
+      = "||" 
+      | "or"
       ;
       
 lexical InfixSymbol8 
-      =  ":="
-      ;
-
-keyword InfixSymbol1Exclude 
-      = ")"
-      ;
-      
-keyword InfixSymbol2Exclude 
-      = "**"
-      ;
-      
-keyword InfixSymbol3Exclude 
-      = "-\>"
-      ;
-      
-keyword InfixSymbol5Exclude 
-      = "|" 
-      | "||" 
-      | "&&" 
-      | "&" 
-      | "\<-"
+      = ":="
       ;
 
 keyword Keywords
-      =   "_" 
-	  | "and"
+      = "and"
 	  | "as"
 	  | "assert"
 	  | "asr"
@@ -215,7 +205,50 @@ keyword Keywords
 	  | "when"
 	  | "while"
 	  | "with"
+	  | "!="
+	  | "#"
+	  | "&"
+	  | "&&"
+	  | "\'"
+      | "("
+ 	  | ")"
+	  | "*"
+	  | "+"
+ 	  | ","
+	  | "-"
+	  | "-."
+	  | "-\>"
+	  | "."
+	  | ".."
+   	  | ":"
+	  | "::"
+	  | ":="
+	  | ":\>"
+	  | ";"
+	  | ";;"
+	  | "\<"
+      | "\<-"
+      | "="
+      | "\>"
+      | "\>]"
+      | "\>}"
+      | "?"
+      | "["
+      | "[\<"
+      | "[\>"
+      | "[|"
+      | "]"
+      | "_"
+      | "`"
+      | "{"
+      | "{\<"
+      | "|"
+      | "|]"
+      | "||"
+      | "}"
+      | "~"
 	  ;
+	  
 
 lexical Comment 
       = "(*" (![(*] | Comment | "*" !>> [)] | "(" !>> [*])* "*)"

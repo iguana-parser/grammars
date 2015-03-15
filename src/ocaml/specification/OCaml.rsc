@@ -32,9 +32,13 @@ syntax ValuePath
 
 syntax ValueName 
      = LowercaseIdentifier 
-     | "(" OperatorChar+ !>> [! : \< = \> ? @ ^ | ~] ")"   // This is added to cover cases such as let (!) x y = x + y
-     | "(" ("mod"| "lsl" | "lsr" | "asr" | "mod" | "land" | "lor" | "lxor") ")" 
-     ;   
+     | "(" OperatorName \ Keywords ")"
+     ;
+     
+syntax OperatorName
+     = PrefixSymbol
+     | InfixSymbol
+     ;     
 
 syntax TagName 
      = Ident

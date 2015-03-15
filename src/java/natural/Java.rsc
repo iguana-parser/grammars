@@ -507,12 +507,12 @@ syntax ForUpdate
 syntax Expression
      = Expression !io "." Identifier
      | Expression "." "this"
-	     | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
-	 	    | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
+	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
      | Expression "." "super" ("." Identifier)? Arguments
      | Type "." "class"
      | "void" "." "class"
-	     | Expression !brackets "(" ArgumentList? ")"     
+	 | Expression !brackets "(" ArgumentList? ")"     
      | Expression !newArray "[" Expression "]"
      > Expression "++"
      | Expression "--"

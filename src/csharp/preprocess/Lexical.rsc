@@ -1,26 +1,25 @@
-module csharp::specification::Lexical
+module csharp::preprocess::Lexical
 
-
-syntax Input
+lexical Input
      = InputSection*
      ;
 
-syntax InputSection
+lexical InputSection
      = InputSectionPart+
      ;
 
-syntax InputSectionPart
+lexical InputSectionPart
      = InputElement* NewLine
      | PpDirective
      ;
 
-syntax InputElement
+lexical InputElement
      = Whitespace
      | Comment
      | Token
      ;
      
-syntax Token
+lexical Token
      = Identifier
      | Keyword
      | IntegerLiteral
@@ -32,7 +31,7 @@ syntax Token
 
 
 layout Layout 
-     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"; 
+     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//"; 
        // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
 
 /* 
@@ -417,7 +416,7 @@ lexical RightShift
 lexical RightShiftAssignment
      = "\>\>="
      ;
-     
+  
 // Pre-processing directives
 
 lexical PpDirective
@@ -461,12 +460,10 @@ lexical PpUnaryExpression
 lexical PpPrimaryExpression
      = "true"
      | "false"
+     | ConditionalSymbol
+     | "("   Whitespace?   PpExpression   Whitespace?   ")"
      ;
      
-lexical ConditionalSymbol
-     = "("   Whitespace?   PpExpression   Whitespace?   ")"
-     ;
-
 lexical PpDeclaration
       = Whitespace?   "#"   Whitespace?   ("define" | "undef")   Whitespace   ConditionalSymbol   PpNewLine
       ;
@@ -572,4 +569,5 @@ lexical WarningList
       = DecimalDigit+
       | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+
       ;
-            
+  
+  
