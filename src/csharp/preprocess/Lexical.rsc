@@ -83,8 +83,12 @@ lexical NotSlashOrAsterisk
  * Form feed character (U+000C)
  */
  lexical Whitespace
-      = [\ \t \f \r \n]+ !>> [\ \t \f] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+      = [\ \t \f \r \n]+ !>> [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
       ;
+      
+lexical WhitespaceNoNL
+      = [\ \t \f]+ !>> [\ \t \f] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+      ;      
        
 // B.1.5 Unicode character escape sequences       
  
@@ -469,7 +473,8 @@ lexical PpDeclaration
       ;
       
 lexical PpNewLine 
-      = Whitespace?   SingleLineComment?   NewLine
+      = Whitespace?   SingleLineComment   NewLine
+      | WhitespaceNoNL? NewLine
       ;
 
 lexical PpConditional 
