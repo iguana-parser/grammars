@@ -508,16 +508,15 @@ lexical SkippedSectionPart
       ;
 
 lexical SkippedCharacters
-     = Whitespace? !>> [\ \t \f]   ![#]   InputCharacter*
+     = ![#]   InputCharacter*
      ;
 
 lexical PpDiagnostic
-     = Whitespace?   "#"   Whitespace?   ("error" | "warning")   PpMessage
+     = "#"   Whitespace?   ("error" | "warning")   PpMessage
      ;
 
 lexical PpMessage
-      = NewLine
-      | Whitespace   InputCharacter*   NewLine
+      = InputCharacter*   NewLine
       ;
 
 lexical PpRegion 
