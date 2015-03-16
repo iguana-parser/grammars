@@ -31,7 +31,8 @@ lexical Token
 
 
 layout Layout 
-     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//"; 
+     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//"
+     ; 
        // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
 
 /* 
@@ -58,9 +59,8 @@ lexical SingleLineComment
       ;      
       
 lexical InputCharacter 
-	  = // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
-	    ![] \ [\r \n] 
-	  | [\a00]                                // to match zero        
+	      = ![] \ [\r \n] 		                    // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
+	      | [\a00]                            // to match zero        
       ;
       
 lexical DelimitedComment
@@ -68,9 +68,9 @@ lexical DelimitedComment
      ;
 
 lexical DelimitedCommentSection
-     = "/"
-     | [*]*  NotSlashOrAsterisk
-     ;
+      = "/"
+      | [*]*  NotSlashOrAsterisk
+      ; 
 
 lexical NotSlashOrAsterisk
       = ![] \ [/ *]
@@ -83,8 +83,8 @@ lexical NotSlashOrAsterisk
  * Form feed character (U+000C)
  */
  lexical Whitespace
-      = [\ \t \f \r \n]+ !>> [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
-      ;
+       = [\ \t \f \r \n]+ !>> [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+       ;
       
 lexical WhitespaceNoNL
       = [\ \t \f]+ !>> [\ \t \f] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
@@ -93,7 +93,7 @@ lexical WhitespaceNoNL
 // B.1.5 Unicode character escape sequences       
  
 lexical UnicodeEscapeSequence
-      = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit
+      = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit   !>> HexDigit
       | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
       ;
       
@@ -250,7 +250,7 @@ lexical IntegerLiteral
      ;
      
 lexical DecimalIntegerLiteral
-     = DecimalDigit+  IntegerTypeSuffix?
+     = DecimalDigit+ !>>[0-9]  IntegerTypeSuffix?
      ;
      
 lexical DecimalDigit
@@ -262,7 +262,7 @@ lexicalIntegerTypeSuffix
       ;
       
 lexical HexadecimalIntegerLiteral 
-     = [0][xX]   HexDigit+   IntegerTypeSuffix?
+     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f]  IntegerTypeSuffix?
      ;      
       
 lexical HexDigit
@@ -277,7 +277,7 @@ lexical RealLiteral
      ;
             
 lexical  ExponentPart
-     = [eE]   Sign?   DecimalDigit+
+     = [eE]   Sign?   DecimalDigit+ !>> [0-9]
      ;
       
 lexical Sign = [+  \-];
@@ -525,16 +525,16 @@ lexical PpRegion
       ;
 
 lexical PpStartRegion 
-      = Whitespace?   "#"   Whitespace?   "region"   PpMessage
+      = "#"   Whitespace?   "region"   PpMessage
       ;
 
 lexical PpEndRegion 
-      = Whitespace?   "#"   Whitespace?   "endregion"   PpMessage
+      = "#"   Whitespace?   "endregion"   PpMessage
       ;
       
       
 lexical PpLine
-     =  Whitespace?   "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
+     =  "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
      ;
      
 lexical LineIndicator 
@@ -553,8 +553,7 @@ lexical FileNameCharacter
      ;
 
 lexical PpPragma 
-     = // Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
-     "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
+     = "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
      ;
 
 lexical PragmaBody 

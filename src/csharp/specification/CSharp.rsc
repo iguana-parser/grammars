@@ -692,7 +692,7 @@ syntax SelectionStatement
      ;
 
 syntax IfStatement
-     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement () !>> "else"
+     = "if"   "("   BooleanExpression   ")"   EmbeddedStatement !>>> "else"
      | "if"   "("   BooleanExpression   ")"   EmbeddedStatement   "else"   EmbeddedStatement
      ;
 
