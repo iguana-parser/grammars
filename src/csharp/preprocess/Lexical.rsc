@@ -9,7 +9,7 @@ lexical InputSection
      ;
 
 lexical InputSectionPart
-     = InputElement* NewLine
+     = InputElement
      | PpDirective
      ;
 
@@ -437,7 +437,7 @@ lexical ConditionalSymbol
       ;
       
 lexical PpExpression
-      = Whitespace? !>> [\ \t \f]  PpOrExpression   Whitespace? !>> [\ \t \f]
+      = Whitespace?  PpOrExpression   Whitespace? !>> [\ \t \f]
       ;
 
 lexical PpOrExpression
@@ -469,7 +469,7 @@ lexical PpPrimaryExpression
      ;
      
 lexical PpDeclaration
-      = Whitespace?   "#"   Whitespace?   ("define" | "undef")   Whitespace   ConditionalSymbol   PpNewLine
+      = "#"   Whitespace?   ("define" | "undef")   Whitespace   ConditionalSymbol   PpNewLine
       ;
       
 lexical PpNewLine 
@@ -482,19 +482,19 @@ lexical PpConditional
       ;
 
 lexical PpIfSection 
-      = Whitespace?   "#"   Whitespace?   "if"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "if"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
       ;
 
 lexical PpElifSection
-      = Whitespace?   "#"   Whitespace?   "elif"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "elif"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
       ;
 
 lexical PpElseSection
-      = Whitespace?   "#"   Whitespace?   "else"   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "else"   PpNewLine   ConditionalSection?
       ;
 
 lexical PpEndif
-      = Whitespace?   "#"   Whitespace?   "endif"   PpNewLine
+      = "#"   Whitespace?   "endif"   PpNewLine
       ;
 
 lexical ConditionalSection 
