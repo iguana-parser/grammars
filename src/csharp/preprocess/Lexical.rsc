@@ -5,7 +5,7 @@ lexical Input
      ;
 
 lexical InputSection
-     = InputSectionPart+
+     = InputSectionPart
      ;
 
 lexical InputSectionPart
@@ -437,7 +437,7 @@ lexical ConditionalSymbol
       ;
       
 lexical PpExpression
-      = Whitespace?   PpOrExpression   Whitespace?
+      = Whitespace? !>> [\ \t \f]  PpOrExpression   Whitespace? !>> [\ \t \f]
       ;
 
 lexical PpOrExpression
@@ -465,7 +465,7 @@ lexical PpPrimaryExpression
      = "true"
      | "false"
      | ConditionalSymbol
-     | "("   Whitespace?   PpExpression   Whitespace?   ")"
+     | "("   Whitespace?   PpExpression   Whitespace?  ")"
      ;
      
 lexical PpDeclaration
