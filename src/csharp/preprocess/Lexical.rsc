@@ -262,7 +262,8 @@ lexicalIntegerTypeSuffix
       ;
       
 lexical HexadecimalIntegerLiteral 
-     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f]  IntegerTypeSuffix?
+     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu"
+     | [0][xX]   HexDigit+ IntegerTypeSuffix
      ;      
       
 lexical HexDigit
@@ -270,8 +271,10 @@ lexical HexDigit
       ;
       
 lexical RealLiteral
-     = DecimalDigit+  "."   DecimalDigit+   ExponentPart?   RealTypeSuffix?
-     | "."  DecimalDigit+   ExponentPart?   RealTypeSuffix?
+     = DecimalDigit+  "."   DecimalDigit+   ExponentPart?   RealTypeSuffix
+     | DecimalDigit+  "."   DecimalDigit+  !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
+     | [0-9] !<< "."  DecimalDigit+ !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
+     | [0-9] !<< "."  DecimalDigit+  ExponentPart?   RealTypeSuffix  !>> [F  f  D  d  M  m]
      | DecimalDigit+   ExponentPart   RealTypeSuffix?
      | DecimalDigit+   RealTypeSuffix
      ;
@@ -280,9 +283,13 @@ lexical  ExponentPart
      = [eE]   Sign?   DecimalDigit+ !>> [0-9]
      ;
       
-lexical Sign = [+  \-];
+lexical Sign 
+     = [+  \-]
+     ;
 
-lexical RealTypeSuffix = [F  f  D  d  M  m];
+lexical RealTypeSuffix 
+      = [F  f  D  d  M  m]
+      ;
       
 lexical CharacterLiteral
      = [\']   Character   [\']
@@ -371,7 +378,7 @@ lexical OperatorOrPunctuator
      | "]"
      | "("
      | ")"
-     | "."
+     | "." !>> [0-9]
      | ","
      | ":"  !>> [:]
      | ";"
