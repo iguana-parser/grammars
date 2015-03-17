@@ -250,7 +250,7 @@ lexical IntegerLiteral
      ;
      
 lexical DecimalIntegerLiteral
-     = DecimalDigit+ !>> [0-9 U u L l F  f  D  d  M  m] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu" 
+     = DecimalDigit+ !>> [0-9 U u L l F  f  D  d  M  m xX] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu" 
      | DecimalDigit+ IntegerTypeSuffix
      ;
      
