@@ -22,8 +22,8 @@ lexical InputElement
 lexical Token
      = Identifier
      | Keyword
-     | IntegerLiteral
-     | RealLiteral
+     | [A-Za-z] !<< IntegerLiteral
+     | [A-Za-z] !<< RealLiteral
      | CharacterLiteral
      | StringLiteral
      | OperatorOrPunctuator
