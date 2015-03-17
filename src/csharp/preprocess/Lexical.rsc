@@ -341,7 +341,7 @@ lexical SingleRegularStringLiteralCharacter
       ;
 
 lexical VerbatimStringLiteral 
-      = "@" [\"]   VerbatimStringLiteralCharacter*   [\"]
+      = "@" [\"]   VerbatimStringLiteralCharacter*   [\"] !>> [\"]
       ;
 
 lexical VerbatimStringLiteralCharacter
