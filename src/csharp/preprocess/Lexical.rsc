@@ -567,7 +567,8 @@ lexical PragmaBody
      ;
 
 lexical PragmaWarningBody 
-     = "warning"   Whitespace   WarningAction   (Whitespace   WarningList)?
+     = "warning"   Whitespace   WarningAction   NewLine
+     | "warning"   Whitespace   WarningAction   Whitespace   WarningList
      ;
 
 lexical WarningAction 
@@ -576,8 +577,8 @@ lexical WarningAction
       ;
 
 lexical WarningList 
-      = DecimalDigit+
-      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+
+      = DecimalDigit+ !>> [0-9]
+      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+ !>> [0-9]
       ;
   
   
