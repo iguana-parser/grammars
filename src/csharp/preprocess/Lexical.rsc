@@ -515,8 +515,12 @@ lexical SkippedSectionPart
       ;
 
 lexical SkippedCharacters
-     = ![#] \ [\r \n]   InputCharacter*
+     = NoHash+
      ;
+     
+lexical NoHash
+      = ![#] \ [\r\n]
+      ;     
 
 lexical PpDiagnostic
      = "#"   Whitespace?   ("error" | "warning")   PpMessage
