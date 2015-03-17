@@ -508,7 +508,7 @@ lexical SkippedSectionPart
       ;
 
 lexical SkippedCharacters
-     = ![#]   InputCharacter*
+     = ![#] \ [\r \n]   InputCharacter*
      ;
 
 lexical PpDiagnostic
@@ -520,7 +520,7 @@ lexical PpMessage
       ;
 
 lexical PpRegion 
-      = PpStartRegion   ConditionalSection?   PpEndRegion
+      = PpStartRegion   ConditionalSection? WhitespaceNoNL?  PpEndRegion
       ;
 
 lexical PpStartRegion 
