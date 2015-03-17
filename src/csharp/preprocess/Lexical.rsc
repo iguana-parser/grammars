@@ -101,7 +101,7 @@ lexical UnicodeEscapeSequence
       
 lexical Identifier
       = [A-Z _ a-z] !<< IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ Keyword
-      | "@"  IdentifierOrKeyword
+      | "@"  IdentifierOrKeyword !>> [0-9 A-Z _ a-z]
       ;
       
       
@@ -445,7 +445,7 @@ lexical ConditionalSymbol
       ;
       
 lexical PpExpression
-      = Whitespace?  PpOrExpression   Whitespace? !>> [\ \t \f]
+      = Whitespace?  PpOrExpression   Whitespace?
       ;
 
 lexical PpOrExpression
