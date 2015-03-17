@@ -263,7 +263,7 @@ lexicalIntegerTypeSuffix
       ;
       
 lexical HexadecimalIntegerLiteral 
-     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu"
+     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f U u L l] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu"
      | [0][xX]   HexDigit+ IntegerTypeSuffix
      ;      
       
@@ -386,7 +386,7 @@ lexical OperatorOrPunctuator
      | "+"  !>> [+ =]
      | "-"  !>> [\- =]
      | "*"  !>> [= *]
-     | "/"  !>> [/ =]
+     | "/"  !>> [/ = *]
      | "%"  !>> [=]
      | "&"  !>> [& =]
      | "|"  !>> [= |]
