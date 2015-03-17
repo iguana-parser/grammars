@@ -481,9 +481,8 @@ lexical PpDeclaration
       ;
       
 lexical PpNewLine 
-      = Whitespace?   SingleLineComment   NewLine
-      | WhitespaceNoNL? NewLine
-      ;
+      = WhitespaceNoNL? NewLine
+      ; //Whitespace?   SingleLineComment   NewLine
 
 lexical PpConditional 
       = PpIfSection   PpElifSection*   PpElseSection?   PpEndif
