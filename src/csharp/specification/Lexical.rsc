@@ -31,7 +31,7 @@ lexical Token
 
 
 layout Layout 
-     = (Whitespace | Comment | DPpConditional | DPpGarbage)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"
+     = (Whitespace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"
      ; 
 
 /* 
