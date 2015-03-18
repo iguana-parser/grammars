@@ -1,39 +1,38 @@
-module csharp::specification::Lexical
+module csharp::preprocess::Lexical
 
-
-syntax Input
+lexical Input
      = InputSection*
      ;
 
-syntax InputSection
-     = InputSectionPart+
+lexical InputSection
+     = InputSectionPart
      ;
 
-syntax InputSectionPart
-     = InputElement* NewLine
+lexical InputSectionPart
+     = InputElement
      | PpDirective
      ;
 
-syntax InputElement
+lexical InputElement
      = Whitespace
      | Comment
      | Token
      ;
      
-syntax Token
+lexical Token
      = Identifier
      | Keyword
-     | IntegerLiteral
-     | RealLiteral
-     | CharacterLiteral
-     | StringLiteral
+     | [A-Za-z] !<< IntegerLiteral_
+     | [A-Za-z] !<< RealLiteral_
+     | CharacterLiteral_
+     | StringLiteral_
      | OperatorOrPunctuator
      ;     
 
 
 layout Layout 
-     = (Whitespace | Comment | PpPragma)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"; 
-       // hack: CPP outpus pragmas to the file and I haven't found a way to get rid of it yet. 
+     = (Whitespace | Comment | DPpConditional | DPpGarbage)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//" !>> "#"
+     ; 
 
 /* 
  * Carriage return character (U+000D)
@@ -59,9 +58,8 @@ lexical SingleLineComment
       ;      
       
 lexical InputCharacter 
-	  = // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
-	    ![] \ [\r \n] 
-	  | [\a00]                                // to match zero        
+	  = ![] \ [\r \n] 		              // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
+	  | [\a00]                            // to match zero        
       ;
       
 lexical DelimitedComment
@@ -69,9 +67,9 @@ lexical DelimitedComment
      ;
 
 lexical DelimitedCommentSection
-     = "/"
-     | [*]*  NotSlashOrAsterisk
-     ;
+      = "/"
+      | [*]*  NotSlashOrAsterisk
+      ; 
 
 lexical NotSlashOrAsterisk
       = ![] \ [/ *]
@@ -84,13 +82,17 @@ lexical NotSlashOrAsterisk
  * Form feed character (U+000C)
  */
  lexical Whitespace
-      = [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
-      ;
+       = [\ \t \f \r \n]+ !>> [\ \t \f \r \n] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+       ;
+      
+lexical WhitespaceNoNL
+      = [\ \t \f]+ !>> [\ \t \f] //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+      ;      
        
 // B.1.5 Unicode character escape sequences       
  
 lexical UnicodeEscapeSequence
-      = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit
+      = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit   !>> HexDigit
       | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
       ;
       
@@ -98,7 +100,7 @@ lexical UnicodeEscapeSequence
       
 lexical Identifier
       = [A-Z _ a-z] !<< IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ Keyword
-      | "@"  IdentifierOrKeyword
+      | "@"  IdentifierOrKeyword !>> [0-9 A-Z _ a-z]
       ;
       
       
@@ -225,29 +227,30 @@ lexical Keyword
       //| "await"
       ;
 
-// Literals      
+// Literals
       
-lexical Literal
-     = BooleanLiteral
-     | IntegerLiteral
-     | RealLiteral
-     | CharacterLiteral
-     | StringLiteral
-     | NullLiteral
+lexical Literal_
+     = BooleanLiteral_
+     | IntegerLiteral_
+     | RealLiteral_
+     | CharacterLiteral_
+     | StringLiteral_
+     | NullLiteral_
      ;
      
-lexical BooleanLiteral
+lexical BooleanLiteral_
       = "true"
       | "false"
       ;
      
-lexical IntegerLiteral
+lexical IntegerLiteral_
      = DecimalIntegerLiteral
      | HexadecimalIntegerLiteral
      ;
      
 lexical DecimalIntegerLiteral
-     = DecimalDigit+  IntegerTypeSuffix?
+     = DecimalDigit+ !>> [0-9 U u L l F  f  D  d  M  m xX] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu" 
+     | DecimalDigit+ IntegerTypeSuffix
      ;
      
 lexical DecimalDigit
@@ -259,29 +262,36 @@ lexicalIntegerTypeSuffix
       ;
       
 lexical HexadecimalIntegerLiteral 
-     = [0][xX]   HexDigit+   IntegerTypeSuffix?
+     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f U u L l] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu"
+     | [0][xX]   HexDigit+ IntegerTypeSuffix
      ;      
       
 lexical HexDigit
       = [0-9  A-F  a-f]
       ;
       
-lexical RealLiteral
-     = DecimalDigit+  "."   DecimalDigit+   ExponentPart?   RealTypeSuffix?
-     | "."  DecimalDigit+   ExponentPart?   RealTypeSuffix?
+lexical RealLiteral_
+     = DecimalDigit+  "."   DecimalDigit+   ExponentPart?   RealTypeSuffix
+     | DecimalDigit+  "."   DecimalDigit+  !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
+     | [0-9] !<< "."  DecimalDigit+ !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
+     | [0-9] !<< "."  DecimalDigit+  ExponentPart?   RealTypeSuffix  !>> [F  f  D  d  M  m]
      | DecimalDigit+   ExponentPart   RealTypeSuffix?
      | DecimalDigit+   RealTypeSuffix
      ;
             
 lexical  ExponentPart
-     = [eE]   Sign?   DecimalDigit+
+     = [eE]   Sign?   DecimalDigit+ !>> [0-9]
      ;
       
-lexical Sign = [+  \-];
+lexical Sign 
+     = [+  \-]
+     ;
 
-lexical RealTypeSuffix = [F  f  D  d  M  m];
+lexical RealTypeSuffix 
+      = [F  f  D  d  M  m]
+      ;
       
-lexical CharacterLiteral
+lexical CharacterLiteral_
      = [\']   Character   [\']
      ;
      
@@ -317,7 +327,7 @@ lexical HexadecimalEscapeSequence
      | "\\x"   HexDigit   HexDigit   HexDigit    HexDigit
      ;
      
-lexical StringLiteral
+lexical StringLiteral_
       = RegularStringLiteral
       | VerbatimStringLiteral
       ;
@@ -338,7 +348,7 @@ lexical SingleRegularStringLiteralCharacter
       ;
 
 lexical VerbatimStringLiteral 
-      = "@" [\"]   VerbatimStringLiteralCharacter*   [\"]
+      = "@" [\"]   VerbatimStringLiteralCharacter*   [\"] !>> [\"]
       ;
 
 lexical VerbatimStringLiteralCharacter
@@ -354,7 +364,7 @@ lexical QuoteEscapeSequence
       = [\"][\"]
       ;
 
-lexical NullLiteral
+lexical NullLiteral_
       = "null"
       ;
       
@@ -368,24 +378,24 @@ lexical OperatorOrPunctuator
      | "]"
      | "("
      | ")"
-     | "."
+     | "." !>> [0-9]
      | ","
-     | ":"
+     | ":"  !>> [:]
      | ";"
-     | "+"
-     | "-"
-     | "*"
-     | "/"
-     | "%"
-     | "&"
-     | "|"
-     | "^"
-     | "!"
+     | "+"  !>> [+ =]
+     | "-"  !>> [\- =]
+     | "*"  !>> [= *]
+     | "/"  !>> [/ = *]
+     | "%"  !>> [=]
+     | "&"  !>> [& =]
+     | "|"  !>> [= |]
+     | "^"  !>> [=]
+     | "!"  !>> [=]
      | "~"
-     | "="
-     | "\<"
-     | "\>"
-     | "?"
+     | "="  !>> [= \>]
+     | "\<" !>> [= \<]
+     | "\>" !>> [=]
+     | "?"  !>> [?]
      | "??"
      | "::"
      | "++"
@@ -402,10 +412,10 @@ lexical OperatorOrPunctuator
      | "*="
      | "/="
      | "%=:"
-     | "&="
+     | "&=" !>> [:]
      | "|="
      | "^="
-     | "\<\<"
+     | "\<\<" !>> [=]
      | "\<\<="
      | "=\>"
      ;
@@ -417,7 +427,7 @@ lexical RightShift
 lexical RightShiftAssignment
      = "\>\>="
      ;
-     
+      
 // Pre-processing directives
 
 lexical PpDirective
@@ -430,11 +440,11 @@ lexical PpDirective
       ;
       
 lexical ConditionalSymbol
-      = IdentifierOrKeyword \ "true" \ "false"
+      = IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ "true" \ "false"
       ;
       
 lexical PpExpression
-      = Whitespace?   PpOrExpression   Whitespace?
+      = PpOrExpression
       ;
 
 lexical PpOrExpression
@@ -461,78 +471,76 @@ lexical PpUnaryExpression
 lexical PpPrimaryExpression
      = "true"
      | "false"
+     | ConditionalSymbol
+     | "("   Whitespace?   PpExpression   Whitespace?  ")"
      ;
      
-lexical ConditionalSymbol
-     = "("   Whitespace?   PpExpression   Whitespace?   ")"
-     ;
-
 lexical PpDeclaration
-      = Whitespace?   "#"   Whitespace?   ("define" | "undef")   Whitespace   ConditionalSymbol   PpNewLine
+      = "#"   Whitespace?   ("define" | "undef")   Whitespace   ConditionalSymbol   PpNewLine
       ;
       
 lexical PpNewLine 
-      = Whitespace?   SingleLineComment?   NewLine
-      ;
+      = WhitespaceNoNL? NewLine
+      ; //Whitespace?   SingleLineComment   NewLine
 
 lexical PpConditional 
       = PpIfSection   PpElifSection*   PpElseSection?   PpEndif
       ;
 
 lexical PpIfSection 
-      = Whitespace?   "#"   Whitespace?   "if"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "if"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
       ;
 
 lexical PpElifSection
-      = Whitespace?   "#"   Whitespace?   "elif"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "elif"   Whitespace   PpExpression   PpNewLine   ConditionalSection?
       ;
 
 lexical PpElseSection
-      = Whitespace?   "#"   Whitespace?   "else"   PpNewLine   ConditionalSection?
+      = "#"   Whitespace?   "else"   PpNewLine   ConditionalSection?
       ;
 
 lexical PpEndif
-      = Whitespace?   "#"   Whitespace?   "endif"   PpNewLine
+      = "#"   Whitespace?   "endif"   PpNewLine
       ;
 
 lexical ConditionalSection 
-     = InputSection
-     | SkippedSectionPart+
+     = //InputSection
+       SkippedSectionPart+
      ;
 
 lexical SkippedSectionPart 
-      = SkippedCharacters?   NewLine
+      = SkippedCharacters
+      | Whitespace
       | PpDirective
       ;
 
 lexical SkippedCharacters
-     = Whitespace?   ![#]   InputCharacter*
+     = ![#] \ [\ \t \f \r \n]
      ;
-
+     
 lexical PpDiagnostic
-     = Whitespace?   "#"   Whitespace?   ("error" | "warning")   PpMessage
+     = "#"   Whitespace?   ("error" | "warning")   PpMessage
      ;
 
 lexical PpMessage
-      = NewLine
-      | Whitespace   InputCharacter*   NewLine
+      = InputCharacter*   NewLine
       ;
 
 lexical PpRegion 
-      = PpStartRegion   ConditionalSection?   PpEndRegion
+      = PpStartRegion   ConditionalSection? WhitespaceNoNL?  PpEndRegion
       ;
 
 lexical PpStartRegion 
-      = Whitespace?   "#"   Whitespace?   "region"   PpMessage
+      = "#"   Whitespace?   "region"   PpMessage
       ;
 
 lexical PpEndRegion 
-      = Whitespace?   "#"   Whitespace?   "endregion"   PpMessage
+      = "#"   Whitespace?   "endregion"   PpMessage
       ;
       
       
 lexical PpLine
-     =  Whitespace?   "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
+     =  "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
      ;
      
 lexical LineIndicator 
@@ -551,8 +559,7 @@ lexical FileNameCharacter
      ;
 
 lexical PpPragma 
-     = // Whitespace?   "#"   Whitespace?   "pragma"   Whitespace   PragmaBody   PpNewLine
-     "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
+     = "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
      ;
 
 lexical PragmaBody 
@@ -560,7 +567,8 @@ lexical PragmaBody
      ;
 
 lexical PragmaWarningBody 
-     = "warning"   Whitespace   WarningAction   (Whitespace   WarningList)?
+     = "warning"   Whitespace   WarningAction   NewLine
+     | "warning"   Whitespace   WarningAction   Whitespace   WarningList
      ;
 
 lexical WarningAction 
@@ -569,7 +577,8 @@ lexical WarningAction
       ;
 
 lexical WarningList 
-      = DecimalDigit+
-      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+
+      = DecimalDigit+ !>> [0-9]
+      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+ !>> [0-9]
       ;
-            
+  
+  

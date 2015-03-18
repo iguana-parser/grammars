@@ -141,7 +141,7 @@ syntax PrimaryExpression
      ;
 
 syntax PrimaryNoArrayCreationExpression
-     = Literal
+     = Literal_
      | SimpleName
      | ParenthesizedExpression
      | MemberAccess
