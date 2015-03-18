@@ -9,7 +9,7 @@
  
 module csharp::specification::CSharp
 
-extend csharp::preprocess::Lexical;
+extend csharp::specification::Lexical;
 
 // Basic concepts
 
@@ -385,10 +385,18 @@ syntax ShiftExpression
 
 syntax RelationalExpression
      = ShiftExpression
-     | RelationalExpression   "\<"   ShiftExpression
-     | RelationalExpression   "\>"   ShiftExpression
-     | RelationalExpression   "\<="   ShiftExpression
-     | RelationalExpression   "\>="   ShiftExpression
+     | RelationalExpression1   "\<"   ShiftExpression
+     | RelationalExpression1   "\>"   ShiftExpression
+     | RelationalExpression1   "\<="  ShiftExpression
+     | RelationalExpression1   "\>="  ShiftExpression
+     | RelationalExpression    "is"   Type
+     | RelationalExpression    "as"   Type
+     ;
+     
+// Disallowing nesting relational expressions such as A<B> C as it is a type error anyway
+// and leads to an ambiguity with generic types     
+syntax RelationalExpression1
+     = ShiftExpression
      | RelationalExpression   "is"   Type
      | RelationalExpression   "as"   Type
      ;
