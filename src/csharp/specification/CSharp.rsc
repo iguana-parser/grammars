@@ -361,9 +361,10 @@ syntax PreDecrementExpression
      ;
 
 syntax CastExpression
-     = "("   Type   ")"   UnaryExpression
+     = "(" (TypeName | ArrayType | PointerType) ")" >>> [~ ! ( A-Z _ a-z 0-9 \" \' @]  UnaryExpression
+     | "(" (PredefinedType | NullableType) ")" UnaryExpression
      ;
-
+     
 syntax MultiplicativeExpression
      = UnaryExpression
      | MultiplicativeExpression   "*"   UnaryExpression
