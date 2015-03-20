@@ -9,7 +9,7 @@
  
 module csharp::specification::CSharp
 
-extend csharp::specification::Lexical;
+extend csharp::preprocess::Lexical;
 
 // Basic concepts
 
