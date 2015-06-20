@@ -173,7 +173,7 @@ syntax TagSpecFull
 // Expressions
 
 syntax Expr 
-     = prefix: 				PrefixSymbol Expr !valuePath
+     = prefix: 				PrefixSymbol Expr
      > non-assoc field: 			Expr "." Ident  
      | non-assoc dotBracket1: 		Expr ".(" Expr ")"
      | non-assoc dotBracket2: 		Expr ".[" Expr "]"
@@ -244,16 +244,16 @@ syntax Expr_2
   
      
 syntax Arg 
- 	 =                Expr !functionApplication !constrExp !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
+ 	 =                Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
+ 	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma 
  	                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule 
  	| label: 		  Label
-     | labelColon:    LabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
+     | labelColon:    LabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
+ 	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
  	                       			  !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      | optlabel:      OptLabel
-     | optlabelColon: OptLabelColon Expr !functionApplication !polyVariant !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma !assign1 !assign2 !assign3 !assign4 
+     | optlabelColon: OptLabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
+ 	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
  	                       				 !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      ;
            
