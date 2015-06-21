@@ -49,27 +49,38 @@ syntax CompoundStatement
      = "{" BlockItemList? "}"
      ;
      
-(6.8.2) block-item-list:
-block-item
-block-item-list block-item
-(6.8.2) block-item:
-declaration
-statement
-(6.8.3) expression-statement:
-expressionopt ;
-(6.8.4) selection-statement:
-if ( expression ) statement
-if ( expression ) statement else statement
-switch ( expression ) statement
-(6.8.5) iteration-statement:
-while ( expression ) statement
-do statement while ( expression ) ;
-for ( expressionopt ; expressionopt ; expressionopt ) statement
-for ( declaration expressionopt ; expressionopt ) statement
-(6.8.6) jump-statement:
-goto identifier ;
-continue ;
-break ;
-return expressionopt ;
+syntax BlockItemList
+     = BlockItem
+     | BlockItemList BlockItem
+     ;
+
+syntax BlockItem
+     = Declaration
+     | Statement
+     ;
+
+syntax ExpressionStatement
+     = Expression? ";"
+     ;
+
+syntax SelectionStatement
+     = "if" "(" Expression ")" Statement
+     | "if" "(" Expression ")" Statement "else" Statement
+     | "switch" "(" Expression ")" Statement
+     ;
+
+syntax IterationStatement
+     = "while" "(" Expression ")" Statement
+     | "do" statement while ( expression ) ;
+     | "for" "(" Expression? ";" Expression? ";" Expression? ")" Statement
+     | "for" "(" Declaration Expression? ";" Expression? ")" Statement
+     ;
+
+syntax JumpStatement
+     = "goto" Identifier ";"
+     | "continue" ";"
+     | "break" ";"
+     | "return" Expression? ";"
+     ;
 
 
