@@ -211,9 +211,95 @@ syntax Declarator
      = Pointer? DirectDeclarator
      ;
 
+syntax DirectDeclarator
+     = Identifier
+     | "(" Declarator ")"
+     | DirectDeclarator "[" TypeQualifierList? AssignmentExpression? "]"
+	 | DirectDeclarator "[" "static" TypeQualifierList? AssignmentExpression "]"
+     | DirectDeclarator "[" TypeQualifierList "static" AssignmentExpression "]"
+     | DirectDeclarator "[" TypeQualifierList? "*" "]"
+     | DirectDeclarator "(" ParameterTypeList ")"
+     | DirectDeclarator "(" IdentifierList? ")"
+     ;
 
+syntax pointer
+     = "*" TypeQualifierList?
+     | "*" TypeQualifierList? Pointer
+     ;
 
+syntax TypeQualifierList
+     = TypeQualifier
+     | TypeQualifierList typeQualifier
+     ;
 
+syntax ParameterTypeList
+     = ParameterList
+     | ParameterList "," "..."
+     ;
+
+syntax ParameterList
+     = ParameterDeclaration
+     | ParameterList "," ParameterDeclaration
+     ;
+
+syntax ParameterDeclaration
+     = DeclarationSpecifiers Declarator
+     | DeclarationSpecifiers AbstractDeclarator?
+     ;
+
+syntax IdentifierList
+     = Identifier
+     | IdentifierList "," Identifier
+     ;
+
+syntax TypeName
+     = SpecifierQualifierList AbstractDeclarator?
+     ;
+
+syntax AbstractDeclarator
+     = Pointer
+     | Pointer? DirectAbstractDeclarator
+     ;
+
+syntax DirectAbstractDeclarator
+     = "(" AbstractDeclarator ")"
+     | DirectAbstractDeclarator? "[" TypeQqualifierList? AssignmentExpression? "]"
+     | DirectAbstractDeclarator? "[" "static" TypeQqualifierList? AssignmentExpression "]"
+     | DirectAbstractDeclarator? "[" TypeQualifierList "static" AssignmentExpression "]"
+     | DirectAbstractDeclarator? "[" "*" "]" DirectAbstractDeclarator? "(" ParameterTypeList? ")"
+     ;
+
+syntax TypedefName
+     =  Identifier
+     ;
+
+syntax Initializer
+     =  AssignmentExpression
+     | "{" InitializerList "}"
+     | "{" InitializerList "," "}"
+     ;
+
+syntax InitializerList
+     = Designation? Initializer
+     | InitializerList "," Designation? Initializer 
+
+syntax Designation
+     = DesignatorList "="
+     ;
+
+syntax DesignatorList
+     = Designator
+     | DesignatorList Designator
+     ;
+
+syntax designator
+     = "[" ConstantExpression "]"
+     | "." Identifier 
+     ;
+
+syntax StaticAssertDeclaration
+     = "_Static_assert" "(" ConstantExpression "," StringLiteral ")" ";"
+     ;
 
 
 
