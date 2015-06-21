@@ -56,3 +56,44 @@ lexical ControlLine
       | "#"           NewLine  
       ;
 
+lexical TextLine
+      = PpTokens? NewLine
+      ;
+
+lexical NonDirective:
+      = PpTokens NewLine
+      ;
+
+lexical LParen
+      = [\ \r \n \t \f] !<< "("
+      ;
+
+lexical ReplacementList
+      = PpTokens?
+      ;
+
+lexical PpTokens
+      = PreProcessingToken
+      | PpTokens PreprocessingToken
+      ;
+
+lexical NewLIne 
+      = [\r \n]
+      ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
