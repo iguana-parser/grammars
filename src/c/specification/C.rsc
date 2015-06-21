@@ -301,6 +301,96 @@ syntax StaticAssertDeclaration
      = "_Static_assert" "(" ConstantExpression "," StringLiteral ")" ";"
      ;
 
+// Expressions
+
+syntax PrimaryExpression
+     = Identifier
+     | Constant
+     | StringLiteral
+     | "(" Expression ")" GenericSelection
+     ;
+
+syntax GenericSelection
+     = "_Generic" "(" AssignmentExpression "," GenericAssocList ")"
+     ;
+
+syntax GenericAssocList
+     = GenericAssociation
+     | GenericAssocList "," GenericAssociation
+     ;
+
+syntax GenericAssociation
+     = TypeName ":" AssignmentExpression
+     | "default" ":" AssignmentExpression
+     ;
+
+syntax PostfixExpression
+     = PrimaryExpression
+     | PostfixExpression "[" Expression "]"
+     | PostfixExpression "(" ArgumentEexpressionList? ")" 
+     | PostfixExpression "." Identifier
+     | PostfixExpression "->" Identifier
+     | PostfixExpression "++"
+     | PostfixExpression "--"
+     | "(" TypeName ")" "{" InitializerList "}"
+     | "(" TypeName ")" "{" InitializerList "," "}"
+     ;
+
+syntax ArgumentEexpressionList
+     =  AssignmentExpression
+     | ArgumentEexpressionList "," AssignmentExpression
+     ;
+
+syntax UnaryExpression
+    = PostfixExpression
+    | "++" UnaryExpression
+    | "--" UnaryExpression 
+    | UnaryOperator CastExpression 
+    | "sizeof" UnaryExpression 
+    | "sizeof" "(" TypeName ")"
+    | "_Alignof" "(" TypeName ")"
+    ;
+
+syntax UnaryOperator
+     =  "&"
+     |  "*"
+     | "+"
+     | "-"
+     | "~"
+     | "!"
+     ;
+
+syntax CastExpression
+     = UnaryExpression
+     | "(" TypeName ")" CastExpression
+     ;
+
+syntax MultiplicativeExpression
+     = CastExpression
+     | MultiplicativeExpression "*" CastExpression 
+     | MultiplicativeExpression "/" CastExpression 
+     | MultiplicativeExpression "%" CastExpression
+     ;
+
+syntax AdditiveExpression
+     = MultiplicativeExpression
+     | AdditiveExpression "+" MultiplicativeExpression
+     | AdditiveExpression "-" MultiplicativeExpression
+     ;
+     
+(6.5.7) shift-expression: AdditiveExpression
+shift-expression << AdditiveExpression shift-expression >> AdditiveExpression
+(6.5.8) relational-expression: shift-expression
+relational-expression relational-expression relational-expression relational-expression
+(6.5.9) equality-expression: relational-expression
+< shift-expression > shift-expression <= shift-expression >= shift-expression
+equality-expression equality-expression
+(6.5.10) AND-expression: equality-expression
+AND-expression &
+(6.5.11) exclusive-OR-expression: AND-expression
+== relational-expression != relational-expression
+equality-expression
+exclusive-OR-expression ^ AND-expression
 
 
 
