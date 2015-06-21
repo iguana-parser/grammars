@@ -103,7 +103,57 @@ syntax InitDeclaratorList
      | InitDeclaratorList "," InitDeclarator
      ;
 
+syntax InitDeclarator
+     = Declarator
+     | Declarator "=" Initializer
+     ;
 
+syntax StorageClassSpecifier:
+     = "typedef"
+     | "extern"
+     | "static"
+     | "_Thread_local"
+     | "auto"
+     | "register"
+     ;
+
+syntax type-specifier
+     = "void"
+     | "char"
+     | "short"
+     | "int"
+     | "long"
+     | "float"
+     | "double"
+     | "signed"
+     | "unsigned"
+     | "_Bool"
+     | "_Complex"
+     | AtomicTypeSpecifier
+     | StructOrUnionSpecifier
+     | EnumSpecifier
+     | TypedefName
+     ;
+
+syntax StructOrUnionSpecifier
+     = StructOrUnion Identifier? "{" StructDeclarationList "}"
+     | StructOrUnion Identifier
+     ;
+
+syntax StructOrUnion
+     = "struct"
+     | "union"
+     ;
+
+syntax StructDeclarationList
+     = StructDeclaration
+     | StructDeclarationList StructDeclaration
+     ;
+
+syntax StructDeclaration
+     = SpecifierQualifierList StructDeclaratorList? ";"
+     | StaticAssertDeclaration
+     ;
 
 
 
