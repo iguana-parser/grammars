@@ -270,37 +270,123 @@ lexical HexadecimalEscapeSequence
       | HexadecimalEscapeSequence HexadecimalDigit
       ;
 
+// String literals
 
+lexical StringLiteral
+      = EncodingPrefix? "\"" SCharSequence? "\""
+      ;
 
+lexical EncodingPrefix
+     =  "u8"
+     | "u" 
+     | "U" 
+     | "L"
+     ;
 
+lexical SCharSequence
+      = SChar
+      | SCharSequence SChar
+      ;
 
+lexical SChar
+      = ![] \ [" \ \n \r]
+      | EscapeSequence
+      ;
 
+// Punctuators
 
+lexical Punctuator
+      = "["
+      | "]"
+      | "("
+      | ")"
+      | "{"
+      | "}" 
+      | "."
+      | "->"
+      | "++"  
+      | "--"  
+      | "&"  
+      | "*"  
+      | "+"  
+      | "-"  
+      | "~"  
+      | "!"
+      | "/"  
+      | "%"  
+      | "<<"  
+      | ">>"  
+      | "<"  
+      | ">"
+      | "<="
+      | ">="  
+      | "=="  
+      | "!="  
+      | "^"  
+      | "|"  
+      | "&&"
+      | "||"
+      | "?"
+      | ":"  
+      | ";"  
+      | "..."
+      | "="  
+      | "*="  
+      | "/="  
+      | "%="  
+      | "+="  
+      | "-="  
+      | "<<="  
+      | ">>="  
+      | "&="  
+      | "^="  
+      | "|="
+      | "," 
+      | "#"
+      | "##"
+      | "<:"
+      | ":>"
+      | "<%"
+      | "%>"  
+      | "%:"  
+      | "%:%:"
+      ;
 
+// Header names
 
+lexical HeaderName
+     = "<" HCharSequence ">"
+     | "\"" QCharSequence "\""
+     ;
 
+lexical HCharSequence
+      = HChar
+      | HCharSequence HChar
+      ;
 
+lexical HChar
+      = ![] \ [\n \r >]
+      ;
 
+lexical QCharSequence
+      = QChar
+      | QCharSequence QChar
+      ;
 
+lexical QChar
+      = ![] \ [\n \r "]
+      ;
 
+// Preprocessing numbers
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+lexical PpNumber
+      = Digit
+      | "." Digit
+      | PpNumber Digit
+      | PpNumber Identifier-NonDigit
+      | PpNumber "e" Sign
+      | PpNumber "E" Sign
+      | PpNumber "p" Sign
+      | PpNumber "P" Sign 
+      | PpNumber "."
+      ;
