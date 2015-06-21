@@ -455,4 +455,3 @@ syntax Expression
 syntax ConstantExpression
      = ConditionalExpression
      ;
-
