@@ -69,3 +69,165 @@ lexical keyword
       | "_Thread_local"
       ;
 
+// Identifiers
+lexical Identifier
+      = IdentifierNonDigit
+      | Identifier IdentifierNonDigit
+      | Identifier Digit
+      ;
+
+lexical IdentifierNonDigit
+      = NonDigit
+      | UniversalCharacterName
+      // other implementation-defined characters
+      ;
+
+lexical NonDigit
+      = [_a-zA-Z]
+      ;
+
+lexical Digit
+      = [0-9]
+      ;
+
+// Universal character names
+
+lexical UniversalCharacterName
+      = "\u" HexQuad
+      | "\U" HexQuad HexQuad
+      ;
+
+lexical HexQuad
+      = HexadecimalDigit HexadecimalDigit HexadecimalDigit HexadecimalDigit
+      ;
+
+// Constants
+
+lexical Constant
+      = IntegerConstant
+      | FloatingConstant
+      | EnumerationConstant
+      | CharacterConstant
+      ;
+
+lexical IntegerConstant
+      = DecimalConstant IntegerSuffix?
+      | OctalConstant IntegerSuffix?
+      | HexadecimalConstant IntegerSuffix?
+      ;
+
+lexical DecimalConstant
+      = NonZeroDigit
+      | DecimalConstant Digit
+      ;
+
+lexical OctalConstant
+      = "0"
+      | OctalConstant OctalDigit
+      ;
+
+lexical HexadecimalConstant
+      = HexadecimalPrefix HexadecimalDigit 
+      | HexadecimalConstant HexadecimalDigit
+      ;
+
+lexical HexadecimalPrefix
+      = "0x" 
+      | "0X"
+      ;
+
+lexical NonZeroDigit 
+      = [1-9]
+      ;
+
+lexical OctalDigit
+      = [0-7]
+      ;
+
+lexical HexadecimalDigit
+      = [0-9 a-f A-F]
+      ;
+
+lexical IntegerSuffix
+      = UnsignedSuffix LongSuffix?
+      | UnsignedSuffix LongLongSuffix 
+      | LongSuffix UnsignedSuffix?
+      | LongLongSuffix UnsignedSuffix?
+      ;
+
+lexical UnsignedSuffix
+      = [uU]
+      ;
+
+lexical LongSuffix
+      = [lL]
+      ;
+
+lexical LongLongSuffix
+      = "ll"
+      | "LL"
+      ;
+
+lexical FloatingConstant
+      = DecimalFloatingConstant 
+      | HexadecimalFloatingConstant
+      ;
+
+lexical DecimalFloatingConstant
+      = FractionalConstant ExponentPart? FloatingSuffix?
+      | DigitSequence ExponentPart FloatingSuffix?
+      ;
+
+lexical FractionalConstant
+     = DigitSequence? "." DigitSequence 
+     | DigitSequence "."
+     ;
+
+lexical ExponentPart
+     = "e" Sign? DigitSequence
+     | "E" Sign? DigitSequence
+     ;
+
+lexical Sign
+      = [+-]
+      ;
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
