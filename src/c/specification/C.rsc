@@ -378,38 +378,81 @@ syntax AdditiveExpression
      | AdditiveExpression "-" MultiplicativeExpression
      ;
      
-(6.5.7) shift-expression: AdditiveExpression
-shift-expression << AdditiveExpression shift-expression >> AdditiveExpression
-(6.5.8) relational-expression: shift-expression
-relational-expression relational-expression relational-expression relational-expression
-(6.5.9) equality-expression: relational-expression
-< shift-expression > shift-expression <= shift-expression >= shift-expression
-equality-expression equality-expression
-(6.5.10) AND-expression: equality-expression
-AND-expression &
-(6.5.11) exclusive-OR-expression: AND-expression
-== relational-expression != relational-expression
-equality-expression
-exclusive-OR-expression ^ AND-expression
+syntax ShiftExpression
+     = AdditiveExpression
+     | ShiftExpression "<<" AdditiveExpression 
+     | ShiftExpression ">>" AdditiveExpression
+     ;
 
+syntax RelationalExpression
+     = ShiftExpression
+     | RelationalExpression "<" ShiftExpression
+     | RelationalExpression ">" ShiftExpression 
+     | RelationalExpression "<=" ShiftExpression
+     | RelationalExpression ">=" ShiftExpression
+     ;
 
+syntax EqualityExpression
+     = RelationalExpression
+     | EqualityExpression "==" RelationalExpression 
+     | EqualityExpression "!=" RelationalExpression
+     ;
 
+syntax AndExpression
+     = EqualityExpression
+     | AndExpression "&" EqualityExpression
+     ;
 
+syntax ExclusiveOrExpression
+     = AndExpression
+     | ExclusiveOrEexpression "^" AndExpression
+     ;
 
+syntax InclusiveOrExpression
+     = ExclusiveOrExpression
+     | InclusiveOrExpression "|" ExclusiveOrExpression
+     ;
 
+syntax LogicalAndExpression
+     = InclusiveOrExpression
+     | LogicalAndExpression "&&" InclusiveOrExpression
+     ;
 
+syntax LogicalOrExpression
+     = LogicalAndExpression
+     | LogicalOrExpression "||" LogicalAndExpression     
+     ;
 
+syntax ConditionalExpression
+     = LogicalOrExpression
+     | LogicalOrExpression "?" Expression ":" ConditionalExpression
+     ;
 
+syntax AssignmentExpression
+     = ConditionalExpression
+     | UnaryExpression AssignmentOperator AssignmentExpression
+     ;
 
+syntax AssignmentOperator
+     = "=" 
+     | "*=" 
+     | "/=" 
+     | "%=" 
+     | "+=" 
+     | "-=" 
+     | "<<=" 
+     | ">>=" 
+     | "&=" 
+     | "^=" 
+     | "|="
+     ;
 
+syntax Expression
+     = AssignmentExpression
+     | Expression "," AssignmentExpression
+     ;
 
-
-
-
-
-
-
-
-
-
+syntax ConstantExpression
+     = ConditionalExpression
+     ;
 
