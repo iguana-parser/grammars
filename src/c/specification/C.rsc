@@ -83,4 +83,51 @@ syntax JumpStatement
      | "return" Expression? ";"
      ;
 
+// Declarations
+
+syntax Declaration
+     = DeclarationSpecifiers InitDeclaratorList? ";"
+     | StaticAssertDeclaration
+     ;
+
+syntax DeclarationSpecifiers
+     = StorageClassSpecifier DeclarationSpecifiers?
+     | TypeSpecifier DeclarationSpecifiers?
+     | TypeQualifier DeclarationSpecifiers?
+     | FunctionSpecifier DeclarationSpecifiers?
+     | AlignmentSpecifier DeclarationSpecifiers?
+     ;
+
+syntax InitDeclaratorList
+     = InitDeclarator
+     | InitDeclaratorList "," InitDeclarator
+     ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
