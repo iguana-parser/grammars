@@ -192,10 +192,83 @@ lexical Sign
       = [+-]
       ;
 
+lexical DigitSequence
+      = Digit
+      | DigitSequence Digit
+      ;
 
-   
+lexical HexadecimalFractionalConstant
+      = HexadecimalDigitSequence? "." HexadecimalDigitSequence 
+      | HexadecimalDigitSequence "."
+      ;
+
+lexical BinaryExponentPart
+      = "p" Sign? DigitSequence 
+      | "P" Sign? DigitSequence
+      ;
+
+lexical HexadecimalDigitSequence
+      = HexadecimalDigit
+      | HexadecimalDigitSequence HexadecimalDigit   
+      ;
+
+lexical FloatingSuffix
+      = [flFL]
+      ;
+
+lexical EnumerationConstant
+      = Identifier
+      ;
 
 
+lexical character-constant
+      = "'" CCharSequence "'"
+      | "L'" CCharSequence "'" 
+      | "u'" CCharSequence "'" 
+      | "U'" CCharSequence "'"
+      ;
+
+lexical CCharSequence
+      = CChar
+      | CCharSequence CChar
+      ;
+
+lexical CChar
+     = ![] \ [' \ \n \r]
+     | EscapeSequence
+     ;
+
+lexical EscapeSequence
+      = SimpleEscapeSequence
+      | OctalEscapeSequence
+      | HexadecimalEscapeSequence
+      | UniversalCharacterName
+      ;
+
+lexical SimpleEscapeSequence
+      = "\'" 
+      | "\\\"" 
+      | "\?"
+      | "\\\\"
+      | "\\a"  
+      | "\\b"  
+      | "\\f" 
+      | "\\n"
+      | "\\r"
+      | "\\t"  
+      | "\\v"
+      ;
+
+lexical OctalEscapeSequence
+      = "\\" OctalDigit
+      | "\\" OctalDigit OctalDigit
+      | "\\" OctalDigit OctalDigit OctalDigit
+      ;
+
+lexical HexadecimalEscapeSequence
+      = "\\x" HexadecimalDigit
+      | HexadecimalEscapeSequence HexadecimalDigit
+      ;
 
 
 
