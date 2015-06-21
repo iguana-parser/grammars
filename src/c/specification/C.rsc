@@ -155,6 +155,62 @@ syntax StructDeclaration
      | StaticAssertDeclaration
      ;
 
+syntax SpecifierQualifierList
+     = TypeSpecifier SpecifierQualifierList?
+     | TypeQualifier SpecifierQualifierList?
+     ;
+
+syntax StructDeclaratorList
+     = StructDeclarator
+     | StructDeclaratorList "," StructDeclarator
+     ;
+
+syntax StructDeclarator
+     = Declarator
+     | Declarator? ":" ConstantExpression
+     ; 
+
+syntax EnumSpecifier
+     = "enum" Identifier? "{" EnumeratorList "}"
+     | "enum" Identifier? "{" EnumeratorList "," "}"
+     | "enum" Identifier
+     ;
+
+syntax EnumeratorList
+     = Enumerator
+     | EnumeratorList "," Enumerator
+     ;
+
+syntax Enumerator
+     = EnumerationConstant
+     | EnumerationConstant "=" ConstantExpression
+     ;
+
+syntax AtomicTypeSpecifier
+     = "_Atomic" "(" TypeName ")"
+     ;
+
+syntax TypeQualifier
+     = "const"
+     | "restrict"
+     | "volatile"
+     | "_Atomic"
+     ;
+
+syntax FunctionSpecifier
+     = "inline"
+     | "_Noreturn"
+     ;
+
+syntax AlignmentSpecifier
+     = "_Alignas" "(" TypeName ")"
+     | "_Alignas" "(" ConstantExpression ")"
+     ;
+
+syntax Declarator
+     = Pointer? DirectDeclarator
+     ;
+
 
 
 
