@@ -241,7 +241,7 @@ lexical CCharSequence
       ;
 
 lexical CChar
-     = ![] \ [\' \ \n \r]
+     = ![] \ [\' \\ \n \r]
      | EscapeSequence
      ;
 
@@ -284,7 +284,7 @@ lexical StringLiteral
       ;
 
 lexical EncodingPrefix
-     =  "u8"
+     = "u8"
      | "u" 
      | "U" 
      | "L"
@@ -296,7 +296,7 @@ lexical SCharSequence
       ;
 
 lexical SChar
-      = ![] \ [\" \ \n \r]
+      = ![] \ [\" \\ \n \r]
       | EscapeSequence
       ;
 
