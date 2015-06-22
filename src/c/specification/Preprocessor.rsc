@@ -1,6 +1,7 @@
 
-// Preprocessing directives
+module c::specification::Preprocessor
 
+// Preprocessing directives
 lexical PreprocessingFile
       = Group?
       ;
@@ -13,7 +14,7 @@ lexical Group
 lexical GroupPart
       = IfSection
       | ControlLine TextLine
-      | "#" non-directive
+      | "#" NonDirective
       ;
 
 lexical IfSection
@@ -60,7 +61,7 @@ lexical TextLine
       = PpTokens? NewLine
       ;
 
-lexical NonDirective:
+lexical NonDirective
       = PpTokens NewLine
       ;
 
@@ -80,20 +81,3 @@ lexical PpTokens
 lexical NewLIne 
       = [\r \n]
       ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
