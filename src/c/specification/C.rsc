@@ -269,8 +269,8 @@ syntax AbstractDeclarator
 
 syntax DirectAbstractDeclarator
      = "(" AbstractDeclarator ")"
-     | DirectAbstractDeclarator? "[" TypeQqualifierList? AssignmentExpression? "]"
-     | DirectAbstractDeclarator? "[" "static" TypeQqualifierList? AssignmentExpression "]"
+     | DirectAbstractDeclarator? "[" TypeQualifierList? AssignmentExpression? "]"
+     | DirectAbstractDeclarator? "[" "static" TypeQualifierList? AssignmentExpression "]"
      | DirectAbstractDeclarator? "[" TypeQualifierList "static" AssignmentExpression "]"
      | DirectAbstractDeclarator? "[" "*" "]" DirectAbstractDeclarator? "(" ParameterTypeList? ")"
      ;
