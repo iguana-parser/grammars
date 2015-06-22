@@ -2,6 +2,8 @@
 
 // Lexical elements
 
+module c::specification::Lexical
+
 lexical Token
       = Keyword
       | Identifier 
@@ -22,7 +24,7 @@ lexical PreprocessingToken
 
 // Keywords
 
-lexical keyword
+lexical Keyword
       = "auto"
       | "break"
       | "case"
@@ -93,8 +95,8 @@ lexical Digit
 // Universal character names
 
 lexical UniversalCharacterName
-      = "\u" HexQuad
-      | "\U" HexQuad HexQuad
+      = "\\u" HexQuad
+      | "\\U" HexQuad HexQuad
       ;
 
 lexical HexQuad
@@ -189,7 +191,7 @@ lexical ExponentPart
      ;
 
 lexical Sign
-      = [+-]
+      = [+ \-]
       ;
 
 lexical DigitSequence
@@ -221,11 +223,11 @@ lexical EnumerationConstant
       ;
 
 
-lexical character-constant
-      = "'" CCharSequence "'"
-      | "L'" CCharSequence "'" 
-      | "u'" CCharSequence "'" 
-      | "U'" CCharSequence "'"
+lexical CharacterConstant
+      = "\'" CCharSequence "\'"
+      | "L\'" CCharSequence "\'" 
+      | "u\'" CCharSequence "\'" 
+      | "U\'" CCharSequence "\'"
       ;
 
 lexical CCharSequence
@@ -234,7 +236,7 @@ lexical CCharSequence
       ;
 
 lexical CChar
-     = ![] \ [' \ \n \r]
+     = ![] \ [\' \ \n \r]
      | EscapeSequence
      ;
 
@@ -248,7 +250,7 @@ lexical EscapeSequence
 lexical SimpleEscapeSequence
       = "\'" 
       | "\\\"" 
-      | "\?"
+      | "\\?"
       | "\\\\"
       | "\\a"  
       | "\\b"  
@@ -289,7 +291,7 @@ lexical SCharSequence
       ;
 
 lexical SChar
-      = ![] \ [" \ \n \r]
+      = ![] \ [\" \ \n \r]
       | EscapeSequence
       ;
 
@@ -303,7 +305,7 @@ lexical Punctuator
       | "{"
       | "}" 
       | "."
-      | "->"
+      | "-\>"
       | "++"  
       | "--"  
       | "&"  
@@ -314,12 +316,12 @@ lexical Punctuator
       | "!"
       | "/"  
       | "%"  
-      | "<<"  
-      | ">>"  
-      | "<"  
-      | ">"
-      | "<="
-      | ">="  
+      | "\<\<"  
+      | "\>\>"  
+      | "\<"  
+      | "\>"
+      | "\<="
+      | "\>="  
       | "=="  
       | "!="  
       | "^"  
@@ -336,18 +338,18 @@ lexical Punctuator
       | "%="  
       | "+="  
       | "-="  
-      | "<<="  
-      | ">>="  
+      | "\<\<="  
+      | "\>\>="  
       | "&="  
       | "^="  
       | "|="
       | "," 
       | "#"
       | "##"
-      | "<:"
-      | ":>"
-      | "<%"
-      | "%>"  
+      | "\<:"
+      | ":\>"
+      | "\<%"
+      | "%\>"  
       | "%:"  
       | "%:%:"
       ;
@@ -355,7 +357,7 @@ lexical Punctuator
 // Header names
 
 lexical HeaderName
-     = "<" HCharSequence ">"
+     = "\<" HCharSequence "\>"
      | "\"" QCharSequence "\""
      ;
 
@@ -365,7 +367,7 @@ lexical HCharSequence
       ;
 
 lexical HChar
-      = ![] \ [\n \r >]
+      = ![] \ [\n \r \>]
       ;
 
 lexical QCharSequence
@@ -374,7 +376,7 @@ lexical QCharSequence
       ;
 
 lexical QChar
-      = ![] \ [\n \r "]
+      = ![] \ [\n \r \"]
       ;
 
 // Preprocessing numbers
@@ -383,7 +385,7 @@ lexical PpNumber
       = Digit
       | "." Digit
       | PpNumber Digit
-      | PpNumber Identifier-NonDigit
+      | PpNumber IdentifierNonDigit
       | PpNumber "e" Sign
       | PpNumber "E" Sign
       | PpNumber "p" Sign
