@@ -25,8 +25,9 @@ syntax ExternalDeclaration
      | Declaration
      ;
      
+// DeclarationSpecifiers? added to deal with functions without return value
 syntax FunctionDefinition
-     = DeclarationSpecifiers Declarator DeclarationList? CompoundStatement
+     = DeclarationSpecifiers? Declarator DeclarationList? CompoundStatement
      ;
 
 syntax DeclarationList
