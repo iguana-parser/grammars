@@ -320,7 +320,16 @@ syntax PrimaryExpression
      | StringLiteral
      | "(" Expression ")" 
      | GenericSelection
+     | "__builtin_offsetof" "(" TypeName "," OffsetOfMemberDesignator ")" // GCC extension to deal with offsetof macro
      ;
+     
+// GCC extension to deal with offsetof macro
+syntax OffsetOfMemberDesignator
+     = Identifier
+     | OffsetOfMemberDesignator "." Identifier
+     | OffsetOfMemberDesignator "[" Expr "]"
+     ;
+
 
 syntax GenericSelection
      = "_Generic" "(" AssignmentExpression "," GenericAssocList ")"
@@ -354,14 +363,14 @@ syntax ArgumentEexpressionList
      ;
 
 syntax UnaryExpression
-    = PostfixExpression
-    | "++" UnaryExpression
-    | "--" UnaryExpression 
-    | UnaryOperator CastExpression 
-    | "sizeof" UnaryExpression 
-    | "sizeof" "(" TypeName ")"
-    | "_Alignof" "(" TypeName ")"
-    ;
+     = PostfixExpression
+     | "++" UnaryExpression
+     | "--" UnaryExpression 
+     | UnaryOperator CastExpression 
+     | "sizeof" UnaryExpression 
+     | "sizeof" "(" TypeName ")"
+     | "_Alignof" "(" TypeName ")"
+     ;
 
 syntax UnaryOperator
      = "&"
