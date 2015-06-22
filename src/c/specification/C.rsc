@@ -47,7 +47,7 @@ syntax Statement
      ;
 
 syntax LabeledStatement
-     = Identifier ":" statement
+     = Identifier ":" Statement
      | "case" ConstantExpression ":" Statement
      | "default" ":" Statement
      ;
@@ -71,7 +71,7 @@ syntax ExpressionStatement
      ;
 
 syntax SelectionStatement
-     = "if" "(" Expression ")" Statement
+     = "if" "(" Expression ")" Statement !>>> "else"
      | "if" "(" Expression ")" Statement "else" Statement
      | "switch" "(" Expression ")" Statement
      ;
@@ -318,7 +318,8 @@ syntax PrimaryExpression
      = Identifier
      | Constant
      | StringLiteral
-     | "(" Expression ")" GenericSelection
+     | "(" Expression ")" 
+     | GenericSelection
      ;
 
 syntax GenericSelection
@@ -348,7 +349,7 @@ syntax PostfixExpression
      ;
 
 syntax ArgumentEexpressionList
-     =  AssignmentExpression
+     = AssignmentExpression
      | ArgumentEexpressionList "," AssignmentExpression
      ;
 
@@ -363,8 +364,8 @@ syntax UnaryExpression
     ;
 
 syntax UnaryOperator
-     =  "&"
-     |  "*"
+     = "&"
+     | "*"
      | "+"
      | "-"
      | "~"
