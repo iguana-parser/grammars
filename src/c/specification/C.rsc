@@ -7,6 +7,8 @@
  * Ali Afroozeh
  */
 
+module c::specification::C
+
 // External definitions
 
 syntax TranslationUnit 
@@ -18,7 +20,7 @@ syntax ExternalDeclaration
      = FunctionDefinition
      | Declaration
      ;
-
+     
 syntax FunctionDefinition
      = DeclarationSpecifiers Declarator DeclarationList? CompoundStatement
      ;
@@ -71,7 +73,7 @@ syntax SelectionStatement
 
 syntax IterationStatement
      = "while" "(" Expression ")" Statement
-     | "do" statement while ( expression ) ;
+     | "do" Statement While "(" Expression ")" ";"
      | "for" "(" Expression? ";" Expression? ";" Expression? ")" Statement
      | "for" "(" Declaration Expression? ";" Expression? ")" Statement
      ;
@@ -108,7 +110,7 @@ syntax InitDeclarator
      | Declarator "=" Initializer
      ;
 
-syntax StorageClassSpecifier:
+syntax StorageClassSpecifier
      = "typedef"
      | "extern"
      | "static"
@@ -117,7 +119,7 @@ syntax StorageClassSpecifier:
      | "register"
      ;
 
-syntax type-specifier
+syntax TypeSpecifier
      = "void"
      | "char"
      | "short"
@@ -222,7 +224,7 @@ syntax DirectDeclarator
      | DirectDeclarator "(" IdentifierList? ")"
      ;
 
-syntax pointer
+syntax Pointer
      = "*" TypeQualifierList?
      | "*" TypeQualifierList? Pointer
      ;
@@ -281,7 +283,8 @@ syntax Initializer
 
 syntax InitializerList
      = Designation? Initializer
-     | InitializerList "," Designation? Initializer 
+     | InitializerList "," Designation? Initializer
+     ;
 
 syntax Designation
      = DesignatorList "="
@@ -292,7 +295,7 @@ syntax DesignatorList
      | DesignatorList Designator
      ;
 
-syntax designator
+syntax Designator
      = "[" ConstantExpression "]"
      | "." Identifier 
      ;
@@ -329,7 +332,7 @@ syntax PostfixExpression
      | PostfixExpression "[" Expression "]"
      | PostfixExpression "(" ArgumentEexpressionList? ")" 
      | PostfixExpression "." Identifier
-     | PostfixExpression "->" Identifier
+     | PostfixExpression "-\>" Identifier
      | PostfixExpression "++"
      | PostfixExpression "--"
      | "(" TypeName ")" "{" InitializerList "}"
@@ -380,16 +383,16 @@ syntax AdditiveExpression
      
 syntax ShiftExpression
      = AdditiveExpression
-     | ShiftExpression "<<" AdditiveExpression 
-     | ShiftExpression ">>" AdditiveExpression
+     | ShiftExpression "\<\<" AdditiveExpression 
+     | ShiftExpression "\>\>" AdditiveExpression
      ;
 
 syntax RelationalExpression
      = ShiftExpression
-     | RelationalExpression "<" ShiftExpression
-     | RelationalExpression ">" ShiftExpression 
-     | RelationalExpression "<=" ShiftExpression
-     | RelationalExpression ">=" ShiftExpression
+     | RelationalExpression "\<" ShiftExpression
+     | RelationalExpression "\>" ShiftExpression 
+     | RelationalExpression "\<=" ShiftExpression
+     | RelationalExpression "\>=" ShiftExpression
      ;
 
 syntax EqualityExpression
@@ -440,8 +443,8 @@ syntax AssignmentOperator
      | "%=" 
      | "+=" 
      | "-=" 
-     | "<<=" 
-     | ">>=" 
+     | "\<\<=" 
+     | "\>\>=" 
      | "&=" 
      | "^=" 
      | "|="
