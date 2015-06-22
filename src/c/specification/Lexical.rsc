@@ -257,17 +257,17 @@ lexical EscapeSequence
       ;
 
 lexical SimpleEscapeSequence
-      = "\'" 
-      | "\\\"" 
-      | "\\?"
-      | "\\\\"
-      | "\\a"  
-      | "\\b"  
-      | "\\f" 
-      | "\\n"
-      | "\\r"
-      | "\\t"  
-      | "\\v"
+      = "\\" "\'" 
+      | "\\" "\"" 
+      | "\\" "?"
+      | "\\" "\\"
+      | "\\" "a"  
+      | "\\" "b"  
+      | "\\" "f" 
+      | "\\" "n"
+      | "\\" "r"
+      | "\\" "t"  
+      | "\\" "v"
       ;
 
 lexical OctalEscapeSequence

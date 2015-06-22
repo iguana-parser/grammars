@@ -327,7 +327,7 @@ syntax PrimaryExpression
 syntax OffsetOfMemberDesignator
      = Identifier
      | OffsetOfMemberDesignator "." Identifier
-     | OffsetOfMemberDesignator "[" Expr "]"
+     | OffsetOfMemberDesignator "[" Expression "]"
      ;
 
 
