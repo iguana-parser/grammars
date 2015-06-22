@@ -491,7 +491,7 @@ lexical WhiteSpace
       ;     
       
 lexical Comment
-	  = "//" ![\n]*
+	  = "//" ![\n]* !>> ![\n \r]
 	  | "/*" (![*] | [*] !>> [/])* "*/" 
 	  ;      
       

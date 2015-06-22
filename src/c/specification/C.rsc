@@ -142,8 +142,10 @@ syntax TypeSpecifier
      | TypedefName
      ;
 
+
+// StructDeclarationList? added to support empty structurs as supported by GCC
 syntax StructOrUnionSpecifier
-     = StructOrUnion Identifier? "{" StructDeclarationList "}"
+     = StructOrUnion Identifier? "{" StructDeclarationList? "}"
      | StructOrUnion Identifier
      ;
 
@@ -280,9 +282,10 @@ syntax TypedefName
      =  Identifier
      ;
 
+// StructDeclarationList? added to support empty structurs as supported by GCC
 syntax Initializer
      =  AssignmentExpression
-     | "{" InitializerList "}"
+     | "{" InitializerList? "}"
      | "{" InitializerList "," "}"
      ;
 
