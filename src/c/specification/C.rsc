@@ -235,7 +235,7 @@ syntax Pointer
 
 syntax TypeQualifierList
      = TypeQualifier
-     | TypeQualifierList typeQualifier
+     | TypeQualifierList TypeQualifier
      ;
 
 syntax ParameterTypeList
