@@ -416,7 +416,7 @@ lexical Group
 lexical GroupPart
       = IfSection
       | ControlLine TextLine
-      | "#" NonDirective
+      | "#" !>> "#" NonDirective
       ;
 
 lexical IfSection

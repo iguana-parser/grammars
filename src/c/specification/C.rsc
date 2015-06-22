@@ -373,10 +373,10 @@ syntax UnaryExpression
      ;
 
 syntax UnaryOperator
-     = "&"
-     | "*"
-     | "+"
-     | "-"
+     = "&" !>> [&]
+     | "*" 
+     | "+" !>> [+]
+     | "-" !>> [\-]
      | "~"
      | "!"
      ;
@@ -395,8 +395,8 @@ syntax MultiplicativeExpression
 
 syntax AdditiveExpression
      = MultiplicativeExpression
-     | AdditiveExpression "+" MultiplicativeExpression
-     | AdditiveExpression "-" MultiplicativeExpression
+     | AdditiveExpression "+" !>> [+] MultiplicativeExpression
+     | AdditiveExpression "-" !>> [\-] MultiplicativeExpression
      ;
      
 syntax ShiftExpression
@@ -407,8 +407,8 @@ syntax ShiftExpression
 
 syntax RelationalExpression
      = ShiftExpression
-     | RelationalExpression "\<" ShiftExpression
-     | RelationalExpression "\>" ShiftExpression 
+     | RelationalExpression "\<" !>> [\<] ShiftExpression
+     | RelationalExpression "\>" !>> [\>] ShiftExpression 
      | RelationalExpression "\<=" ShiftExpression
      | RelationalExpression "\>=" ShiftExpression
      ;
@@ -421,7 +421,7 @@ syntax EqualityExpression
 
 syntax AndExpression
      = EqualityExpression
-     | AndExpression "&" EqualityExpression
+     | AndExpression "&" !>> [&] EqualityExpression
      ;
 
 syntax ExclusiveOrExpression
