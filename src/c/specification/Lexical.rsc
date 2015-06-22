@@ -80,8 +80,7 @@ lexical Keyword
 //      ;
 
 lexical Identifier
-      = [_ a-z A-Z 0-9] !<< IdentifierNonDigit (IdentifierNonDigit | Digit)* !>> [_ a-z A-Z 0-9] \ Keyword
-      | Identifier Digit
+      = [_ a-z A-Z 0-9] !<< (IdentifierNonDigit (IdentifierNonDigit | Digit)*) !>> [_ a-z A-Z 0-9] \ Keyword
       ;
 
 lexical IdentifierNonDigit
@@ -114,7 +113,7 @@ lexical HexQuad
 lexical Constant
       = IntegerConstant
       | FloatingConstant
-      | EnumerationConstant
+      //| EnumerationConstant  (See 1)
       | CharacterConstant
       ;
 
@@ -232,7 +231,6 @@ lexical FloatingSuffix
 lexical EnumerationConstant
       = Identifier
       ;
-
 
 lexical CharacterConstant
       = "\'" CCharSequence "\'"
@@ -493,9 +491,9 @@ lexical WhiteSpace
       ;     
       
 lexical Comment
-	= "//" ![\n]*
-	| "/*" (![*] | [*] !>> [/])* "*/" 
-	;      
+	  = "//" ![\n]*
+	  | "/*" (![*] | [*] !>> [/])* "*/" 
+	  ;      
       
 layout Layout 
      = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
