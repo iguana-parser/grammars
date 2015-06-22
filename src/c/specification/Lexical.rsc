@@ -179,6 +179,11 @@ lexical DecimalFloatingConstant
       = FractionalConstant ExponentPart? FloatingSuffix?
       | DigitSequence ExponentPart FloatingSuffix?
       ;
+      
+lexical HexadecimalFloatingConstant
+      = HexadecimalPrefix HexadecimalFractionalConstant BinaryExponentPart FloatingSuffix?
+      | HexadecimalPrefix HexadecimalDigitSequence BinaryExponentPart FloatingSuffix?
+      ;      
 
 lexical FractionalConstant
      = DigitSequence? "." DigitSequence 
@@ -392,3 +397,102 @@ lexical PpNumber
       | PpNumber "P" Sign 
       | PpNumber "."
       ;
+
+// Preprocessing directives
+
+lexical PreprocessingFile
+      = Group?
+      ;
+
+lexical Group
+      = GroupPart
+      | Group GroupPart
+      ;
+
+lexical GroupPart
+      = IfSection
+      | ControlLine TextLine
+      | "#" NonDirective
+      ;
+
+lexical IfSection
+      = IfGroup ElifGroups? ElseGroup? EndifLine
+      ;
+
+lexical IfGroup
+      = "#" "if"     ConstantExpression NewLine Group?
+      | "#" "ifdef"  Identifier NewLine Group? 
+      | "#" "ifndef" Identifier NewLine Group?
+      ;
+
+lexical ElifGroups
+      = ElifGroup
+      | ElifGroups ElifGroup
+      ;
+
+lexical ElifGroup
+      = "#" "elif" ConstantExpression NewLine Group?
+      ;
+
+lexical ElseGroup
+      = "#" "else" NewLine Group?
+      ;
+
+lexical EndifLine
+      = "#" "endif" NewLine
+      ;
+
+lexical ControlLine
+      = "#" "include" PpTokens NewLine
+      | "#" "define"  Identifier ReplacementList NewLine
+      | "#" "define"  Identifier LParen IdentifierList? ")" ReplacementList NewLine
+      | "#" "define"  Identifier LParen "..." ")" ReplacementList NewLine
+      | "#" "define"  Identifier LParen IdentifierList "," "..." ")" ReplacementList NewLine
+      | "#" "undef"   Identifier NewLine
+      | "#" "line"    PpTokens NewLine
+      | "#" "error"   PpTokens? NewLine
+      | "#" "pragma"  PpTokens? NewLine 
+      | "#"           NewLine  
+      ;
+
+lexical TextLine
+      = PpTokens? NewLine
+      ;
+
+lexical NonDirective
+      = PpTokens NewLine
+      ;
+
+lexical LParen
+      = [\ \r \n \t \f] !<< "("
+      ;
+
+lexical ReplacementList
+      = PpTokens?
+      ;
+
+lexical PpTokens
+      = PreprocessingToken
+      | PpTokens PreprocessingToken
+      ;
+
+// Layout
+
+lexical NewLine 
+      = [\r \n]
+      ;
+      
+lexical WhiteSpace 
+      = [\ \t \f \r \n] 
+      ;     
+      
+lexical Comment
+	= "//" ![\n]*
+	| "/*" (![*] | [*] !>> [/])* "*/" 
+	;      
+      
+layout Layout 
+     = (WhiteSpace | Comment)* !>> [\t \n \r \f  \ ] !>> "/*" !>> "//";
+      
+      
+      

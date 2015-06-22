@@ -9,6 +9,10 @@
 
 module c::specification::C
 
+extend c::specification::Lexical;
+extend c::specification::Preprocessor;
+
+
 // External definitions
 
 syntax TranslationUnit 
@@ -73,7 +77,7 @@ syntax SelectionStatement
 
 syntax IterationStatement
      = "while" "(" Expression ")" Statement
-     | "do" Statement While "(" Expression ")" ";"
+     | "do" Statement "while" "(" Expression ")" ";"
      | "for" "(" Expression? ";" Expression? ";" Expression? ")" Statement
      | "for" "(" Declaration Expression? ";" Expression? ")" Statement
      ;
@@ -408,7 +412,7 @@ syntax AndExpression
 
 syntax ExclusiveOrExpression
      = AndExpression
-     | ExclusiveOrEexpression "^" AndExpression
+     | ExclusiveOrExpression "^" AndExpression
      ;
 
 syntax InclusiveOrExpression
