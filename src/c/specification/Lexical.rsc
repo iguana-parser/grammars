@@ -72,9 +72,15 @@ lexical Keyword
       ;
 
 // Identifiers
+
+//lexical Identifier
+//      = IdentifierNonDigit
+//      | Identifier IdentifierNonDigit
+//      | Identifier Digit
+//      ;
+
 lexical Identifier
-      = IdentifierNonDigit
-      | Identifier IdentifierNonDigit
+      = [_ a-z A-Z 0-9] !<< IdentifierNonDigit (IdentifierNonDigit | Digit)* !>> [_ a-z A-Z 0-9] \ Keyword
       | Identifier Digit
       ;
 
