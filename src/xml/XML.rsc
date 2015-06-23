@@ -4,6 +4,75 @@
 
 module xml::XML
 
+
+// Document
+lexical Document
+      = Prolog Element Misc*
+      ;
+      
+lexical Prolog
+      = XMLDecl? Misc* (DocTypeDecl Misc*)?
+      ;
+      
+      
+// XML Delaration       
+lexical XMLDecl
+      = "\<?xml" VersionInfo EncodingDecl? SDDecl? S? "?\>\'"
+      ;
+      
+lexical VersionInfo
+      = 	S "version" Eq (("\'" VersionNum "\'") | ("\"" VersionNum "\""))
+      ;
+      
+lexical EncodingDecl	
+      = 	S "encoding" Eq (("\"" EncName "\"") | ("\"" EncName "\""))
+      ;
+      
+lexical SDDecl	
+      = 	S "standalone" Eq (("\'" ("yes" | "no") "\"") | ("\"" ("yes" | "no") "\""))
+      ;
+      
+lexical EncName
+ 	     = 	[A-Za-z] [A-Za-z0-9._\-]*
+ 	     ;
+      
+lexical VersionNum	
+      = "1." [0-9]+
+      ;                  
+
+// Doctype Declaration
+lexical DocTypeDecl	
+      = "\<!DOCTYPE" S Name (S ExternalID)? S? ("[" IntSubset "]" S?)? "\>"
+      ;
+      
+lexical DeclSep	
+     =  	PEReference | S
+     ;
+
+lexical IntSubset	
+      = 	(MarkupDecl | DeclSep)*
+      ;
+      
+lexical MarkupDecl	
+      = EelementDecl 
+      | AttlistDecl 
+      | EntityDecl 
+      | NotationDecl 
+      | PI 
+      | Comment
+      ;
+      
+// External Entities
+	lexical ExternalID	
+	      = "SYSTEM" S SystemLiteral
+      | "PUBLIC" S PubidLiteral S SystemLiteral
+      ;
+      
+lexical NDataDecl	
+      = 	S "NDATA" S Name
+      ;      
+
+// Element
 lexical Element      
       = EmptyElemTag
       | STag Content ETag
@@ -30,12 +99,12 @@ lexical Attribute
       ;
 
 lexical AttValue   
-      = "\"" (![< & "] | Reference)* "\""
-      | "\'" (![< & '] | Reference)* "\'"
+      = "\"" (![\< & \"] | Reference)* "\""
+      | "\'" (![\< & \'] | Reference)* "\'"
       ;
 
 lexical CharData     
-      = ![< & "]* \ "]]>"
+      = ![\< & \"]* \ "]]\>"
       ;
 
 lexical Name         
@@ -106,18 +175,26 @@ lexical NameChar
       | [\u203F-\u2040]
       ;
       
+// References
 lexical Reference
       = EntityRef 
       | CharRef
       ;
-
+      
 lexical EntityRef
       = "&" Name ";"
       ;
 
 lexical PEReference 
       = "%" Name ";"
-      ;      
+      ;
+      
+ lexical CharRef
+      = "&#" [0-9]+ ";"
+      | "&#x" [0-9a-fA-F]+ ";"
+      ;
+
+// Layout
      
 lexical Comment
       = "\<!--" (Char \ "-" | ("-" Char \ "-"))* "--\>"
@@ -155,7 +232,3 @@ lexical PITarget
       = Name \ [X x M m L l]
       ;
       
- lexical CharRef
-      = "&#" [0-9]+ ";"
-      | "&#x" [0-9a-fA-F]+ ";"
-      ;

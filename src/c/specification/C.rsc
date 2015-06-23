@@ -224,7 +224,7 @@ syntax DirectDeclarator
      = Identifier
      | "(" Declarator ")"
      | DirectDeclarator "[" TypeQualifierList? AssignmentExpression? "]"
-	 | DirectDeclarator "[" "static" TypeQualifierList? AssignmentExpression "]"
+	     | DirectDeclarator "[" "static" TypeQualifierList? AssignmentExpression "]"
      | DirectDeclarator "[" TypeQualifierList "static" AssignmentExpression "]"
      | DirectDeclarator "[" TypeQualifierList? "*" "]"
      | DirectDeclarator "(" ParameterTypeList ")"
