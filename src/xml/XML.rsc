@@ -14,7 +14,6 @@ lexical Prolog
       = XMLDecl? Misc* (DocTypeDecl Misc*)?
       ;
       
-      
 // XML Delaration       
 lexical XMLDecl
       = "\<?xml" VersionInfo EncodingDecl? SDDecl? S? "?\>\'"
@@ -54,7 +53,7 @@ lexical IntSubset
       ;
       
 lexical MarkupDecl	
-      = EelementDecl 
+      = ElementDecl 
       | AttlistDecl 
       | EntityDecl 
       | NotationDecl 
@@ -62,6 +61,129 @@ lexical MarkupDecl
       | Comment
       ;
       
+// Element Type Declaration
+
+lexical ElementDecl	
+      = "\<!ELEMENT" S Name S ContentSpec S? "\>"
+      ;
+      
+	lexical ContentSpec	
+	      = "EMPTY" 
+	      | "ANY" 
+	      | Mixed 
+	      | Children
+	      ;
+	      
+lexical Mixed	
+      = "(" S? "#PCDATA" (S? "|" S? Name)* S? ")*"
+      | "(" S? "#PCDATA" S? ")"
+      ;
+	      
+// Element-content Models
+lexical Children	
+      = 	(Choice | Seq) ("?" | "*" | "+")?
+      ;
+      
+lexical CP	
+      = 	(Name | Choice | Seq) ("?" | "*" | "+")?
+      ;
+      
+lexical Choice	
+      = "(" S? CP ( S? "|" S? CP )+ S? ")"
+      ;
+      
+lexical Seq	
+      = "(" S? CP ( S? "," S? CP )* S? ")"
+      ;
+      
+// Attribute-list Declaration
+lexical AttlistDecl	
+     =  "\<!ATTLIST" S Name AttDef* S? "\>"
+     ;
+     
+lexical AttDef	
+      = 	S Name S AttType S DefaultDecl
+      ;
+      
+// Attribute Types
+
+	lexical AttType	
+	      = 	StringType 
+	      | TokenizedType 
+	      | EnumeratedType
+	      ;
+	      
+lexical 	StringType	
+      = "CDATA"
+      ;
+      
+lexical TokenizedType	
+      = "ID"
+      | "IDREF"
+      | "IDREFS"
+      | "ENTITY"
+      | "ENTITIES"
+      | "NMTOKEN"
+      | "NMTOKENS"
+      ;
+      
+lexical EnumeratedType
+      = 	NotationType 
+      | Enumeration
+      ;
+      
+lexical NotationType
+      = "NOTATION" S "(" S? Name (S? "|" S? Name)* S? ")"
+      ;
+      
+lexical Enumeration	
+      = "(" S? Nmtoken (S? "|" S? Nmtoken)* S? ")"
+      ;
+      
+lexical Nmtoken
+      = NameChar+
+      ;
+      
+lexical DefaultDecl	
+      = "#REQUIRED" 
+      | "#IMPLIED"
+      | (("#FIXED" S)? AttValue)
+      ;
+      
+// Entity Declaration
+
+syntax 	EntityDecl	
+     = 	GEDecl 
+     | PEDecl
+     ;
+     
+lexical GEDecl	
+     = "\<!ENTITY" S Name S EntityDef S? "\>"
+     ;
+     
+lexical 	PEDecl	
+      = "\<!ENTITY" S "%" S Name S PEDef S? "\>"
+      ;
+      
+lexical 	EntityDef	
+      = 	EntityValue 
+      | (ExternalID NDataDecl?)
+      ;
+      
+lexical 	PEDef	
+      = 	EntityValue 
+      | ExternalID
+      ;
+      
+ // Notation Declarations
+ lexical NotationDecl	
+       = "\<!NOTATION" S Name S (ExternalID | PublicID) S? "\>"
+       ;
+       
+lexical PublicID	
+      = "PUBLIC" S PubidLiteral
+      ;       
+       
 // External Entities
 	lexical ExternalID	
 	      = "SYSTEM" S SystemLiteral
@@ -193,8 +315,6 @@ lexical PEReference
       = "&#" [0-9]+ ";"
       | "&#x" [0-9a-fA-F]+ ";"
       ;
-
-// Layout
      
 lexical Comment
       = "\<!--" (Char \ "-" | ("-" Char \ "-"))* "--\>"
@@ -230,5 +350,30 @@ lexical Eq
 
 lexical PITarget
       = Name \ [X x M m L l]
+      ;
+      
+// Literals
+
+lexical 	EntityValue	
+      = "\"" ([^%&\"] | PEReference | Reference)* "\""
+      | "\'" ([^%&\'] | PEReference | Reference)* "\'"
+      ;
+      
+lexical 	AttValue	
+      = "\"" ([^\<&\"] | Reference)* "\""
+			      |  "\'" ([^\<&\'] | Reference)* "\'"
+			      ;
+			      
+lexical SystemLiteral	
+      = 	("\"" [^\"]* "\"") | ("\"" [^\']* "\'")
+      ;
+      
+lexical 	PubidLiteral	
+      = "\"" PubidChar* "\""
+      | "\'" (PubidChar \ "\'")* "\'"
+      ;
+      
+lexical 	PubidChar	
+      = [\u0020 \u000D \u000A a-z A-Z 0-9 \- \' ( ) + , . / : = ? ; ! * # @ $ _ %]
       ;
       
