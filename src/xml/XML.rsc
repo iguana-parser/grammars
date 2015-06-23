@@ -192,7 +192,13 @@ lexical PublicID
       
 lexical NDataDecl	
       = 	S "NDATA" S Name
-      ;      
+      ;
+      
+lexical Misc	
+      = 	Comment 
+      | PI 
+      | S
+      ;  
 
 // Element
 lexical Element      
@@ -213,7 +219,7 @@ lexical ETag
       ;
 
 lexical Content
-      = CharData? ((Element | Reference | CDSect| PI | Comment) CharData?)*
+      = CharData ((Element | Reference | CDSect| PI | Comment) CharData)*
       ;
 
 lexical Attribute 
@@ -376,4 +382,5 @@ lexical 	PubidLiteral
 lexical 	PubidChar	
       = [\u0020 \u000D \u000A a-z A-Z 0-9 \- \' ( ) + , . / : = ? ; ! * # @ $ _ %]
       ;
+      
       
