@@ -3,9 +3,9 @@
  *
  *  author: Ali Afroozeh
  */
-module java::specification::Java
+module java::JavaNatural
 
-extend java::specification::Lexical;
+extend java::\lexical::CharLevel;
 
 
 /************************************************************************************************************************
@@ -160,15 +160,9 @@ syntax ConstructorDeclarator
      ;
      
 syntax ConstructorBody
-     = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+     = Block
      ;
      
-syntax ExplicitConstructorInvocation
-     = NonWildTypeArguments? "this" "(" ArgumentList? ")" ";" 
-     | NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     | Primary "." NonWildTypeArguments? "super" "(" ArgumentList? ")" ";"
-     ;          
-
 syntax NonWildTypeArguments
      = "\<" { ReferenceType ","}+ "\>"
      ;
@@ -379,7 +373,7 @@ syntax ElementValuePair
     ;
 
 syntax ElementValue 
-    = ConditionalExpression
+    = Expression
     | Annotation
     | ElementValueArrayInitializer
     ;
@@ -435,15 +429,6 @@ syntax LocalVariableDeclarationStatement
      ;
 
 syntax Statement
-     = StatementWithoutTrailingSubstatement 
-     | Identifier ":" Statement
-     | "if" "(" Expression ")" Statement
-     | "if" "(" Expression ")" StatementNoShortIf "else" Statement
-     | "while" "(" Expression ")" Statement
-     | ForStatement
-     ;
-
-syntax StatementWithoutTrailingSubstatement
      = Block
      | ";" 
      | StatementExpression ";"
@@ -456,31 +441,18 @@ syntax StatementWithoutTrailingSubstatement
      | "synchronized" "(" Expression ")" Block 
      | "throw" Expression ";" 
      | "try" Block (CatchClause+ | (CatchClause* Finally))
-     | "try" ResourceSpecification Block CatchClause* Finally?
-     ;
-     
-syntax StatementNoShortIf
-     = StatementWithoutTrailingSubstatement
-     | Identifier ":" StatementNoShortIf
-     | "if" "(" Expression ")" StatementNoShortIf "else" StatementNoShortIf
-     | "while" "(" Expression ")" StatementNoShortIf
-     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" StatementNoShortIf
-     ;
-     
-syntax ForStatement
-     = "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement 
+     | "try" ResourceSpecification Block CatchClause* Finally? 
+     | Identifier ":" Statement
+     | "if" "(" Expression ")" Statement !>>> "else"
+     | "if" "(" Expression ")" Statement "else" Statement
+     | "while" "(" Expression ")" Statement
+     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement
      | "for" "(" FormalParameter ":" Expression ")" Statement
      ;
 
 syntax StatementExpression
-     = Assignment 
-     | PreIncrementExpression 
-     | PreDecrementExpression 
-     | PostIncrementExpression 
-     | PostDecrementExpression 
-     | MethodInvocation 
-     | ClassInstanceCreationExpression
-    ;
+     = Expression !lt !gt
+     ;
     
 syntax CatchClause 
     = "catch" "(" VariableModifier* CatchType Identifier ")" Block
@@ -532,28 +504,65 @@ syntax ForUpdate
  * Expressions
  ***********************************************************************************************************************/
 
-syntax Primary
-	 =  PrimaryNoNewArray 
-	 |  ArrayCreationExpression
-	 ;
-
-syntax PrimaryNoNewArray 
-     = Literal
+syntax Expression
+     = Expression !io "." Identifier
+     | Expression "." "this"
+	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
+     | Expression "." "super" ("." Identifier)? Arguments
      | Type "." "class"
      | "void" "." "class"
-     | "this" 
-     | ClassName "." "this"   
-     | "(" Expression ")" 
-     | ClassInstanceCreationExpression 
-     | FieldAccess
-     | MethodInvocation 
-     | ArrayAccess
+	 | Expression !brackets "(" ArgumentList? ")"     
+     | Expression !newArray "[" Expression "]"
+     > Expression "++"
+     | Expression "--"
+     > up: "+" !>> "+" Expression
+     | um: "-" !>> "-" Expression
+     | "++" Expression
+     | "--" Expression 
+     | "!" Expression
+     | "~" Expression
+     | "new" ClassInstanceCreationExpression
+     | newArray: "new" ArrayCreationExpression
+     | "(" PrimitiveType ")" Expression
+     | "(" ReferenceType ")" Expression !up !um 
+     > left( Expression "*" Expression 
+     |       Expression "/" Expression
+     |       Expression "%" Expression )
+     > left( Expression "+" !>> "+" Expression
+     |       Expression "-" !>> "-" Expression )
+     > left( Expression "\<\<" Expression 
+     |       Expression "\>\>" !>> "\>" Expression
+     |       Expression "\>\>\>" Expression )
+     > left( 
+       lt:   Expression "\<" !>> "=" !>> "\<" Expression
+     | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
+     |       Expression "\<=" Expression
+     |       Expression "\>=" Expression
+     | io:   Expression "instanceof" Type ) 
+     > left( Expression "==" Expression
+     |       Expression "!=" Expression )
+     > left  Expression "&" !>> "&" Expression
+     > left  Expression "^" Expression
+     > left  Expression "|" !>> "|" Expression 
+     > left  Expression "&&" Expression
+     > left  Expression "||" Expression
+     > right Expression "?" Expression ":" Expression 
+     > right Expression !lt !gt AssignmentOperator Expression
+     | brackets: "(" Expression ")"
+     | Primary
      ;
      
+syntax Primary
+	 = Literal
+     | "this"
+     | "super"
+     | Identifier
+     ;     
+
 syntax ClassInstanceCreationExpression
-     = "new" TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond?  "(" ArgumentList? ")" ClassBody? 
-     | (Primary | QualifiedIdentifier) "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
-     ; // Check if it's a good idea to add Identifier to primary?
+     =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     ;
      
 syntax TypeArgumentsOrDiamond 
      = "\<" "\>" 
@@ -565,165 +574,12 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	     = "new" (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
-	     | "new" (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
+	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
-     
+
 syntax DimExpr
      = "[" Expression "]"
-     ;
-     
-syntax FieldAccess
-     = Primary "." Identifier
-     | "super" "." Identifier
-     | ClassName "." "super" "." Identifier
-     ;
-     
-syntax MethodInvocation
-     = MethodName "(" ArgumentList? ")"
-     | Primary "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | ClassName "." "super" "." NonWildTypeArguments? Identifier "(" ArgumentList? ")"
-     | TypeName "." NonWildTypeArguments Identifier "(" ArgumentList? ")"
-     ;
-     
-syntax ArrayAccess
-     = ExpressionName "[" Expression "]" 
-     | PrimaryNoNewArray "[" Expression "]"
-     ;
- 
-syntax PostfixExpression
-     = Primary
-     | ExpressionName 
-     | PostIncrementExpression 
-     | PostDecrementExpression
-     ;
-
-syntax PostIncrementExpression
-     = PostfixExpression "++"
-     ;
-
-syntax PostDecrementExpression
-     = PostfixExpression "--"
-     ;
-     
-syntax UnaryExpression
-     = PreIncrementExpression 
-     | PreDecrementExpression 
-     | "+" !>> "+" UnaryExpression
-     | "-" !>> "-" UnaryExpression
-     | UnaryExpressionNotPlusMinus
-     ;
-     
-     
-syntax PreIncrementExpression
-     = "++" UnaryExpression
-     ;
-     
-     
-syntax PreDecrementExpression
-     = "--" UnaryExpression
-     ;
-     
-syntax UnaryExpressionNotPlusMinus
-     = PostfixExpression
-     | "~" UnaryExpression
-     | "!" UnaryExpression 
-     | CastExpression
-     ;
-
-syntax CastExpression
-     = "(" PrimitiveType ")" UnaryExpression
-     | "(" ReferenceType ")" UnaryExpressionNotPlusMinus
-     ;
-     
-syntax MultiplicativeExpression
-     = UnaryExpression
-     | MultiplicativeExpression "*" UnaryExpression 
-     | MultiplicativeExpression "/" UnaryExpression
-     | MultiplicativeExpression "%" UnaryExpression
-     ;
-     
-syntax AdditiveExpression
-     = MultiplicativeExpression
-     | AdditiveExpression "+" !>> "+" MultiplicativeExpression
-     | AdditiveExpression "-" !>> "-" MultiplicativeExpression     
-     ;
-     
-syntax ShiftExpression
-     = AdditiveExpression
-     | ShiftExpression "\<\<" AdditiveExpression
-     | ShiftExpression "\>\>" AdditiveExpression
-     | ShiftExpression "\>\>\>" AdditiveExpression
-     ;
-     
-
-syntax RelationalExpression
-     = ShiftExpression
-     | RelationalExpression "\<" ShiftExpression 
-     | RelationalExpression "\>" ShiftExpression 
-     | RelationalExpression "\<=" ShiftExpression 
-     | RelationalExpression "\>=" ShiftExpression 
-     | RelationalExpression "instanceof" ReferenceType
-     ;
-
-
-syntax EqualityExpression
-     = RelationalExpression
-     | EqualityExpression "==" RelationalExpression
-     | EqualityExpression "!=" RelationalExpression
-     ;
-     
-syntax AndExpression
-     = EqualityExpression
-     | AndExpression "&" EqualityExpression
-     ;
-     
-syntax ExclusiveOrExpression
-     = AndExpression
-     | ExclusiveOrExpression "^" AndExpression
-     ;
-     
-syntax InclusiveOrExpression
-     = ExclusiveOrExpression
-     | InclusiveOrExpression "|" ExclusiveOrExpression
-     ;
-     
-syntax ConditionalAndExpression
-     = InclusiveOrExpression
-     | ConditionalAndExpression "&&" InclusiveOrExpression
-     ;
-     
-syntax ConditionalOrExpression
-     = ConditionalAndExpression
-     | ConditionalOrExpression "||" ConditionalAndExpression
-     ;
-     
-
-syntax ConditionalExpression
-     = ConditionalOrExpression
-     | ConditionalOrExpression "?" Expression ":" ConditionalExpression
-     ;
-     
-syntax AssignmentExpression
-     = ConditionalExpression 
-     | Assignment
-     ;
-     
-     
-syntax Assignment
-     = LeftHandSide AssignmentOperator AssignmentExpression
-     ;
-     
-syntax LeftHandSide
-     = ExpressionName
-     | "(" LeftHandSide ")" 
-     | FieldAccess 
-     | ArrayAccess
-     ;
-
-syntax Expression
-     = AssignmentExpression
      ;
      
 syntax ConstantExpression
@@ -734,10 +590,6 @@ syntax ClassName
 	 = QualifiedIdentifier
 	 ;
 	 
-syntax ExpressionName
-     = QualifiedIdentifier
-     ;
-     
 syntax MethodName
      = QualifiedIdentifier
      ;
@@ -751,7 +603,9 @@ syntax SuperSuffix
      | "." Identifier Arguments?
      ;
 
-syntax ExplicitGenericInvocationSuffix 
-     = "super" SuperSuffix
-     | Identifier Arguments
-     ;
+ syntax ExplicitGenericInvocationSuffix 
+ 	  = "super" SuperSuffix
+ 	  | Identifier Arguments
+ 	  ;
+     
+     

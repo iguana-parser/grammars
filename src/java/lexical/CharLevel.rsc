@@ -1,4 +1,4 @@
-module java::specification::Lexical
+module java::\lexical::CharLevel
 
 //----------------------------------------------------------------------------------------------------------------
 // Lexical Definititions

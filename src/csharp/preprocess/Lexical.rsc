@@ -434,14 +434,6 @@ lexical RightShiftAssignment
      
 // Conditional directives with evalutation
 
-syntax A 
-     = Id*
-     ;
-
-lexical Id
-      = [A-Z _ a-z] !<< IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ Keyword
-      ;     
-
 lexical DPpConditional 
       = DPpIfSection
       ;
