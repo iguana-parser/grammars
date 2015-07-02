@@ -53,7 +53,7 @@ token CommentChar
     = ![\\ *]      // UnicodeInputCharacter but not CR or LF 
     | [\\] !>> [\\ u]
     | [\\] [\\]
-    | [*] !>> [\\]
+    | [*] !>> [/]
     | UnicodeEscape
     | [\a00]           // to match zero        
     ;    
@@ -68,9 +68,9 @@ token EndOfLineComment
     
 //----------------------------------------------------------------------------------------------------------------      
 
-token Identifier 
-    = [$ A-Z _ a-z] !<< IdentifierChars \Keyword \BooleanLiteral \NullLiteral
-    ;
+lexical Identifier 
+      = [$ A-Z _ a-z] !<< IdentifierChars \Keyword \BooleanLiteral \NullLiteral
+      ;
 
 token IdentifierChars 
     = JavaLetter (JavaLetter | JavaLetterOrDigit)*
