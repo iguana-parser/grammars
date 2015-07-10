@@ -50,20 +50,17 @@ token Comment
     ;
 
 token CommentChar 
-    = ![\\ *]      // UnicodeInputCharacter but not CR or LF 
-    | [\\] !>> [\\ u]
-    | [\\] [\\]
-    | [*] !>> [/]
-    | UnicodeEscape
+    = [/] 
+    | [*]* ![/ *]      // Modified to allow DFA compilation
     | [\a00]           // to match zero        
     ;    
 
 token TraditionalComment 
-    = "/*" CommentChar* "*/" 
+    = "/*" CommentChar* [*]+  "/" 
     ;
 
 token EndOfLineComment 
-    = "//" InputCharacter*
+    = "//" ![\r \n \a00]*
     ;
     
 //----------------------------------------------------------------------------------------------------------------      
