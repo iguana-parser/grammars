@@ -22,8 +22,8 @@ lexical InputElement
 lexical Token
      = Identifier
      | Keyword
-     | [A-Za-z] !<< IntegerLiteral_
-     | [A-Za-z] !<< RealLiteral_
+     | [A-Za-z0-9] !<< IntegerLiteral_
+     | [A-Za-z0-9] !<< RealLiteral_
      | CharacterLiteral_
      | StringLiteral_
      | OperatorOrPunctuator
@@ -46,38 +46,38 @@ lexical Layout1
  * Line separator character (U+2028)
  * Paragraph separator character (U+2029)
  */
-lexical NewLine
-      = [\r \n] //[\r \n \u0085 \u2028 \u2029]
-      ;
+token NewLine
+    = [\r \n] //[\r \n \u0085 \u2028 \u2029]
+    ;
       
 // Comments
 
 token Comment
-      = SingleLineComment
-      | DelimitedComment
-      ;
+    = SingleLineComment
+    | DelimitedComment
+    ;
       
 token SingleLineComment
-      = "//" InputCharacter*
-      ;      
+    = "//" InputCharacter*
+    ;      
       
 token InputCharacter 
-	  = ![\r \n] 		              // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
-	  | [\a00]                    // to match zero        
+	= ![\r \n] 		              // ![] \ [\r \n \u0085 \u2028 \u2029]    // Any Unicode character Except NewLine
+	| [\a00]                    // to match zero        
     ;
       
 token DelimitedComment
-     = "/*"   DelimitedCommentSection*   [*]+   "/"
-     ;
+    = "/*" DelimitedCommentSection* [*]+ "/"
+    ;
 
 token DelimitedCommentSection
-      = "/"
-      | [*]*  NotSlashOrAsterisk
-      ; 
+    = "/"
+    | [*]*  NotSlashOrAsterisk
+    ; 
 
 token NotSlashOrAsterisk
-      = ![/ *]
-      ;
+    = ![/ *]
+    ;
       
 /* 
  * Any character with Unicode class Zs
@@ -85,58 +85,58 @@ token NotSlashOrAsterisk
  * Vertical tab character (U+000B)
  * Form feed character (U+000C)
  */
- token Whitespace
-       = [\ \t \f \r \n]+ //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
-       ;
+token Whitespace
+    = [\ \t \f \r \n]+ //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+    ;
       
 token WhitespaceNoNL
-      = [\ \t \f]+  //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
-      ;      
+    = [\ \t \f]+  //[\u0020 \u00A0 \u1680 \u180E \u2000-\u200A \u202F \u205F \u3000 \u0009 \u000B \u000C]
+    ;      
        
 // B.1.5 Unicode character escape sequences       
  
-lexical UnicodeEscapeSequence
-      = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit   
-      | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
-      ;
+token UnicodeEscapeSequence
+    = "\\u"   HexDigit   HexDigit   HexDigit   HexDigit   
+    | "\\U"   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
+    ;
       
 // Identifiers      
       
 lexical Identifier
-      = [A-Z _ a-z] !<< IdentifierOrKeyword !>> [0-9 A-Z _ a-z] \ Keyword
-      | "@"  IdentifierOrKeyword !>> [0-9 A-Z _ a-z]
-      ;
+     = [A-Z _ a-z] !<< IdentifierOrKeyword \ Keyword
+     | "@"  IdentifierOrKeyword
+     ;
       
       
 token IdentifierOrKeyword
-      = IdentifierStartCharacter IdentifierPartCharacter*
-      ;
+    = IdentifierStartCharacter IdentifierPartCharacter*
+    ;
       
 token IdentifierStartCharacter
-      = LetterCharacter
-      | "_"
-      ;
+    = LetterCharacter
+    | "_"
+    ;
 
 token IdentifierPartCharacter
-      = LetterCharacter
-      | DecimalDigitCharacter
-      | "_"
+    = LetterCharacter
+    | DecimalDigitCharacter
+    | "_"
       //| ConnectingCharacter
       //| CombiningCharacter
       //| FormattingCharacter
-      ;
+    ;
      
-lexical LetterCharacter
-     = [a-zA-Z] //Lu | Ll | Lt | Lm | Lo | Nl
-     ; 
+token LetterCharacter
+    = [a-zA-Z] //Lu | Ll | Lt | Lm | Lo | Nl
+    ; 
      
 //lexical CombiningCharacter
 //      = Mn | Mc
 //      ;
       
-lexical DecimalDigitCharacter
-      = [0-9] //Nd
-      ;
+token DecimalDigitCharacter
+     = [0-9] //Nd
+     ;
        
 //lexical ConnectingCharacter  
 //      = Pc
@@ -149,7 +149,7 @@ lexical DecimalDigitCharacter
       
 // Keywords      
   
-lexical Keyword  
+token Keyword  
       = "abstract"   
       | "as"
       | "base"
@@ -235,143 +235,142 @@ lexical Keyword
       
 lexical Literal_
      = BooleanLiteral_
-     | IntegerLiteral_
-     | RealLiteral_
+     | [A-Za-z0-9] !<< IntegerLiteral_
+     | [A-Za-z0-9] !<< RealLiteral_
      | CharacterLiteral_
      | StringLiteral_
      | NullLiteral_
      ;
      
-lexical BooleanLiteral_
-      = "true"
-      | "false"
-      ;
+token BooleanLiteral_
+    = "true"
+    | "false"
+    ;
      
 lexical IntegerLiteral_
      = DecimalIntegerLiteral
      | HexadecimalIntegerLiteral
      ;
      
-lexical DecimalIntegerLiteral
-     = DecimalDigit+ !>> [0-9 U u L l F  f  D  d  M  m xX] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu" 
-     | DecimalDigit+ IntegerTypeSuffix
-     ;
+token DecimalIntegerLiteral
+    = DecimalDigit+ 
+    | DecimalDigit+ IntegerTypeSuffix
+    ;
      
-lexical DecimalDigit
-      = [0-9]
-      ;     
+token DecimalDigit
+    = [0-9]
+    ;     
      
-lexicalIntegerTypeSuffix
-      = "U" | "u" | "L" | "l" | "UL" | "Ul" | "uL" | "ul" | "LU" | "Lu" | "lU" | "lu"
-      ;
+token IntegerTypeSuffix
+    = "U" | "u" | "L" | "l" | "UL" | "Ul" | "uL" | "ul" | "LU" | "Lu" | "lU" | "lu"
+    ;
       
-lexical HexadecimalIntegerLiteral 
-     = [0][xX]   HexDigit+ !>>[0-9  A-F  a-f U u L l] !>> "UL" !>> "Ul" !>> "uL" !>> "ul" !>> "LU" !>> "Lu" !>> "lU" !>> "lu"
-     | [0][xX]   HexDigit+ IntegerTypeSuffix
-     ;      
+token HexadecimalIntegerLiteral 
+    = [0][xX]   HexDigit+
+    | [0][xX]   HexDigit+ IntegerTypeSuffix
+    ;      
       
-lexical HexDigit
-      = [0-9  A-F  a-f]
-      ;
+token HexDigit
+    = [0-9  A-F  a-f]
+    ;
       
-lexical RealLiteral_
+token RealLiteral_
      = DecimalDigit+  "."   DecimalDigit+   ExponentPart?   RealTypeSuffix
-     | DecimalDigit+  "."   DecimalDigit+  !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
-     | [0-9] !<< "."  DecimalDigit+ !>> [0-9]  ExponentPart?   !>> [F  f  D  d  M  m]
-     | [0-9] !<< "."  DecimalDigit+  ExponentPart?   RealTypeSuffix  !>> [F  f  D  d  M  m]
+     | DecimalDigit+  "."   DecimalDigit+  ExponentPart?
+     | "."  DecimalDigit+ ExponentPart?
+     | "."  DecimalDigit+  ExponentPart?   RealTypeSuffix
      | DecimalDigit+   ExponentPart   RealTypeSuffix?
      | DecimalDigit+   RealTypeSuffix
      ;
             
-lexical  ExponentPart
-     = [eE]   Sign?   DecimalDigit+ !>> [0-9]
-     ;
+token  ExponentPart
+    = [eE]   Sign?   DecimalDigit+
+    ;
       
-lexical Sign 
-     = [+  \-]
-     ;
+token Sign 
+    = [+  \-]
+    ;
 
-lexical RealTypeSuffix 
-      = [F  f  D  d  M  m]
-      ;
+token RealTypeSuffix 
+    = [F  f  D  d  M  m]
+    ;
       
-lexical CharacterLiteral_
-     = [\']   Character   [\']
-     ;
+token CharacterLiteral_
+    = [\']   Character   [\']
+    ;
      
-lexical Character
-      = SingleCharacter
-      | SimpleEscapeSequence
-      | HexadecimalEscapeSequence
-      | UnicodeEscapeSequence
-      ; 
+token Character
+    = SingleCharacter
+    | SimpleEscapeSequence
+    | HexadecimalEscapeSequence
+    | UnicodeEscapeSequence
+    ; 
 
-lexical SingleCharacter
-      = ![] \ [\' \\ \r \n \u0085 \u2028 \u2029]
-      ;
+token SingleCharacter
+    = ![\' \\ \r \n \u0085 \u2028 \u2029]
+    ;
       
-lexical SimpleEscapeSequence
-      = [\\][\']
-      | [\\][\"]
-      | [\\][\\]
-      | [\\][0]
-      | [\\][a]
-      | [\\][b]
-      | [\\][f]
-      | [\\][n]
-      | [\\][r]
-      | [\\][t]
-      | [\\][v]
-      ;
+token SimpleEscapeSequence
+    = [\\][\']
+    | [\\][\"]
+    | [\\][\\]
+    | [\\][0]
+    | [\\][a]
+    | [\\][b]
+    | [\\][f]
+    | [\\][n]
+    | [\\][r]
+    | [\\][t]
+    | [\\][v]
+    ;
       
-lexical HexadecimalEscapeSequence
-     = "\\x"   HexDigit   !>> HexDigit
-     | "\\x"   HexDigit   HexDigit !>> HexDigit
-     | "\\x"   HexDigit   HexDigit   HexDigit !>> HexDigit
-     | "\\x"   HexDigit   HexDigit   HexDigit    HexDigit
-     ;
+token HexadecimalEscapeSequence
+    = "\\x"   HexDigit
+    | "\\x"   HexDigit   HexDigit
+    | "\\x"   HexDigit   HexDigit   HexDigit
+    | "\\x"   HexDigit   HexDigit   HexDigit    HexDigit
+    ;
      
-lexical StringLiteral_
-      = RegularStringLiteral
-      | VerbatimStringLiteral
-      ;
+token StringLiteral_
+    = RegularStringLiteral
+    | VerbatimStringLiteral
+    ;
       
-lexical RegularStringLiteral
-      = [\"]   RegularStringLiteralCharacter*   [\"]
-      ;
+token RegularStringLiteral
+    = [\"]   RegularStringLiteralCharacter*   [\"]
+    ;
       
-lexical RegularStringLiteralCharacter
-      = SingleRegularStringLiteralCharacter
-      | SimpleEscapeSequence
-      | HexadecimalEscapeSequence
-      | UnicodeEscapeSequence
-      ;
+token RegularStringLiteralCharacter
+    = SingleRegularStringLiteralCharacter
+    | SimpleEscapeSequence
+    | HexadecimalEscapeSequence
+    | UnicodeEscapeSequence
+    ;
      
-lexical SingleRegularStringLiteralCharacter
-      = ![] \ [\" \\  \r \n \u0085 \u2028 \u2029]
-      ;
+token SingleRegularStringLiteralCharacter
+    = ![\" \\  \r \n \u0085 \u2028 \u2029]
+    ;
 
-lexical VerbatimStringLiteral 
-      = "@" [\"]   VerbatimStringLiteralCharacter*   [\"] !>> [\"]
-      ;
+token VerbatimStringLiteral 
+    = "@" [\"]   VerbatimStringLiteralCharacter*   [\"] !>> [\"]
+    ;
 
-lexical VerbatimStringLiteralCharacter
-      = SingleVerbatimStringLiteralCharacter
-      | QuoteEscapeSequence
-      ;
+token VerbatimStringLiteralCharacter
+    = SingleVerbatimStringLiteralCharacter
+    | QuoteEscapeSequence
+    ;
 
-lexical SingleVerbatimStringLiteralCharacter
-     = ![] \ [\"]
-     ;
+token SingleVerbatimStringLiteralCharacter
+    = ![\"]
+    ;
 
-lexical QuoteEscapeSequence
-      = [\"][\"]
-      ;
+token QuoteEscapeSequence
+    = [\"][\"]
+    ;
 
-lexical NullLiteral_
-      = "null"
-      ;
-      
+token NullLiteral_
+    = "null"
+    ;
       
 // Operators and punctuators   
    
@@ -424,13 +423,13 @@ lexical OperatorOrPunctuator
      | "=\>"
      ;
       
-lexical RightShift
-      = "\>\>"
-      ;
+token RightShift
+    = "\>\>"
+    ;
       
-lexical RightShiftAssignment
-     = "\>\>="
-     ;
+token RightShiftAssignment
+    = "\>\>="
+    ;
      
 // Conditional directives with evalutation
 
@@ -514,10 +513,10 @@ lexical PpDeclaration
       | "#"   Whitespace?   "undef"   Whitespace   ConditionalSymbol sym do ppDeclare(sym, false); PpNewLine
       ;
       
-lexical PpNewLine 
-      = WhitespaceNoNL? SingleLineComment? NewLine
-      | WhitespaceNoNL? SingleLineComment? $$
-      ;
+token PpNewLine 
+    = WhitespaceNoNL? SingleLineComment? NewLine
+    | WhitespaceNoNL? SingleLineComment? $$
+    ;
 
 lexical PpConditional 
       = PpIfSection   PpElifSection*   PpElseSection?   PpEndif
@@ -551,8 +550,8 @@ lexical SkippedSectionPart
       | NewLine
       ;
 
-lexical SkippedCharacters
-     = ![#] \ [\ \t \f \r \n /]
+token SkippedCharacters
+     = ![# \ \t \f \r \n /]
      | [/] !>> [/] 
      ;
      
@@ -577,24 +576,24 @@ lexical PpEndRegion
       ;
       
       
-lexical PpLine
-     =  "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
-     ;
+token PpLine
+    =  "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
+    ;
      
-lexical LineIndicator 
-     = DecimalDigit+   Whitespace   FileName 
-     | DecimalDigit+
-     | "default" 
-     | "hidden"
-     ;
+token LineIndicator 
+    = DecimalDigit+   Whitespace   FileName 
+    | DecimalDigit+
+    | "default" 
+    | "hidden"
+    ;
 
-lexical FileName 
-     = "\""   FileNameCharacter+   "\""
-     ;
+token FileName 
+    = "\""   FileNameCharacter+   "\""
+    ;
 
-lexical FileNameCharacter 
-     = ![] \ [\"]
-     ;
+token FileNameCharacter 
+    = ![\"]
+    ;
 
 lexical PpPragma 
      = "#"   Whitespace?   "pragma"   Whitespace   PragmaBody
@@ -609,14 +608,14 @@ lexical PragmaWarningBody
      | "warning"   Whitespace   WarningAction   Whitespace   WarningList
      ;
 
-lexical WarningAction 
-      = "disable"
-      | "restore"
-      ;
+token WarningAction 
+    = "disable"
+    | "restore"
+    ;
 
 lexical WarningList 
-      = DecimalDigit+ !>> [0-9]
-      | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+ !>> [0-9]
-      ;
-  
-  
+     = DecimalDigit+
+     | WarningList   Whitespace?   ","   Whitespace?   DecimalDigit+
+     ;
+
+    
