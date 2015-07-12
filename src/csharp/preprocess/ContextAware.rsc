@@ -352,7 +352,7 @@ token SingleRegularStringLiteralCharacter
     ;
 
 token VerbatimStringLiteral 
-    = "@" [\"]   VerbatimStringLiteralCharacter*   [\"] !>> [\"]
+    = "@" [\"]   VerbatimStringLiteralCharacter*   [\"]
     ;
 
 token VerbatimStringLiteralCharacter
@@ -550,7 +550,7 @@ lexical SkippedSectionPart
       | NewLine
       ;
 
-token SkippedCharacters
+lexical SkippedCharacters
      = ![# \ \t \f \r \n /]
      | [/] !>> [/] 
      ;
