@@ -334,6 +334,7 @@ lexical HexadecimalEscapeSequence
 lexical StringLiteral_
       = RegularStringLiteral
       | VerbatimStringLiteral
+      | "$" RegularStringLiteral
       ;
       
 lexical RegularStringLiteral

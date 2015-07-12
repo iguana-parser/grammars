@@ -171,7 +171,7 @@ syntax ParenthesizedExpression
      ;
 
 syntax MemberAccess
-     = PrimaryExpression   "."   Identifier  TypeArgumentList?
+     = PrimaryExpression "?"?  "."   Identifier  TypeArgumentList?
      | PredefinedType   "."   Identifier  TypeArgumentList?
      | QualifiedAliasMember   "."   Identifier
      ;
@@ -181,7 +181,7 @@ syntax InvocationExpression
      ;
 
 syntax ElementAccess
-     = PrimaryNoArrayCreationExpression   "["   ArgumentList   "]"
+     = PrimaryNoArrayCreationExpression "?"?  "["   ArgumentList   "]"
      | ArrayCreationExpression   "["   ArgumentList   "]"  // To allow parsing string s = new string[] {"a", "b"} [1]
      ;
 
@@ -1063,6 +1063,7 @@ syntax MemberName
 
 syntax MethodBody
      = Block
+     | "=\>" Expression ";"  // C# 6 Expression Bodied methods
      | ";"
      ;
 
@@ -1096,7 +1097,8 @@ syntax ParameterArray
      ;
 
 syntax PropertyDeclaration
-     = Attributes?   PropertyModifier*   Type   MemberName   "{"   AccessorDeclarations   "}"
+     = Attributes?   PropertyModifier*   Type   MemberName   "{"   AccessorDeclarations "}" ("=" Expression ";")?  // Property auto initalizer
+     | Attributes?   PropertyModifier*   Type   MemberName   "=\>" Expression  ";"      // C# 6 Expression Bodied Properties
      ;
 
 syntax PropertyModifier

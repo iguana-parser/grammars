@@ -239,6 +239,7 @@ lexical Literal_
      | [A-Za-z0-9] !<< RealLiteral_
      | CharacterLiteral_
      | StringLiteral_
+     | InterpolatedString
      | NullLiteral_
      ;
      
@@ -334,7 +335,7 @@ token HexadecimalEscapeSequence
 token StringLiteral_
     = RegularStringLiteral
     | VerbatimStringLiteral
-    ;
+    ;    
       
 token RegularStringLiteral
     = [\"]   RegularStringLiteralCharacter*   [\"]
@@ -371,6 +372,71 @@ token QuoteEscapeSequence
 token NullLiteral_
     = "null"
     ;
+    
+lexical InterpolatedString
+    = "$" [\"] [\"]
+    | "$" [\"] InterpolatedStringLiteralCharacters [\"]
+    ;
+        
+lexical InterpolatedStringLiteralCharacters
+    = InterpolatedStringLiteralPart+
+    ;
+    
+lexical InterpolatedStringLiteralPart
+    = SingleInterpolatedStringLiteralCharacter
+    | InterpolatedStringEscapeSequence
+    | Interpolation
+    ;
+
+token SingleInterpolatedStringLiteralCharacter    
+    = ![\" { }]
+    ;    
+    
+token InterpolatedStringEscapeSequence
+    = [\"][\"]
+    | "{{"
+    | "}}"
+    ;
+    
+lexical Interpolation
+    = "{" InterpolationContents "}"
+    ;
+    
+lexical InterpolationContents
+   = BalancedText
+   | BalancedText ":" InterpolationFormat
+   ;
+
+lexical BalancedText
+    = BalancedTextPart+
+    ;
+
+lexical BalancedTextPart
+    = ![@ \" $ ( \[ {]
+    | VerbatimStringLiteral
+    | "@" IdentifierOrKeyword
+    | RegularStringLiteral
+    | InterpolatedString
+    | "(" BalancedText ")"
+    | "[" BalancedText "]"
+    | "{" BalancedText "}"
+    | DelimitedComment
+    | SingleLineComment
+    | Expression
+    ;
+
+token InterpolationFormat
+    = LiteralInterpolationFormat
+    ;
+
+token LiteralInterpolationFormat
+    = InterpolationFormatPart+
+    ;
+
+token InterpolationFormatPart
+    = [\" : { } \r \n]
+    ;
+
       
 // Operators and punctuators   
    
