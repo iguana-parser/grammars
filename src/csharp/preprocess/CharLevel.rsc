@@ -1,4 +1,4 @@
-module csharp::preprocess::Lexical
+module csharp::preprocess::CharLevel
 
 lexical Input
      = InputSection*

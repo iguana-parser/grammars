@@ -513,10 +513,10 @@ lexical PpDeclaration
       | "#"   Whitespace?   "undef"   Whitespace   ConditionalSymbol sym do ppDeclare(sym, false); PpNewLine
       ;
       
-token PpNewLine 
-    = WhitespaceNoNL? SingleLineComment? NewLine
-    | WhitespaceNoNL? SingleLineComment? $$
-    ;
+lexical PpNewLine 
+     = WhitespaceNoNL? SingleLineComment? NewLine
+     | WhitespaceNoNL? SingleLineComment? $$
+     ;
 
 lexical PpConditional 
       = PpIfSection   PpElifSection*   PpElseSection?   PpEndif
@@ -576,7 +576,7 @@ lexical PpEndRegion
       ;
       
       
-token PpLine
+lexical PpLine
     =  "#"   Whitespace?   "line"   Whitespace   LineIndicator   PpNewLine
     ;
      
