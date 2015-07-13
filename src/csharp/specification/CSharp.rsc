@@ -223,6 +223,7 @@ syntax MemberInitializerList
 
 syntax MemberInitializer
      = Identifier   "="   InitializerValue
+     | "[" Expression "]" "=" Expression
      ;
 
 syntax InitializerValue
@@ -242,6 +243,7 @@ syntax ElementInitializerList
 syntax ElementInitializer
      = NonAssignmentExpression
      | "{"   ExpressionList   "}"
+     | "[" Expression "]" "=" Expression
      ;
 
 syntax ExpressionList
@@ -1183,6 +1185,7 @@ syntax RemoveAccessorDeclaration
 
 syntax IndexerDeclaration
      = Attributes?   IndexerModifier*   IndexerDeclarator   "{"   AccessorDeclarations   "}"
+     | Attributes?   IndexerModifier*   IndexerDeclarator   "=\>" Expression ";"
      ;
 
 syntax IndexerModifier

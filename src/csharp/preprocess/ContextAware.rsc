@@ -374,8 +374,8 @@ token NullLiteral_
     ;
     
 lexical InterpolatedString
-    = "$" [\"] [\"]
-    | "$" [\"] InterpolatedStringLiteralCharacters [\"]
+    = "$" "@"? [\"] [\"]
+    | "$" "@"? [\"] InterpolatedStringLiteralCharacters [\"]
     ;
         
 lexical InterpolatedStringLiteralCharacters
