@@ -9,9 +9,7 @@
 
 module c::specification::C
 
-extend c::specification::Lexical;
-extend c::specification::Preprocessor;
-
+extend c::specification::ContextAware;
 
 // External definitions
 

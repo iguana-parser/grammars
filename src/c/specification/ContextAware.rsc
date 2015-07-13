@@ -128,18 +128,15 @@ token IntegerConstant
       ;
 
 token DecimalConstant
-      = NonZeroDigit
-      | DecimalConstant Digit
+      = NonZeroDigit Digit*
       ;
 
 token OctalConstant
-      = "0"
-      | OctalConstant OctalDigit
+      = "0" OctalDigit*
       ;
 
 token HexadecimalConstant
-      = HexadecimalPrefix HexadecimalDigit 
-      | HexadecimalConstant HexadecimalDigit
+      = HexadecimalPrefix HexadecimalDigit+ 
       ;
 
 token HexadecimalPrefix
@@ -230,7 +227,7 @@ token FloatingSuffix
       = [flFL]
       ;
 
-token EnumerationConstant
+lexical EnumerationConstant
       = Identifier
       ;
 
@@ -278,7 +275,7 @@ token OctalEscapeSequence
       ;
 
 token HexadecimalEscapeSequence
-      = ("\\x"? HexadecimalDigit)+
+      = "\\x" HexadecimalDigit+
       ;
 
 // String literals
