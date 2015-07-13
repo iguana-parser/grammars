@@ -394,8 +394,11 @@ token SingleInterpolatedStringLiteralCharacter
     
 token InterpolatedStringEscapeSequence
     = [\"][\"]
-    | "{{"
-    | "}}"
+    | [\\][\"]
+    | [{][{]
+    | [\\][{]
+    | [}][}]
+    | [\\][}]
     ;
     
 lexical Interpolation
@@ -667,12 +670,17 @@ lexical PpPragma
 
 lexical PragmaBody 
      = PragmaWarningBody
+     | PragmaChecksumBody
      ;
 
 lexical PragmaWarningBody 
      = "warning"   Whitespace   WarningAction   NewLine
      | "warning"   Whitespace   WarningAction   Whitespace   WarningList
      ;
+     
+token PragmaChecksumBody
+    = "checksum" Whitespace StringLiteral_ Whitespace StringLiteral_ Whitespace StringLiteral_
+    ;      
 
 token WarningAction 
     = "disable"

@@ -807,7 +807,7 @@ syntax CatchClauses
      ;
 
 syntax SpecificCatchClause
-     = "catch"   "("   TypeName   Identifier?   ")"  ("if"   "("   BooleanExpression   ")")?   Block  // if condition added to comply with C# 6
+     = "catch"   "("   TypeName   Identifier?   ")"  ( ("if" | "when")   "("   BooleanExpression   ")")?   Block  // if condition added to comply with C# 6
      ;
 
 syntax GeneralCatchClause
