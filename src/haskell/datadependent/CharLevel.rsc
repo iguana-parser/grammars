@@ -1,4 +1,4 @@
-module haskell::datadependent::Lexical
+module haskell::datadependent::CharLevel
 
 lexical LiteralH 
       = Integer !>> "." !>> "#"    // !>> "." is added to disambiguate 2.2

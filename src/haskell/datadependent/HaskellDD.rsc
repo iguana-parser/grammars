@@ -1,6 +1,6 @@
 module haskell::datadependent::HaskellDD
 
-extend haskell::datadependent::Lexical;
+extend haskell::datadependent::CharLevel;
 
 syntax Module
      = "module" ModId Exports? "where" Body 

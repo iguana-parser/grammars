@@ -1,15 +1,15 @@
 module haskell::datadependent::ContextAware
 
-lexical LiteralH 
-      = Integer !>> "." !>> "#"    // !>> "." is added to disambiguate 2.2
-      | Integer "#" !>> "#"
+token LiteralH 
+      = Integer 
+      | Integer "#" 
       | Integer "##"
-      | Float !>> "#"
-      | Float "#" !>> "#"
+      | Float 
+      | Float "#" 
       | Float "##"
-      | Char  !>> "#"
+      | Char  
 	  | Char "#"      
-      | String !>> "#"
+      | String
       | String "#"
       ;
 
@@ -36,7 +36,7 @@ lexical WhiteStuff
       ;
 
 token WhiteChar   
-      = [\n \r \t \ \u000B]
+      = [\n \r \t \ \u000B]*
       ;
 
 token NewLine
@@ -63,13 +63,13 @@ lexical NComment
       = "{-" (![{\-] | NComment | "-" !>> [}] | "{" !>> [\-])* "-}"
       ;
 
-lexical Any 
+token Any 
       = Graphic 
       | Space 
       | Tab
       ;
 
-lexical Graphic 
+token Graphic 
       = Small 
       | Large 
       | Symbol 
@@ -79,36 +79,36 @@ lexical Graphic
       | "\'"
  	  ;
  
-lexical Small   
+token Small   
       = AscSmall 
 //     | UniSmall 
       | "_"
       ;
 
-lexical AscSmall    
+token AscSmall    
      =  [a-z]
      ;
 
 //lexical UniSmall    
 //      =   any Unicode lowercase letter;
  
-lexical Large   
+token Large   
       = AscLarge 
 //    | UniLarge
       ;
 
-lexical AscLarge    
+token AscLarge    
       = [A-Z]
       ;
 
 //lexical uniLarge    =   any uppercase or titlecase Unicode letter
 
-lexical Symbol  
+token Symbol  
       = AscSymbol 
 //    | UniSymbol \ Special \ "_" \ "\"" \ "'"
       ;
  
-lexical AscSymbol   
+token AscSymbol   
       = "!" 
       | "#" 
       | "$" 
@@ -133,22 +133,22 @@ lexical AscSymbol
 
 // lexical uniSymbol   =   any Unicode symbol or punctuation
 
-lexical Digit   
+token Digit   
       = AscDigit 
 //    | UniDigit
       ;
 
-lexical AscDigit    
+token AscDigit    
      =  [0-9]
      ;
 
 // lexical uniDigit    =   any Unicode decimal digit
 
-lexical OctIt   
+token OctIt   
       =   [0-7]
       ;
 
-lexical HexIt   
+token HexIt   
       =  Digit 
       |  [A-Fa-f]
       ;
@@ -265,19 +265,19 @@ lexical QConSym
       = (ModId ".")? ConSym
       ;
  
-lexical Decimal 
-      = Digit Digit* !>> [0-9]
+token Decimal 
+      = Digit Digit*
       ;
 
-lexical Octal   
-     =  OctIt OctIt* !>> [0-7]
+token Octal   
+     =  OctIt OctIt*
      ;
 
-lexical Hexadecimal 
-      = HexIt HexIt* !>> [0-9A-Fa-f]
+token Hexadecimal 
+      = HexIt HexIt*
       ;
  
-lexical Integer 
+token Integer 
       = Decimal
       | "0o" Octal 
       | "0O" Octal
@@ -285,7 +285,7 @@ lexical Integer
       | "0X" Hexadecimal
       ;
 
-lexical Float   
+token Float   
       = Decimal "." Decimal Exponent?
       | Decimal Exponent
       ;

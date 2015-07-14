@@ -373,7 +373,7 @@ syntax ElementValuePair
     ;
 
 syntax ElementValue 
-    = Expression
+    = Expression !ao
     | Annotation
     | ElementValueArrayInitializer
     ;
@@ -514,7 +514,7 @@ syntax Expression
      | "void" "." "class"
 	 | Expression !brackets "(" ArgumentList? ")"     
      | Expression !newArray "[" Expression "]"
-     > Expression "++"
+     | Expression "++"
      | Expression "--"
      > up: "+" !>> "+" Expression
      | um: "-" !>> "-" Expression
@@ -538,8 +538,8 @@ syntax Expression
        lt:   Expression "\<" !>> "=" !>> "\<" Expression
      | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
      |       Expression "\<=" Expression
-     |       Expression "\>=" Expression
-     | io:   Expression "instanceof" Type ) 
+     |       Expression "\>=" Expression )
+     | io:   Expression "instanceof" Type
      > left( Expression "==" Expression
      |       Expression "!=" Expression )
      > left  Expression "&" !>> "&" Expression
@@ -548,7 +548,7 @@ syntax Expression
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right Expression "?" Expression ":" Expression 
-     > right Expression !lt !gt AssignmentOperator Expression
+     > right ao: Expression !lt !gt AssignmentOperator Expression
      | brackets: "(" Expression ")"
      | Primary
      ;

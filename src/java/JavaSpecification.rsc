@@ -5,7 +5,7 @@
  */
 module java::JavaSpecification
 
-extend java::\lexical::ContextAware;
+extend java::\lexical::CharLevel;
 
 
 /************************************************************************************************************************
