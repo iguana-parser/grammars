@@ -5,7 +5,7 @@
  */
 module java::JavaNatural
 
-extend java::\lexical::CharLevel;
+extend java::\lexical::ContextAware;
 
 
 /************************************************************************************************************************

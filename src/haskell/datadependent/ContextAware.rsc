@@ -78,6 +78,14 @@ token Graphic
       | "\"" 
       | "\'"
  	  ;
+ 	  
+token GraphicNoQuoate 
+      = Small 
+      | Large 
+      | Symbol 
+      | Digit 
+      | Special 
+ 	  ; 	  
  
 token Small   
       = AscSmall 
@@ -290,21 +298,38 @@ token Float
       | Decimal Exponent
       ;
 
-lexical Exponent    
-      = [eE] [+\-]? Decimal
-      ;
+token Exponent    
+    = [eE] [+\-]? Decimal
+     ;
  
-lexical Char    
-      = "\'" (Graphic \ [\'\\] | Space | Escape \ [\\&]) "\'"
-      ;
+token Char    
+    = "\'" (GraphicNoQuoate | Space | EscapeNoAnd) "\'"
+    ;
 
-lexical String  
-      =  "\"" (Graphic \ [\"\\] | Space | Escape | Gap)* "\""
-      ;
+token String  
+    =  "\"" (GraphicNoQuoate | Space | Escape | Gap)* "\""
+    ;
+
+token EscapeNoAnd
+    = "\\" ( CharEscNoAnd | Ascii | Decimal | ("o" Octal) | ("x" Hexadecimal) )
+    ;
 
 token Escape  
-      = "\\" ( CharEsc | Ascii | Decimal | ("o" Octal) | ("x" Hexadecimal) )
-      ;
+    = "\\" ( CharEsc | Ascii | Decimal | ("o" Octal) | ("x" Hexadecimal) )
+    ;
+      
+token CharEscNoAnd
+    = "a" 
+    | "b" 
+    | "f" 
+    | "n" 
+    | "r" 
+    | "t" 
+    | "v" 
+    | "\\" 
+    | "\"" 
+    | "\'" 
+    ;       
       
 token CharEsc 
       = "a" 

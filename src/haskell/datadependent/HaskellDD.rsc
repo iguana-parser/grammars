@@ -1,6 +1,6 @@
 module haskell::datadependent::HaskellDD
 
-extend haskell::datadependent::CharLevel;
+extend haskell::datadependent::ContextAware;
 
 syntax Module
      = "module" ModId Exports? "where" Body 
