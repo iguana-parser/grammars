@@ -239,6 +239,7 @@ lexical Literal_
      | RealLiteral_
      | CharacterLiteral_
      | StringLiteral_
+     | InterpolatedString
      | NullLiteral_
      ;
      
@@ -334,7 +335,6 @@ lexical HexadecimalEscapeSequence
 lexical StringLiteral_
       = RegularStringLiteral
       | VerbatimStringLiteral
-      | "$" RegularStringLiteral
       ;
       
 lexical RegularStringLiteral
@@ -372,8 +372,74 @@ lexical QuoteEscapeSequence
 lexical NullLiteral_
       = "null"
       ;
-      
-      
+
+lexical InterpolatedString
+    = "$" "@"? [\"] [\"]
+    | "$" "@"? [\"] InterpolatedStringLiteralCharacters [\"]
+    ;
+        
+lexical InterpolatedStringLiteralCharacters
+    = InterpolatedStringLiteralPart+
+    ;
+    
+lexical InterpolatedStringLiteralPart
+    = SingleInterpolatedStringLiteralCharacter
+    | InterpolatedStringEscapeSequence
+    | Interpolation
+    ;
+
+lexical SingleInterpolatedStringLiteralCharacter    
+    = ![\" { }]
+    ;    
+    
+lexical InterpolatedStringEscapeSequence
+    = [\"][\"]
+    | [\\][\"]
+    | [{][{]
+    | [\\][{]
+    | [}][}]
+    | [\\][}]
+    ;
+    
+lexical Interpolation
+    = "{" InterpolationContents "}"
+    ;
+    
+lexical InterpolationContents
+   = BalancedText
+   | BalancedText ":" InterpolationFormat
+   ;
+
+lexical BalancedText
+    = BalancedTextPart+
+    ;
+
+lexical BalancedTextPart
+    = ![@ \" $ ( \[ {]
+    | VerbatimStringLiteral
+    | "@" IdentifierOrKeyword
+    | RegularStringLiteral
+    | InterpolatedString
+    | "(" BalancedText ")"
+    | "[" BalancedText "]"
+    | "{" BalancedText "}"
+    | DelimitedComment
+    | SingleLineComment
+    | Expression
+    ;
+
+lexical InterpolationFormat
+    = LiteralInterpolationFormat
+    ;
+
+lexical LiteralInterpolationFormat
+    = InterpolationFormatPart+
+    ;
+
+lexical InterpolationFormatPart
+    = [\" : { } \r \n]
+    ;
+
 // Operators and punctuators   
    
 lexical OperatorOrPunctuator
@@ -602,13 +668,18 @@ lexical PpPragma
      ;
 
 lexical PragmaBody 
-     = PragmaWarningBody
-     ;
+      = PragmaWarningBody
+      | PragmaChecksumBody
+      ;
 
 lexical PragmaWarningBody 
-     = "warning"   Whitespace   WarningAction   NewLine
-     | "warning"   Whitespace   WarningAction   Whitespace   WarningList
-     ;
+      = "warning"   Whitespace   WarningAction   NewLine
+      | "warning"   Whitespace   WarningAction   Whitespace   WarningList
+      ;
+     
+lexical PragmaChecksumBody
+      = "checksum" Whitespace StringLiteral_ Whitespace StringLiteral_ Whitespace StringLiteral_
+      ;      
 
 lexical WarningAction 
       = "disable"

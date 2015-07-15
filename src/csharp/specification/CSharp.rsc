@@ -9,7 +9,7 @@
  
 module csharp::specification::CSharp
 
-extend csharp::preprocess::ContextAware;
+extend csharp::preprocess::CharLevel;
 
 // Basic concepts
 

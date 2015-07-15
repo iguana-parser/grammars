@@ -539,7 +539,7 @@ syntax Expression
      | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
      |       Expression "\<=" Expression
      |       Expression "\>=" Expression )
-     | io:   Expression "instanceof" Type
+     > io:   Expression "instanceof" Type
      > left( Expression "==" Expression
      |       Expression "!=" Expression )
      > left  Expression "&" !>> "&" Expression
