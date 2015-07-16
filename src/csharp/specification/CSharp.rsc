@@ -9,7 +9,7 @@
  
 module csharp::specification::CSharp
 
-extend csharp::preprocess::CharLevel;
+extend csharp::specification::Lexical;
 
 // Basic concepts
 

@@ -36,7 +36,7 @@ lexical WhiteStuff
       ;
 
 token WhiteChar   
-      = [\n \r \t \ \u000B]*
+      = [\n \r \t \ \u000B]+
       ;
 
 token NewLine
@@ -77,15 +77,7 @@ token Graphic
       | Special 
       | "\"" 
       | "\'"
- 	  ;
- 	  
-token GraphicNoQuoate 
-      = Small 
-      | Large 
-      | Symbol 
-      | Digit 
-      | Special 
- 	  ; 	  
+ 	  ;  
  
 token Small   
       = AscSmall 
@@ -161,25 +153,40 @@ token HexIt
       |  [A-Fa-f]
       ;
       
-lexical QuasiVarId
-     =  [a-zA-Z0-9_] !<< "\'" "\'"? Small (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+token QuasiVarId
+     =  [a-zA-Z0-9_] !<< QuasiVarIdChars 
      ;
+     
+token QuasiVarIdChars
+    = "\'" "\'"? Small (Small | Large | Digit)*
+    ;     
       
-lexical QuasiConId
-     =  [a-zA-Z0-9_] !<< "\'" "\'"? Large (Small | Large | Digit)* !>> [a-zA-Z0-9_\'] 
+token QuasiConId
+     =  [a-zA-Z0-9_] !<< QuasiConIdChars 
      ;
+     
+token QuasiConIdChars
+    = "\'" "\'"? Large (Small | Large | Digit)*
+    ;
  
 lexical VarId   
-      = [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId !>> "#"
-      | [a-zA-Z0-9_] !<< (Small (Small | Large | Digit | "\'")*) !>> [a-zA-Z0-9_\'] \ ReservedId "#"
+      = [a-zA-Z0-9_] !<< VarIdChars \ ReservedId !>> "#"
+      | [a-zA-Z0-9_] !<< VarIdChars \ ReservedId "#"
       | QuasiVarId
       ;
 
+token VarIdChars
+    = Small (Small | Large | Digit | "\'")*
+    ;
+
 lexical ConId   
-      = [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] !>> "#"
-      | [a-zA-Z0-9_] !<< Large (Small | Large | Digit | "\'")* !>> [a-zA-Z0-9_\'] "#"
+      = [a-zA-Z0-9_] !<< ConIdChars
       | QuasiConId
       ;
+      
+token ConIdChars
+    = Large (Small | Large | Digit | "\'")* "#"?
+    ;
 
 lexical ReservedId  
       = "case" 
@@ -228,9 +235,9 @@ lexical ReservedOp
       | "~" 
       | "=\>"
       | "-\<"
-	  | "\>-"
-	  | "-\<\<" 
-	  | "\>\>-" 
+	      | "\>-"
+	      | "-\<\<" 
+	      | "\>\>-" 
       ;
 
 lexical TyVar
@@ -302,12 +309,13 @@ token Exponent
     = [eE] [+\-]? Decimal
      ;
  
+ 
 token Char    
-    = "\'" (GraphicNoQuoate | Space | EscapeNoAnd) "\'"
+    = "\'" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? ^ | \- ~ : 0-9 ( ) , ; \" \[ \] ` { } ] | Space | EscapeNoAnd) "\'"
     ;
 
 token String  
-    =  "\"" (GraphicNoQuoate | Space | Escape | Gap)* "\""
+    =  "\"" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? ^ | \- ~ : 0-9 ( ) , ; \' \[ \] ` { } ] | Space | Escape | Gap)* "\""
     ;
 
 token EscapeNoAnd
