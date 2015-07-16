@@ -1,16 +1,10 @@
 module haskell::datadependent::ContextAware
 
 token LiteralH 
-      = Integer 
-      | Integer "#" 
-      | Integer "##"
-      | Float 
-      | Float "#" 
-      | Float "##"
-      | Char  
-	  | Char "#"      
-      | String
-      | String "#"
+      = Integer "#"? "#"?
+      | Float "#"? "#"?
+      | Char "#"? 
+      | String "#"?
       ;
 
 token Special 
@@ -170,8 +164,7 @@ token QuasiConIdChars
     ;
  
 lexical VarId   
-      = [a-zA-Z0-9_] !<< VarIdChars \ ReservedId !>> "#"
-      | [a-zA-Z0-9_] !<< VarIdChars \ ReservedId "#"
+      = [a-zA-Z0-9_] !<< VarIdChars \ ReservedId "#"? !>> "#"
       | QuasiVarId
       ;
 
@@ -311,11 +304,11 @@ token Exponent
  
  
 token Char    
-    = "\'" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? ^ | \- ~ : 0-9 ( ) , ; \" \[ \] ` { } ] | Space | EscapeNoAnd) "\'"
+    = "\'" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? @ ^ | \- ~ : 0-9 ( ) , ; \" \[ \] ` { } ] | Space | EscapeNoAnd) "\'"
     ;
 
 token String  
-    =  "\"" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? ^ | \- ~ : 0-9 ( ) , ; \' \[ \] ` { } ] | Space | Escape | Gap)* "\""
+    =  "\"" ([a-z _ A-Z ! # $ % & * + . / \< = \> ? @ ^ | \- ~ : 0-9 ( ) , ; \' \[ \] ` { } ] | Space | Escape | Gap)* "\""
     ;
 
 token EscapeNoAnd
