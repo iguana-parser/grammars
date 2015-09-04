@@ -115,12 +115,12 @@ lexical InfixSymbol
       
 lexical InfixSymbol1 
       = "lsl" | "lsr" | "asr" 
-      | [*][*] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      | ([*][*] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "**"
       ;
      
 lexical InfixSymbol2 
       = "mod" | "land"| "lor" | "lxor" 
-      | [/ % *] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      | ([/ % *] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "**"
       ;
        
 lexical InfixSymbol3 
@@ -132,7 +132,15 @@ lexical InfixSymbol4
       ;
       
 lexical InfixSymbol5 
-      = ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "\<-"
+      = ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ InfixSymbol5Exclude 
+      ;
+      
+lexical InfixSymbol5Exclude 
+      = "|" 
+      | "||" 
+      | "&&" 
+      | "&" 
+      | "\<-"
       ;
       
 lexical InfixSymbol6 
@@ -148,6 +156,7 @@ lexical InfixSymbol7
 lexical InfixSymbol8 
       = ":="
       ;
+
 
 keyword Keywords
       = "and"

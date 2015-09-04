@@ -32,7 +32,7 @@ syntax ValuePath
 
 syntax ValueName 
      = LowercaseIdentifier 
-     | "(" OperatorName \ Keywords ")"
+     | "(" OperatorName ")"
      ;
      
 syntax OperatorName
@@ -205,10 +205,10 @@ syntax Expr
      | ifThen: 		 		"if"  Expr "then" Expr !>>> "else"
      //> semicolon: 	 		Expr ";" !>>  ";"
      > right sep: 	 		Expr ";" Expr
-     > match: 		 		"match" Expr "with" PatternMatching
-     | function: 	 		"function" PatternMatching
+     > match: 		 		"match" Expr "with" PatternMatching !>>> "|"
+     | function: 	 		"function" PatternMatching !>>> "|"
      | fun: 		 		"fun" MultipleMatching
-     | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching     
+     | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching !>>> "|"     
      | letbinding: 	 		"let" "rec"? LetBinding ";"? ("and" LetBinding ";"?)* "in" Expr
      | letModule:	 		"let" "module" ModuleExpr "="  ModuleExpr "in"  Expr 
      | letOpen:             "let" "open" ModulePath "in"  Expr
@@ -258,7 +258,7 @@ syntax Arg
      ;
            
 syntax PatternMatching 
-     =  "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching* !>>> "|" 
+     =  "|"? Pattern ("when" Expr)? "-\>" Expr InnerPatternMatching*  
      ;
      
 syntax InnerPatternMatching
