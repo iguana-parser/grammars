@@ -124,7 +124,7 @@ lexical InfixSymbol2
       ;
        
 lexical InfixSymbol3 
-      = [+ \-] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      = ([+ \-] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "-\>"
       ;
       
 lexical InfixSymbol4 
@@ -132,7 +132,7 @@ lexical InfixSymbol4
       ;
       
 lexical InfixSymbol5 
-      = [= \< \> | & $] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      = ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "\<-"
       ;
       
 lexical InfixSymbol6 
