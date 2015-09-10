@@ -2,10 +2,10 @@ module ocaml::specification::ContextAware
 
 // Lexical
 
-token Ident 
-    = LowercaseIdentifier 
-    | CapitalizedIdentifier
-    ; 
+lexical Ident 
+     = LowercaseIdentifier 
+     | CapitalizedIdentifier
+     ; 
 
 // underscore is considered a lower case identifier
 lexical LowercaseIdentifier 
@@ -36,25 +36,25 @@ token NativeIntLiteral
     =  [\-]? SpecialInt [n]
     ;
 
-lexical SpecialInt 
-      = [0-9] [0-9_]* !>> [0-9_.eE]
-      | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eE]  
-      | ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eE]
-      | ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eE]
-      ;
+token SpecialInt 
+    = [0-9] [0-9_]* 
+    | ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]*   
+    | ("0o"| "0O") [0-7] [0-7_]*
+    | ("0b"| "0B") [0-1] [0-1_]*
+    ;
 
-lexical IntegerLiteral 
-      = [\-]? [0-9] [0-9_]* !>> [0-9_.eElLn]
-      | [\-]? ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]* !>> [0-9_A-Fa-f.eElLn]  
-      | [\-]? ("0o"| "0O") [0-7] [0-7_]* !>> [0-7_.eElLn]
-      | [\-]? ("0b"| "0B") [0-1] [0-1_]* !>> [0-1_.eElLn]
- 	  ;
+token IntegerLiteral 
+    = [\-]? [0-9] [0-9_]*
+    | [\-]? ("0x"| "0X") [0-9A-Fa-f][0-9A-Fa-f_]*  
+    | [\-]? ("0o"| "0O") [0-7] [0-7_]* 
+    | [\-]? ("0b"| "0B") [0-1] [0-1_]* 
+ 	;
  					   
-lexical FloatLiteral 
-      = [\-]? [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-]             // only with e
-	  | [\-]? [0-9] [0-9_]* [.] [0-9_]* !>> [0-9_.eE\-]                           // only with .
-      | [\-]? [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]* !>> [0-9_.eE\-] // with both . and e
-	  ;
+token FloatLiteral 
+    = [\-]? [0-9] [0-9_]* [eE] [+\-]? [0-9] [0-9_]*              // only with e
+	| [\-]? [0-9] [0-9_]* [.] [0-9_]*                      		 // only with .
+    | [\-]? [0-9] [0-9_]* [.] [0-9_]* [eE] [+\-]? [0-9] [0-9_]*  // with both . and e
+	;
 					 
 token CharLiteral 
     = [\'] (RegularChar | EscapeSequence) [\']
@@ -90,25 +90,25 @@ token OperatorChar
     ;
 
 lexical PrefixSymbol 
-      = ([!] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "!="
-   	  | [? ~] OperatorChar+  !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
+      = ([!] OperatorChar*) \ "!="
+   	  | [? ~] OperatorChar+ 
 	  ;
 
 lexical Label 
       =	"~" LowercaseIdentifier !>> ":"
       ;
                        
-token LabelColon 
-    = "~" LowercaseIdentifier ":"
-    ;
+lexical LabelColon 
+      = "~" LowercaseIdentifier ":"
+      ;
       
 lexical OptLabel 
       = "?" LowercaseIdentifier !>> ":"
       ;
       
-token OptLabelColon 
-    = "?" LowercaseIdentifier ":"
-    ;	
+lexical OptLabelColon 
+      = "?" LowercaseIdentifier ":"
+      ;	
       
 lexical InfixSymbol
       = InfixSymbol1
@@ -122,43 +122,52 @@ lexical InfixSymbol
       ;      
       
 token InfixSymbol1 
-    = "lsl" | "lsr" | "asr" 
-    | [*][*] OperatorChar*
-    ;
+      = "lsl" | "lsr" | "asr" 
+      | [*][*] OperatorChar+
+      ;
      
-token InfixSymbol2 
-    = "mod" | "land"| "lor" | "lxor" 
-    | [/ % *] OperatorChar* 
-    ;
+lexical InfixSymbol2 
+      = "mod" | "land"| "lor" | "lxor" 
+      | ([/ % *] OperatorChar*) \ "**"
+      ;
        
-token InfixSymbol3 
-    = [+ \-] OperatorChar*
-    ;
+lexical InfixSymbol3 
+      = ([+ \-] OperatorChar*) \ "-\>"
+      ;
       
 token InfixSymbol4 
-    = [@ ^] OperatorChar*
-    ;
+      = [@ ^] OperatorChar*
+      ;
       
-token InfixSymbol5 
-    = [= \< \> | & $] OperatorChar*
-    ;
+lexical InfixSymbol5 
+      = ([= \< \> | & $] OperatorChar*) \ InfixSymbol5Exclude 
+      ;
+      
+token InfixSymbol5Exclude 
+      = "|" 
+      | "||" 
+      | "&&" 
+      | "&" 
+      | "\<-"
+      ;
       
 token InfixSymbol6 
-	= "&" !>> [&] 
-    | "&&"
-    ;
+	  = "&" 
+      | "&&"
+      ;
                             
 token InfixSymbol7 
-    = "||" 
-    | "or"
-    ;
+      = "||" 
+      | "or"
+      ;
       
 token InfixSymbol8 
-    = ":="
-    ;
+      = ":="
+      ;
 
 keyword Keywords
-      = "and"
+      = "_"
+      | "and"
 	  | "as"
 	  | "assert"
 	  | "asr"
@@ -213,48 +222,6 @@ keyword Keywords
 	  | "when"
 	  | "while"
 	  | "with"
-	  | "!="
-	  | "#"
-	  | "&"
-	  | "&&"
-	  | "\'"
-      | "("
- 	  | ")"
-	  | "*"
-	  | "+"
- 	  | ","
-	  | "-"
-	  | "-."
-	  | "-\>"
-	  | "."
-	  | ".."
-   	  | ":"
-	  | "::"
-	  | ":="
-	  | ":\>"
-	  | ";"
-	  | ";;"
-	  | "\<"
-      | "\<-"
-      | "="
-      | "\>"
-      | "\>]"
-      | "\>}"
-      | "?"
-      | "["
-      | "[\<"
-      | "[\>"
-      | "[|"
-      | "]"
-      | "_"
-      | "`"
-      | "{"
-      | "{\<"
-      | "|"
-      | "|]"
-      | "||"
-      | "}"
-      | "~"
 	  ;
 	  
 
@@ -263,9 +230,9 @@ lexical Comment
       ;         
 	
 token Whitespace 
-    = [\ \t\n\r \u0009-\u000D]*
+    = [\ \t\n\r \u0009-\u000D]+
     ;
 	
 layout Layout 
-     = (Comment | Whitespace)* !>> "(*"
+     = (Comment | Whitespace)* !>> [\ \t\n\r \u0009-\u000D] !>> "(*"
      ;

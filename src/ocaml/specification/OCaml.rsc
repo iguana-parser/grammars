@@ -315,8 +315,8 @@ syntax Pattern_
      ;            
          
 syntax Constant 
-     = posInt: 			 [\-] !<< IntegerLiteral
-     | floatLiteral: 	 [\-] !<< FloatLiteral
+     = posInt: 			 [\-] !<< IntegerLiteral !>> [0-9_A-Fa-f.eElLn]
+     | floatLiteral: 	 [\-] !<< FloatLiteral !>> [0-9_.eE\-]
      | charLiteral: 	 CharLiteral
      | stringLiteral: 	 StringLiteral1
      | constr: 			 Constr
