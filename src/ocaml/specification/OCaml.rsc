@@ -8,7 +8,7 @@
 
 module ocaml::specification::OCaml
 
-extend ocaml::specification::Lexical;
+extend ocaml::specification::ContextAware;
 
 // Top-level     		
 

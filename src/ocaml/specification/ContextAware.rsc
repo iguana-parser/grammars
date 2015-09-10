@@ -128,20 +128,20 @@ token InfixSymbol1
      
 lexical InfixSymbol2 
       = "mod" | "land"| "lor" | "lxor" 
-      | ([/ % *] OperatorChar*) \ "**"
+      | ([/ % *] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "**"
       ;
        
 lexical InfixSymbol3 
-      = ([+ \-] OperatorChar*) \ "-\>"
+      = ([+ \-] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ "-\>"
       ;
       
-token InfixSymbol4 
-      = [@ ^] OperatorChar*
+lexical InfixSymbol4 
+      = [@ ^] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
       ;
       
-lexical InfixSymbol5 
-      = "!="
-      | ([ = \< \> | & $] OperatorChar*) \ InfixSymbol5Exclude 
+lexical InfixSymbol5
+      = "!=" 
+      | ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ InfixSymbol5Exclude 
       ;
       
 token InfixSymbol5Exclude 
