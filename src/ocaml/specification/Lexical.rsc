@@ -131,8 +131,9 @@ lexical InfixSymbol4
       = [@ ^] OperatorChar* !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~]
       ;
       
-lexical InfixSymbol5 
-      = ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ InfixSymbol5Exclude 
+lexical InfixSymbol5
+      = "!=" 
+      | ([= \< \> | & $] OperatorChar*) !>> [! $ % & * + \- . / : \< = \> ? @ ^ | ~] \ InfixSymbol5Exclude 
       ;
       
 lexical InfixSymbol5Exclude 

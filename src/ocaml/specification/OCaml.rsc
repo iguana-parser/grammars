@@ -178,7 +178,7 @@ syntax Expr
      | dotBracket1: 		    Expr ".(" Expr ")"
      | dotBracket2: 		    Expr ".[" Expr "]"
      | dotBracket3: 		    Expr ".{" Expr "}"
-     > hash: 				Expr "#" MethodName
+     | hash: 				Expr "#" MethodName
      > non-assoc 
      (
      functionApplication: 	Expr !comma  Arg+
@@ -195,7 +195,6 @@ syntax Expr
      > right coloncolon:	Expr "::" Expr
      > right infix4: 		Expr InfixSymbol4 Expr
      > left  infix5: 		Expr InfixSymbol5 Expr
-     | left  uneq:   		Expr "!=" Expr
      > right infix6: 		Expr InfixSymbol6 Expr
      > right infix7: 		Expr InfixSymbol7 Expr
      > non-assoc comma: 	Expr ("," Expr_2)+
@@ -245,15 +244,15 @@ syntax Expr_2
      
 syntax Arg 
  	 =                Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma 
+ 	                       !coloncolon !infix4 !infix5 !infix6 !infix7 !comma 
  	                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule 
  	 | label:         Label
      | labelColon:    LabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
-                                      !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
+                                      !coloncolon !infix4 !infix5 !infix6 !infix7 !comma  
                                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      | optlabel:      OptLabel
      | optlabelColon: OptLabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
-                                         !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
+                                         !coloncolon !infix4 !infix5 !infix6 !infix7 !comma  
                                          !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      ;
            

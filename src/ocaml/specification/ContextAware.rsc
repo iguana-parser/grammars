@@ -140,7 +140,8 @@ token InfixSymbol4
       ;
       
 lexical InfixSymbol5 
-      = ([= \< \> | & $] OperatorChar*) \ InfixSymbol5Exclude 
+      = "!="
+      | ([ = \< \> | & $] OperatorChar*) \ InfixSymbol5Exclude 
       ;
       
 token InfixSymbol5Exclude 
