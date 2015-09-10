@@ -120,7 +120,7 @@ syntax ExtendedModuleName
 // Type expressions
 
 syntax Typexpr 
-     = non-assoc "?"? LabelName ":" Typexpr 
+     = "?"? LabelName ":" Typexpr 
      > Typexpr TypeConstr
      > non-assoc star: Typexpr "*" {Typexpr_ "*"}+
      > right arrow: Typexpr "-\>" Typexpr
@@ -174,10 +174,10 @@ syntax TagSpecFull
 
 syntax Expr 
      = prefix: 				PrefixSymbol Expr
-     > non-assoc field: 			Expr "." Ident  
-     | non-assoc dotBracket1: 		Expr ".(" Expr ")"
-     | non-assoc dotBracket2: 		Expr ".[" Expr "]"
-     | non-assoc dotBracket3: 		Expr ".{" Expr "}"
+     > field: 			    Expr "." Ident  
+     | dotBracket1: 		    Expr ".(" Expr ")"
+     | dotBracket2: 		    Expr ".[" Expr "]"
+     | dotBracket3: 		    Expr ".{" Expr "}"
      > hash: 				Expr "#" MethodName
      > non-assoc 
      (
@@ -187,7 +187,7 @@ syntax Expr
      | lazy: 				"lazy" Expr
      | assertExpr: 			"assert" Expr
      )
-     > unaryMinus: 			"-"  Expr 
+     > unaryMinus:          "-"  Expr 
      | floatUnaryMinus:     "-." Expr
      > right infix1: 		Expr InfixSymbol1 Expr
      > left  infix2: 		Expr InfixSymbol2 Expr
@@ -207,7 +207,7 @@ syntax Expr
      > right sep: 	 		Expr ";" Expr
      > match: 		 		"match" Expr "with" PatternMatching !>>> "|"
      | function: 	 		"function" PatternMatching !>>> "|"
-     | fun: 		 		"fun" MultipleMatching
+     | fun: 		 		    "fun" MultipleMatching
      | tryBlock: 	 		"try" Expr ";"? "with" PatternMatching !>>> "|"     
      | letbinding: 	 		"let" "rec"? LetBinding ";"? ("and" LetBinding ";"?)* "in" Expr
      | letModule:	 		"let" "module" ModuleExpr "="  ModuleExpr "in"  Expr 
@@ -247,14 +247,14 @@ syntax Arg
  	 =                Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
  	                       !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma 
  	                       !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule 
- 	| label: 		  Label
+ 	 | label:         Label
      | labelColon:    LabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       			  !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
- 	                       			  !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
+                                      !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
+                                      !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      | optlabel:      OptLabel
      | optlabelColon: OptLabelColon Expr !functionApplication !lazy !assertExpr !unaryMinus !floatUnaryMinus !infix1 !infix2 !infix3 
- 	                       				 !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
- 	                       				 !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
+                                         !coloncolon !infix4 !infix5 !uneq !infix6 !infix7 !comma  
+                                         !infix8 !ifThenElse !ifThen !sep !match !function !fun !tryBlock !letbinding !letModule
      ;
            
 syntax PatternMatching 
@@ -359,7 +359,7 @@ syntax ModuleExpr
      = modulePath: ModulePath
      |             "struct" ";;"? ModuleItems? "end"
      | 			   "functor" "(" ModuleName ":" ModuleType ")" "-\>" ModuleExpr
-     |  		   "functor" "(" ")" "-\>" ModuleExpr
+     |  		       "functor" "(" ")" "-\>" ModuleExpr
      | 		       ModuleExpr "(" ModuleExpr? ")"
      |   		   ModuleExpr "(" ModuleExpr ":" ModuleType ")"
      |             "(" ModuleExpr ")"
