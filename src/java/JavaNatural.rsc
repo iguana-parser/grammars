@@ -238,40 +238,19 @@ syntax ClassBody
     ;
 
 syntax ClassBodyDeclaration
-     = ClassMemberDeclaration
-     | InstanceInitializer
-     | StaticInitializer 
+     = "static"? Block
      | ConstructorDeclaration
-     ;
-     
-syntax InstanceInitializer
-     = Block
-     ;
-     
-syntax StaticInitializer
-     = "static" Block
-     ;
-
-syntax ConstructorDeclaration
-     = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
-     ;
-     
-syntax ConstructorDeclarator
-     = TypeParameters? Identifier "(" FormalParameterList? ")"
-     ;
-     
-syntax ConstructorBody
-     = Block
-     ;
-     
-syntax ClassMemberDeclaration
-     = FieldDeclaration 
+     | FieldDeclaration 
      | MethodDeclaration 
      | ClassDeclaration 
      | InterfaceDeclaration
      | ";"
-	 ;
-	 
+     ;
+     
+syntax ConstructorDeclaration
+     = ConstructorModifier* TypeParameters? Identifier "(" FormalParameterList? ")" Throws? Block
+     ;
+     
 /************************************************************************************************************************
  * Interfaces
  ***********************************************************************************************************************/	 
