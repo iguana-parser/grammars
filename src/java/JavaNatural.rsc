@@ -13,8 +13,8 @@ extend java::\lexical::ContextAware;
  ***********************************************************************************************************************/
 
 syntax Type 
-     = PrimitiveType 
-     | ReferenceType
+     = PrimitiveType ("[" "]")*
+     | ReferenceType ("[" "]")*
      ;
 
 syntax PrimitiveType 
@@ -29,8 +29,7 @@ syntax PrimitiveType
      ;
      
 syntax ReferenceType
-     = TypeDeclSpecifier TypeArguments?
-     | ArrayType
+     = Identifier TypeArguments? ( "." Identifier TypeArguments? )*
      ;
      
 syntax ReferenceTypeNonArrayType
@@ -69,9 +68,9 @@ syntax TypeArguments
      = "\<" {TypeArgument ","}+ "\>" 
      ;
         
-syntax TypeArgument  // fix: changed ReferenceType to Type to deal with primitive array types such as < String[] > 
-     = Type
-     | "?" (("extends" | "super") Type)?  
+syntax TypeArgument 
+     = simpleTypeArgument:   Type
+     | wildCardTypeArgument: "?" (("extends" | "super") Type)?  
      ;
 
 syntax QualifiedIdentifier 
@@ -164,7 +163,7 @@ syntax ConstructorBody
      ;
      
 syntax NonWildTypeArguments
-     = "\<" { ReferenceType ","}+ "\>"
+     = "\<" { Type ","}+ "\>"
      ;
 
 syntax ClassMemberDeclaration
@@ -513,7 +512,7 @@ syntax Expression
      | Type "." "class"
      | "void" "." "class"
 	 | Expression !brackets "(" ArgumentList? ")"     
-     | Expression !newArray "[" Expression "]"
+     | Expression "[" Expression "]"
      | Expression "++"
      | Expression "--"
      > up: "+" !>> "+" Expression
@@ -524,8 +523,7 @@ syntax Expression
      | "~" Expression
      | "new" ClassInstanceCreationExpression
      | newArray: "new" ArrayCreationExpression
-     | "(" PrimitiveType ")" Expression
-     | "(" ReferenceType ")" Expression !up !um 
+     | "(" Type ")" Expression 
      > left( Expression "*" Expression 
      |       Expression "/" Expression
      |       Expression "%" Expression )

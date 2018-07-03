@@ -21,7 +21,7 @@ syntax TopLevelPhrase
    	 | Expr
    	 ;
    	 
-syntax CompilationUnit
+start syntax CompilationUnit
      = ModuleItems?
      ;    	 
    	  
