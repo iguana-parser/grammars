@@ -92,26 +92,45 @@ syntax PackageDeclaration
      ;  
   
 syntax ImportDeclaration 
-    = "import"  "static"?  {Identifier "."}+ ("." "*")? ";" 
+    = "import" "static"? {Identifier "."}+ ("." "*")? ";" 
     ;
   
-syntax TypeDeclaration 
+syntax TypeDeclaration
     = ClassDeclaration
-    | InterfaceDeclaration 
-    | ";" 
-    ;  
+    | InterfaceDeclaration
+    | ";"
+    ;
     
- /************************************************************************************************************************
- * Classes
- ***********************************************************************************************************************/
-  
 syntax ClassDeclaration 
      = NormalClassDeclaration
      | EnumDeclaration
      ;
     
+syntax InterfaceDeclaration 
+     = NormalInterfaceDeclaration
+     | AnnotationTypeDeclaration
+     ;
+
 syntax NormalClassDeclaration 
-    = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
+     = ClassModifier* "class" Identifier TypeParameters? ("extends" Type)? ("implements" TypeList)? ClassBody;
+    
+
+syntax EnumDeclaration
+     = ClassModifier* "enum" Identifier ("implements" TypeList)? EnumBody
+     ;
+     
+syntax NormalInterfaceDeclaration 
+     = InterfaceModifier* "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody
+     ;
+
+syntax AnnotationTypeDeclaration 
+     = InterfaceModifier* "@" "interface" Identifier AnnotationTypeBody
+     ;
+    
+ /************************************************************************************************************************
+ * Classes
+ ***********************************************************************************************************************/
+      
 
 syntax ClassModifier
      = Annotation
@@ -177,16 +196,7 @@ syntax ClassMemberDeclaration
 /************************************************************************************************************************
  * Interfaces
  ***********************************************************************************************************************/	 
-
-syntax InterfaceDeclaration 
-     = NormalInterfaceDeclaration
-     | AnnotationTypeDeclaration
-     ;  
-	 
-syntax NormalInterfaceDeclaration 
-     =  InterfaceModifier* "interface" Identifier TypeParameters? ("extends" TypeList)? InterfaceBody
-     ;
-     
+	      
 syntax InterfaceModifier
      = Annotation
      | "public"
@@ -229,10 +239,6 @@ syntax AbstractMethodModifier
      | "public"
      | "abstract"
      ;          
-
-syntax AnnotationTypeDeclaration 
-     = InterfaceModifier* "@" "interface" Identifier AnnotationTypeBody
-     ;
      
 syntax AnnotationTypeBody
      = "{" AnnotationTypeElementDeclaration* "}"
@@ -389,10 +395,6 @@ syntax ElementValues
  * Enums
  ***********************************************************************************************************************/
      
-syntax EnumDeclaration
-     = ClassModifier* "enum" Identifier ("implements" TypeList)? EnumBody
-     ;
-
 syntax EnumBody
      = "{" {EnumConstant ","}* ","? EnumBodyDeclarations? "}"
      ;     
