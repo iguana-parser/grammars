@@ -297,12 +297,12 @@ syntax DefaultValue
  ***********************************************************************************************************************/
 	 
 syntax FieldDeclaration
-     = FieldModifier* Type VariableDeclarators ";"
+     = FieldModifier* Type {VariableDeclarator ","}+ ";"
      ;
 
-syntax VariableDeclarators 
-    = {VariableDeclarator ","}+
-    ;
+syntax VariableDeclarators
+     = {VariableDeclarator ","}+
+     ;
 
 syntax VariableDeclarator
      = VariableDeclaratorId ("=" VariableInitializer)?
@@ -326,11 +326,7 @@ syntax ArrayInitializer
  ***********************************************************************************************************************/
 
 syntax MethodDeclaration
-     = MethodHeader MethodBody
-     ;
-     
-syntax MethodHeader 
-     = MethodModifier* TypeParameters? Result MethodDeclarator Throws?
+     = MethodModifier* TypeParameters? Result MethodDeclarator Throws? MethodBody
      ;
      
 syntax MethodDeclarator
@@ -430,9 +426,13 @@ syntax Statement
      | "if" "(" Expression ")" Statement !>>> "else"
      | "if" "(" Expression ")" Statement "else" Statement
      | "while" "(" Expression ")" Statement
-     | "for" "(" ForInit? ";" Expression? ";" ForUpdate? ")" Statement
-     | "for" "(" FormalParameter ":" Expression ")" Statement
+     | "for" "(" ForControl ")" Statement
      ;
+
+syntax ForControl
+	= ForInit? ";" Expression? ";" ForUpdate?
+	| FormalParameter ":" Expression
+	;
 
 syntax StatementExpression
      = Expression !lt !gt
