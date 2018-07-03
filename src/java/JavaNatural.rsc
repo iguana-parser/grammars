@@ -32,24 +32,30 @@ syntax ReferenceType
      = Identifier TypeArguments? ( "." Identifier TypeArguments? )*
      ;
      
-syntax ReferenceTypeNonArrayType
-     = TypeDeclSpecifier TypeArguments?
+syntax TypeArguments 
+     = "\<" {TypeArgument ","}+ "\>" 
      ;
-     
+        
+syntax TypeArgument 
+     = simpleTypeArgument:   Type
+     | wildCardTypeArgument: "?" (("extends" | "super") Type)?  
+     ;     
+
 syntax TypeList
      = {Type ","}+
+     ;
+     
+syntax NonWildTypeArguments
+     = "\<" { Type ","}+ "\>"
      ;     
      
-syntax TypeName
-     = QualifiedIdentifier
-     ;
+syntax TypeArgumentsOrDiamond 
+     = "\<" "\>" 
+     | TypeArguments
+     ;     
      
-syntax TypeVariable
-     = Identifier
-     ;
-     
-syntax ArrayType
-     = Type "[" "]"
+syntax ReferenceTypeNonArrayType
+     = TypeDeclSpecifier TypeArguments?
      ;
      
 syntax TypeParameters 
@@ -62,17 +68,20 @@ syntax TypeParameter
      
 syntax TypeBound 
      = "extends" {ReferenceType "&"}+
-     ;  
-       
-syntax TypeArguments 
-     = "\<" {TypeArgument ","}+ "\>" 
+     ;      
+      
+syntax TypeName
+     = QualifiedIdentifier
      ;
-        
-syntax TypeArgument 
-     = simpleTypeArgument:   Type
-     | wildCardTypeArgument: "?" (("extends" | "super") Type)?  
+     
+syntax TypeVariable
+     = Identifier
      ;
-
+     
+syntax ArrayType
+     = Type "[" "]"
+     ;
+          
 syntax QualifiedIdentifier 
      = {Identifier "."}+;
 
@@ -143,6 +152,87 @@ syntax ClassModifier
      | "strictfp"
      ;
      
+syntax ConstructorModifier
+     = Annotation 
+     | "public"
+     | "protected"
+     | "private"
+     ;
+     
+syntax InterfaceModifier
+     = Annotation
+     | "public"
+     | "protected"
+     | "private"
+     | "abstract"
+     | "static"
+     | "strictfp"
+     ;
+     
+syntax ConstantModifier
+     = Annotation
+     | "public"
+     | "static"
+     | "final"
+     ;
+
+syntax AbstractMethodModifier
+     = Annotation
+     | "public"
+     | "abstract"
+     ;          
+     
+syntax FieldModifier
+     = Annotation 
+     | "public" 
+     | "protected" 
+     | "private"
+     | "static"
+     | "final" 
+     | "transient"
+     | "volatile"
+     ;
+
+syntax MethodModifier 
+     = Annotation
+     | "public" 
+     | "protected"
+     | "private"
+     | "abstract" 
+     | "static"
+     | "final"
+     | "synchronized"
+     | "native"
+     | "strictfp"
+     ;
+     
+/************************************************************************************************************************
+ * Annotations
+ ***********************************************************************************************************************/
+  
+syntax Annotation 
+    = "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
+    ;
+    
+syntax AnnotationElement
+    = { ElementValuePair "," }+
+    | { ElementValue "," }+
+    ;        
+
+syntax ElementValuePair 
+    = Identifier "=" ElementValue
+    ;
+
+syntax ElementValue 
+    = Expression !ao
+    | Annotation
+    | ElementValueArrayInitializer
+    ;
+
+syntax ElementValueArrayInitializer 
+    = "{" { ElementValue "," }* ","? "}"
+    ;
+    
 syntax ClassBody 
     = "{" ClassBodyDeclaration* "}"
     ;
@@ -165,13 +255,6 @@ syntax StaticInitializer
 syntax ConstructorDeclaration
      = ConstructorModifier* ConstructorDeclarator Throws? ConstructorBody
      ;
-
-syntax ConstructorModifier
-     = Annotation 
-     | "public"
-     | "protected"
-     | "private"
-     ;
      
 syntax ConstructorDeclarator
      = TypeParameters? Identifier "(" FormalParameterList? ")"
@@ -181,10 +264,6 @@ syntax ConstructorBody
      = Block
      ;
      
-syntax NonWildTypeArguments
-     = "\<" { Type ","}+ "\>"
-     ;
-
 syntax ClassMemberDeclaration
      = FieldDeclaration 
      | MethodDeclaration 
@@ -196,17 +275,7 @@ syntax ClassMemberDeclaration
 /************************************************************************************************************************
  * Interfaces
  ***********************************************************************************************************************/	 
-	      
-syntax InterfaceModifier
-     = Annotation
-     | "public"
-     | "protected"
-     | "private"
-     | "abstract"
-     | "static"
-     | "strictfp"
-     ;
-     
+	           
 syntax InterfaceBody
      = "{" InterfaceMemberDeclaration* "}"
      ;
@@ -222,24 +291,11 @@ syntax InterfaceMemberDeclaration
 syntax ConstantDeclaration
      = ConstantModifier* Type VariableDeclarators ";"
      ;
-     
-syntax ConstantModifier
-     = Annotation
-     | "public"
-     | "static"
-     | "final"
-     ;
-     
+          
 syntax AbstractMethodDeclaration
      = AbstractMethodModifier* TypeParameters? Result MethodDeclarator Throws? ";"
      ;
-     
-syntax AbstractMethodModifier
-     = Annotation
-     | "public"
-     | "abstract"
-     ;          
-     
+          
 syntax AnnotationTypeBody
      = "{" AnnotationTypeElementDeclaration* "}"
      ;
@@ -263,17 +319,6 @@ syntax DefaultValue
 	 
 syntax FieldDeclaration
      = FieldModifier* Type VariableDeclarators ";"
-     ;
-
-syntax FieldModifier
-     = Annotation 
-     | "public" 
-     | "protected" 
-     | "private"
-     | "static"
-     | "final" 
-     | "transient"
-     | "volatile"
      ;
 
 syntax VariableDeclarators 
@@ -332,19 +377,6 @@ syntax LastFormalParameter
      | FormalParameter
      ;
      
-syntax MethodModifier 
-     = Annotation
-     | "public" 
-     | "protected"
-     | "private"
-     | "abstract" 
-     | "static"
-     | "final"
-     | "synchronized"
-     | "native"
-     | "strictfp"
-     ;
-     
 syntax Result
      = Type
      | "void"
@@ -361,34 +393,6 @@ syntax ExceptionType
 syntax MethodBody
      = Block
      | ";"
-     ;
-
-    
-/************************************************************************************************************************
- * Annotations
- ***********************************************************************************************************************/
-  
-syntax Annotation 
-    = "@" TypeName  "(" {ElementValuePair ","}* ")"
-    | "@" TypeName ( "(" ElementValue ")" )? 
-    ;
-
-syntax ElementValuePair 
-    = Identifier "=" ElementValue
-    ;
-
-syntax ElementValue 
-    = Expression !ao
-    | Annotation
-    | ElementValueArrayInitializer
-    ;
-
-syntax ElementValueArrayInitializer 
-    = "{" ElementValues? ","? "}"
-    ;
-
-syntax ElementValues 
-     = {ElementValue ","}+
      ;
 
 /************************************************************************************************************************
@@ -563,12 +567,7 @@ syntax Primary
 syntax ClassInstanceCreationExpression
      =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
      ;
-     
-syntax TypeArgumentsOrDiamond 
-     = "\<" "\>" 
-     | TypeArguments
-     ;     
-     
+          
 syntax ArgumentList
      = {Expression ","}+
      ;     
