@@ -206,6 +206,11 @@ syntax MethodModifier
      | "strictfp"
      ;
      
+syntax VariableModifier 
+    = Annotation
+    | "final"
+    ;     
+     
 /************************************************************************************************************************
  * Annotations
  ***********************************************************************************************************************/
@@ -330,8 +335,7 @@ syntax MethodDeclaration
      ;
      
 syntax MethodDeclarator
-     = Identifier "(" FormalParameterList? ")"
-     | MethodDeclarator "[" "]"
+     = Identifier "(" FormalParameterList? ")" ("[" "]")*
      ;
      
 syntax FormalParameterList
@@ -340,12 +344,7 @@ syntax FormalParameterList
      
 syntax FormalParameter
      = VariableModifier* Type VariableDeclaratorId
-     ;         
-
-syntax VariableModifier 
-    = "final"
-    | Annotation
-    ;
+     ;
 
 syntax LastFormalParameter
      = VariableModifier* Type "..." VariableDeclaratorId
