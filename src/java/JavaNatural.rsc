@@ -394,22 +394,22 @@ syntax LocalVariableDeclarationStatement
 syntax Statement
      = Block
      | ";" 
-     | StatementExpression ";"
-     | "assert" Expression (":" Expression)? ";" 
-     | "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
-     | "do" Statement "while" "(" Expression ")" ";" 
-     | "break" Identifier? ";" 
-     | "continue" Identifier? ";" 
-     | "return" Expression? ";" 
-     | "synchronized" "(" Expression ")" Block 
-     | "throw" Expression ";" 
-     | "try" Block (CatchClause+ | (CatchClause* Finally))
-     | "try" ResourceSpecification Block CatchClause* Finally? 
-     | Identifier ":" Statement
-     | "if" "(" Expression ")" Statement !>>> "else"
-     | "if" "(" Expression ")" Statement "else" Statement
-     | "while" "(" Expression ")" Statement
-     | "for" "(" ForControl ")" Statement
+     | expressionStmt: Expression !lt !gt ";"
+     | assertStmt: "assert" Expression (":" Expression)? ";" 
+     | switchStmt: "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
+     | doStmt: "do" Statement "while" "(" Expression ")" ";" 
+     | breakStmt: "break" Identifier? ";" 
+     | continueStmt: "continue" Identifier? ";" 
+     | returnStmt: "return" Expression? ";" 
+     | synchronizedStmt: "synchronized" "(" Expression ")" Block 
+     | throwStmt: "throw" Expression ";" 
+     | tryStmt: "try" Block (CatchClause+ | (CatchClause* Finally))
+     | tryWithResourcesStmt: "try" ResourceSpecification Block CatchClause* Finally? 
+     | labelStmt: Identifier ":" Statement
+     | ifStmt: "if" "(" Expression ")" Statement !>>> "else"
+     | ifElseStmt: "if" "(" Expression ")" Statement "else" Statement
+     | whileStmt: "while" "(" Expression ")" Statement
+     | forStmt: "for" "(" ForControl ")" Statement
      ;
 
 syntax ForControl
@@ -417,9 +417,6 @@ syntax ForControl
 	| FormalParameter ":" Expression
 	;
 
-syntax StatementExpression
-     = Expression !lt !gt
-     ;
     
 syntax CatchClause 
     = "catch" "(" VariableModifier* CatchType Identifier ")" Block
@@ -459,12 +456,12 @@ syntax LocalVariableDeclaration
     ;
 
 syntax ForInit 
-     = {StatementExpression ","}+
+     = {Expression ","}+
      | LocalVariableDeclaration
      ;
      
 syntax ForUpdate 
-     = {StatementExpression ","}+
+     = {Expression ","}+
      ;    
 
 /************************************************************************************************************************
