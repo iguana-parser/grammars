@@ -63,25 +63,13 @@ syntax TypeParameters
      ;
 
 syntax TypeParameter 
-     = TypeVariable TypeBound?
+     = Identifier TypeBound?
      ;     
      
 syntax TypeBound 
      = "extends" {ReferenceType "&"}+
      ;      
       
-syntax TypeName
-     = QualifiedIdentifier
-     ;
-     
-syntax TypeVariable
-     = Identifier
-     ;
-     
-syntax ArrayType
-     = Type "[" "]"
-     ;
-          
 syntax QualifiedIdentifier 
      = {Identifier "."}+;
 
@@ -243,7 +231,7 @@ syntax ClassBody
     ;
 
 syntax ClassBodyDeclaration
-     = "static"? Block
+     = Initializer
      | ConstructorDeclaration
      | FieldDeclaration 
      | MethodDeclaration 
@@ -251,6 +239,10 @@ syntax ClassBodyDeclaration
      | InterfaceDeclaration
      | ";"
      ;
+     
+syntax Initializer
+     = "static"? Block
+     ;     
      
 syntax ConstructorDeclaration
      = ConstructorModifier* TypeParameters? Identifier "(" FormalParameterList? ")" Throws? Block
@@ -273,7 +265,7 @@ syntax InterfaceMemberDeclaration
      ;
      
 syntax ConstantDeclaration
-     = ConstantModifier* Type VariableDeclarators ";"
+     = ConstantModifier* Type {VariableDeclarator ","}+ ";"
      ;
           
 syntax AbstractMethodDeclaration
@@ -303,10 +295,6 @@ syntax DefaultValue
 	 
 syntax FieldDeclaration
      = FieldModifier* Type {VariableDeclarator ","}+ ";"
-     ;
-
-syntax VariableDeclarators
-     = {VariableDeclarator ","}+
      ;
 
 syntax VariableDeclarator
@@ -357,13 +345,9 @@ syntax Result
      ;
 
 syntax Throws
-     = "throws" {ExceptionType ","}+
+     = "throws" {QualifiedIdentifier ","}+
      ;
      
-syntax ExceptionType
-     = TypeName
-     ;    
-            
 syntax MethodBody
      = Block
      | ";"
@@ -404,7 +388,7 @@ syntax BlockStatement
      ;
 
 syntax LocalVariableDeclarationStatement 
-     = VariableModifier*  Type VariableDeclarators ";"
+     = VariableModifier* Type {VariableDeclarator ","}+ ";"
      ;
 
 syntax Statement
