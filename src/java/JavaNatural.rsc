@@ -394,7 +394,7 @@ syntax LocalVariableDeclarationStatement
 syntax Statement
      = Block
      | ";" 
-     | expressionStmt: Expression !lt !gt ";"
+     | expressionStmt: Expression ";"
      | assertStmt: "assert" Expression (":" Expression)? ";" 
      | switchStmt: "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
      | doStmt: "do" Statement "while" "(" Expression ")" ";" 
@@ -489,29 +489,19 @@ syntax Expression
      | "new" ClassInstanceCreationExpression
      | newArray: "new" ArrayCreationExpression
      | "(" Type ")" Expression 
-     > left( Expression "*" Expression 
-     |       Expression "/" Expression
-     |       Expression "%" Expression )
-     > left( Expression "+" !>> "+" Expression
-     |       Expression "-" !>> "-" Expression )
-     > left( Expression "\<\<" Expression 
-     |       Expression "\>\>" !>> "\>" Expression
-     |       Expression "\>\>\>" Expression )
-     > left( 
-       lt:   Expression "\<" !>> "=" !>> "\<" Expression
-     | gt:   Expression "\>" !>> "=" !>> "\>" Expression 
-     |       Expression "\<=" Expression
-     |       Expression "\>=" Expression )
+     > left Expression ("*" | "/" | "%") Expression 
+     > left Expression ("+" !>> "+" | "-" !>> "-") Expression
+     > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
+     > left Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
      > io:   Expression "instanceof" Type
-     > left( Expression "==" Expression
-     |       Expression "!=" Expression )
+     > left  Expression ("==" | "!=") Expression
      > left  Expression "&" !>> "&" Expression
      > left  Expression "^" Expression
      > left  Expression "|" !>> "|" Expression 
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right Expression "?" Expression ":" Expression 
-     > right ao: Expression !lt !gt AssignmentOperator Expression
+     > right ao: Expression AssignmentOperator Expression
      | brackets: "(" Expression ")"
      | Primary
      ;
