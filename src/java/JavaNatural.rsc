@@ -469,48 +469,51 @@ syntax ForUpdate
  ***********************************************************************************************************************/
 
 syntax Expression
-     = Expression !io "." Identifier
+     = Expression "." Identifier
      | Expression "." "this"
 	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
 	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
      | Expression "." "super" ("." Identifier)? Arguments
-     | Type "." "class"
-     | "void" "." "class"
-	 | Expression !brackets "(" ArgumentList? ")"     
-     | Expression "[" Expression "]"
-     | Expression "++"
-     | Expression "--"
-     > up: "+" !>> "+" Expression
-     | um: "-" !>> "-" Expression
-     | "++" Expression
-     | "--" Expression 
-     | "!" Expression
-     | "~" Expression
-     | "new" ClassInstanceCreationExpression
+	 | methodCall: Expression !brackets "(" ArgumentList? ")"     
+     | arrayAccess: Expression "[" Expression "]"
+     | postfix: Expression ("++" | "--")
+     > unaryPlusMinus: ("+" !>> "+" | "-" !>> "-") Expression
+     | prefix: ("++" | "--" | "!" | "~") Expression
+     | newClass: "new" ClassInstanceCreationExpression
      | newArray: "new" ArrayCreationExpression
-     | "(" Type ")" Expression 
+     | caseExpr: "(" Type ")" Expression !unaryPlusMinus
      > left Expression ("*" | "/" | "%") Expression 
      > left Expression ("+" !>> "+" | "-" !>> "-") Expression
-     > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
-     > left Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
-     > io:   Expression "instanceof" Type
+     > left shiftExpr: Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
+     > left comparisonExpr: Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
+     > instanceOfExpr:   Expression "instanceof" Type
      > left  Expression ("==" | "!=") Expression
      > left  Expression "&" !>> "&" Expression
      > left  Expression "^" Expression
      > left  Expression "|" !>> "|" Expression 
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
-     > right Expression "?" Expression ":" Expression 
-     > right ao: Expression AssignmentOperator Expression
+     > right conditionalExpr: Expression "?" Expression ":" Expression 
+     > right ao: Expression !comparisonExpr AssignmentOperator Expression
      | brackets: "(" Expression ")"
-     | Primary
+     | primary: Primary
      ;
+     
+syntax FieldAccess
+	= Expression "." Identifier
+     | Expression "." "this"
+	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
+     | Expression "." "super" ("." Identifier)? Arguments
+     ;     
      
 syntax Primary
 	 = Literal
      | "this"
      | "super"
      | Identifier
+     | Type "." "class"
+     | "void" "." "class"
      ;     
 
 syntax ClassInstanceCreationExpression
