@@ -245,8 +245,17 @@ syntax Initializer
      ;     
      
 syntax ConstructorDeclaration
-     = ConstructorModifier* TypeParameters? Identifier "(" FormalParameterList? ")" Throws? Block
+     = ConstructorModifier* TypeParameters? Identifier "(" FormalParameterList? ")" Throws? ConstructorBody
      ;
+     
+syntax ConstructorBody
+    = "{" ExplicitConstructorInvocation? BlockStatement* "}"
+    ;
+
+syntax ExplicitConstructorInvocation
+    = constructorInvocation: NonWildTypeArguments? "this" Arguments ";"
+    | superConstructorInvocation: (Primary ".")? NonWildTypeArguments? "super" Arguments ";"
+    ;     
      
 /************************************************************************************************************************
  * Interfaces
@@ -431,11 +440,7 @@ syntax Finally
     ;
 
 syntax ResourceSpecification 
-    = "(" Resources ";"? ")"
-    ;
-
-syntax Resources 
-    = {Resource ";"}+
+    = "(" { Resource ";"}+ ";"? ")"
     ;
 
 syntax Resource 
@@ -443,11 +448,11 @@ syntax Resource
      ; 
 
 syntax SwitchBlockStatementGroup 
-	     = SwitchLabel+ BlockStatement+
+	 = SwitchLabel+ BlockStatement+
      ;
 
 syntax SwitchLabel 
-     = "case" ConstantExpression ":"
+     = "case" Expression ":"
      | "default" ":"
      ;
 
@@ -469,23 +474,17 @@ syntax ForUpdate
  ***********************************************************************************************************************/
 
 syntax Expression
-     = Expression "." Identifier
-     | Expression "." "this"
-	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
-	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
-     | Expression "." "super" ("." Identifier)? Arguments
-	 | methodCall: Expression !brackets "(" ArgumentList? ")"     
+     = fieldAccess: Expression "." Selector
+     | methodCall: MethodInvocation     
      | arrayAccess: Expression "[" Expression "]"
      | postfix: Expression ("++" | "--")
-     > unaryPlusMinus: ("+" !>> "+" | "-" !>> "-") Expression
-     | prefix: ("++" | "--" | "!" | "~") Expression
-     | newClass: "new" ClassInstanceCreationExpression
-     | newArray: "new" ArrayCreationExpression
-     | caseExpr: "(" Type ")" Expression !unaryPlusMinus
+     > prefix: ("+" !>> "+" | "-" !>> "-" | "++" | "--" | "!" | "~") Expression
+     | newClass: "new" (ClassInstanceCreationExpression | ArrayCreationExpression)
+     | castExpr: "(" Type ")" Expression
      > left Expression ("*" | "/" | "%") Expression 
      > left Expression ("+" !>> "+" | "-" !>> "-") Expression
-     > left shiftExpr: Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
-     > left comparisonExpr: Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
+     > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
+     > left Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
      > instanceOfExpr:   Expression "instanceof" Type
      > left  Expression ("==" | "!=") Expression
      > left  Expression "&" !>> "&" Expression
@@ -494,28 +493,33 @@ syntax Expression
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right conditionalExpr: Expression "?" Expression ":" Expression 
-     > right ao: Expression !comparisonExpr AssignmentOperator Expression
-     | brackets: "(" Expression ")"
+     > right aassignment: Expression !comparisonExpr AssignmentOperator Expression
      | primary: Primary
      ;
-     
-syntax FieldAccess
-	= Expression "." Identifier
-     | Expression "." "this"
-	 | Expression "." "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
-	 | Expression "." NonWildTypeArguments ExplicitGenericInvocationSuffix     
-     | Expression "." "super" ("." Identifier)? Arguments
-     ;     
-     
-syntax Primary
-	 = Literal
-     | "this"
-     | "super"
-     | Identifier
-     | Type "." "class"
-     | "void" "." "class"
-     ;     
 
+syntax Primary
+	 = literalPrimary: Literal
+     | thisPrimary: "this"
+     | superPrimary: "super"
+     | idPrimary: Identifier
+     | typePrimary: Type "." "class"
+     | voidPrimary: "void" "." "class"
+     | parExprPrimary: "(" Expression ")"
+     ;
+     
+syntax Selector
+	= Identifier
+ 	| "this"
+	| "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	| NonWildTypeArguments ExplicitGenericInvocationSuffix     
+    | "super" ("." Identifier)? Arguments
+    | MethodInvocation
+    ;     
+     
+syntax MethodInvocation
+     = Identifier "(" ArgumentList? ")"
+     ;     
+     
 syntax ClassInstanceCreationExpression
      =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
      ;
@@ -525,7 +529,7 @@ syntax ArgumentList
      ;     
 
 syntax ArrayCreationExpression
-	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")*
+	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")* !>>> "["
 	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
 
@@ -533,18 +537,10 @@ syntax DimExpr
      = "[" Expression "]"
      ;
      
-syntax ConstantExpression
-     = Expression
-     ;
-     
 syntax ClassName
 	 = QualifiedIdentifier
 	 ;
-	 
-syntax MethodName
-     = QualifiedIdentifier
-     ;
-     
+	      
 syntax TypeDeclSpecifier
      = Identifier (TypeArguments? "." Identifier)*
      ;     
