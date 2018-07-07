@@ -375,7 +375,7 @@ syntax EnumConstant
      ;
      
 syntax Arguments
-     = "(" ArgumentList? ")"
+     = "(" { Expression "," }* ")"
      ;
      
 syntax EnumBodyDeclarations
@@ -493,8 +493,8 @@ syntax Expression
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right conditionalExpr: Expression "?" Expression ":" Expression 
-     > right aassignment: Expression !comparisonExpr AssignmentOperator Expression
-     | primary: Primary
+     > right assignmentExpr: Expression !comparisonExpr AssignmentOperator Expression
+     | primaryExpr: Primary
      ;
 
 syntax Primary
@@ -510,24 +510,20 @@ syntax Primary
 syntax Selector
 	= Identifier
  	| "this"
-	| "new" TypeArguments? Identifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody?
+	| "new" TypeArguments? Identifier TypeArgumentsOrDiamond? Arguments ClassBody?
 	| NonWildTypeArguments ExplicitGenericInvocationSuffix     
     | "super" ("." Identifier)? Arguments
     | MethodInvocation
     ;     
      
 syntax MethodInvocation
-     = Identifier "(" ArgumentList? ")"
+     = Identifier Arguments
      ;     
      
 syntax ClassInstanceCreationExpression
-     =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? "(" ArgumentList? ")" ClassBody? 
+     =  TypeArguments? TypeDeclSpecifier TypeArgumentsOrDiamond? Arguments ClassBody? 
      ;
           
-syntax ArgumentList
-     = {Expression ","}+
-     ;     
-
 syntax ArrayCreationExpression
 	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")* !>>> "["
 	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer

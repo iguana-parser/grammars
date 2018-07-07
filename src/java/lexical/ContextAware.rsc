@@ -139,12 +139,12 @@ keyword Keyword
 //----------------------------------------------------------------------------------------------------------------
 
 lexical Literal 
-      = IntegerLiteral
-      | FloatingPointLiteral
-      | BooleanLiteral
-      | CharacterLiteral
-      | StringLiteral
-      | NullLiteral
+      = integerLiteral:   IntegerLiteral
+      | floatLiteral:     FloatingPointLiteral
+      | booleanLiteral:   BooleanLiteral
+      | characterLiteral: CharacterLiteral
+      | stringLiteral:    StringLiteral
+      | nullLiteral:      NullLiteral
       ; 
     
 lexical IntegerLiteral 
