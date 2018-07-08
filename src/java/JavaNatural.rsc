@@ -525,14 +525,10 @@ syntax ClassInstanceCreationExpression
      ;
           
 syntax ArrayCreationExpression
-	 = (PrimitiveType | ReferenceType) DimExpr+ ("[" "]")* !>>> "["
+	 = (PrimitiveType | ReferenceType) ("[" Expression "]")+ ("[" "]")* !>>> "["
 	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
 
-syntax DimExpr
-     = "[" Expression "]"
-     ;
-     
 syntax ClassName
 	 = QualifiedIdentifier
 	 ;
