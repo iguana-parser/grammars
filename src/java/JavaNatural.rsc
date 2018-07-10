@@ -496,20 +496,23 @@ syntax Expression
 syntax Primary
 	 = literalPrimary: Literal
      | thisPrimary: "this"
-     | superPrimary: "super"
+     | superPrimary: "super" SuperSuffix
      | idPrimary: Identifier
-     | typePrimary: Type "." "class"
-     | voidPrimary: "void" "." "class"
+     | typeLiteralPrimary: (Type | "void") "." "class"
      | parExprPrimary: "(" Expression ")"
      ;
      
+syntax SuperSuffix
+     = "." Identifier Arguments?
+     ;  
+     
 syntax Selector
-	= Identifier
- 	| "this"
-	| "new" TypeArguments? Identifier TypeArgumentsOrDiamond? Arguments ClassBody?
-	| NonWildTypeArguments ExplicitGenericInvocationSuffix     
-    | "super" ("." Identifier)? Arguments
-    | MethodInvocation
+	= idSelector:      Identifier
+	| methodSelector:  MethodInvocation
+ 	| thisSelector:    "this"
+ 	| superSelector:   "super" SuperSuffix
+	| newSelector:     "new" TypeArguments? Identifier TypeArgumentsOrDiamond? Arguments ClassBody?
+	| genericSelector: NonWildTypeArguments ExplicitGenericInvocationSuffix     
     ;     
      
 syntax MethodInvocation
@@ -532,11 +535,6 @@ syntax ClassName
 syntax TypeDeclSpecifier
      = Identifier (TypeArguments? "." Identifier)*
      ;     
-
-syntax SuperSuffix 
-     =  Arguments 
-     | "." Identifier Arguments?
-     ;
 
  syntax ExplicitGenericInvocationSuffix 
  	  = "super" SuperSuffix
