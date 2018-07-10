@@ -495,7 +495,7 @@ syntax Expression
 
 syntax Primary
 	 = literalPrimary: Literal
-     | thisPrimary: "this"
+     | thisPrimary: (QualifiedIdentifier ".")? "this"
      | superPrimary: "super" SuperSuffix
      | idPrimary: Identifier
      | typeLiteralPrimary: (Type | "void") "." "class"
@@ -503,16 +503,15 @@ syntax Primary
      ;
      
 syntax SuperSuffix
-     = "." Identifier Arguments?
+     = "." NonWildTypeArguments? Identifier Arguments?
      ;  
      
 syntax Selector
 	= idSelector:      Identifier
-	| methodSelector:  MethodInvocation
+	| methodSelector:  NonWildTypeArguments? MethodInvocation
  	| thisSelector:    "this"
  	| superSelector:   "super" SuperSuffix
 	| newSelector:     "new" TypeArguments? Identifier TypeArgumentsOrDiamond? Arguments ClassBody?
-	| genericSelector: NonWildTypeArguments ExplicitGenericInvocationSuffix     
     ;     
      
 syntax MethodInvocation
@@ -528,17 +527,8 @@ syntax ArrayCreationExpression
 	 | (PrimitiveType | ReferenceTypeNonArrayType) ("[" "]")+ ArrayInitializer
      ;
 
-syntax ClassName
-	 = QualifiedIdentifier
-	 ;
-	      
 syntax TypeDeclSpecifier
      = Identifier (TypeArguments? "." Identifier)*
      ;     
 
- syntax ExplicitGenericInvocationSuffix 
- 	  = "super" SuperSuffix
- 	  | Identifier Arguments
- 	  ;
-     
      
