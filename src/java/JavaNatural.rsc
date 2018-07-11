@@ -391,9 +391,13 @@ syntax Block
      ;
 
 syntax BlockStatement 
-     = localVariableDeclaration: LocalVariableDeclaration ";"
+     = LocalVariableDeclarationStatement
      | ClassDeclaration
      | Statement
+     ;
+
+syntax LocalVariableDeclarationStatement
+     = VariableModifier* Type {VariableDeclarator ","}+ ";"
      ;
 
 syntax Statement
@@ -452,13 +456,9 @@ syntax SwitchLabel
      | "default" ":"
      ;
 
-syntax LocalVariableDeclaration 
-    = VariableModifier* Type {VariableDeclarator ","}+
-    ;
-
 syntax ForInit 
-     = {Expression ","}+
-     | LocalVariableDeclaration
+     = expressions:  {Expression ","}+
+     | variableDecl: Type {VariableDeclarator ","}+
      ;
      
 syntax ForUpdate 
