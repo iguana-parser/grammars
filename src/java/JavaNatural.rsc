@@ -204,8 +204,12 @@ syntax VariableModifier
  ***********************************************************************************************************************/
   
 syntax Annotation 
-    = "@" QualifiedIdentifier  ( "(" AnnotationElement? ")" )?
+    = "@" QualifiedIdentifier Values?
     ;
+    
+syntax Values
+     = "(" AnnotationElement? ")"
+     ; 
     
 syntax AnnotationElement
     = { ElementValuePair "," }+
@@ -286,13 +290,17 @@ syntax AnnotationTypeBody
      ;
 
 syntax AnnotationTypeElementDeclaration 
-     = AbstractMethodModifier* Type Identifier "(" ")" ("[" "]")* DefaultValue? ";" 
+     = AnnotationMethodDeclaration 
      | ConstantDeclaration
      | ClassDeclaration
      | InterfaceDeclaration
      | AnnotationTypeDeclaration
      | ";"
      ;
+     
+syntax AnnotationMethodDeclaration
+     = AbstractMethodModifier* Type Identifier "(" ")" ("[" "]")* DefaultValue? ";"
+     ;     
      
 syntax DefaultValue
      = "default" ElementValue
