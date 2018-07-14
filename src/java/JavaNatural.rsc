@@ -221,7 +221,7 @@ syntax ElementValuePair
     ;
 
 syntax ElementValue 
-    = Expression !ao
+    = Expression !assignmentExpr
     | Annotation
     | ElementValueArrayInitializer
     ;
@@ -497,7 +497,7 @@ syntax Expression
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right conditionalExpr: Expression "?" Expression ":" Expression 
-     > right assignmentExpr: Expression !comparisonExpr AssignmentOperator Expression
+     > right assignmentExpr: Expression AssignmentOperator Expression
      | primaryExpr: Primary
      ;
 
