@@ -409,8 +409,8 @@ syntax LocalVariableDeclarationStatement
      ;
 
 syntax Statement
-     = Block
-     | ";" 
+     = blockStmt: Block
+     | emptyStmt: ";" 
      | expressionStmt: Expression ";"
      | assertStmt: "assert" Expression (":" Expression)? ";" 
      | switchStmt: "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
@@ -420,7 +420,8 @@ syntax Statement
      | returnStmt: "return" Expression? ";" 
      | synchronizedStmt: "synchronized" "(" Expression ")" Block 
      | throwStmt: "throw" Expression ";" 
-     | tryStmt: "try" Block (CatchClause+ | (CatchClause* Finally))
+     | tryStmt: "try" Block CatchClause+
+     | tryFinally: "try" Block CatchClause* Finally
      | tryWithResourcesStmt: "try" ResourceSpecification Block CatchClause* Finally? 
      | labelStmt: Identifier ":" Statement
      | ifStmt: "if" "(" Expression ")" Statement !>>> "else"
