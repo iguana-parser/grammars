@@ -262,7 +262,7 @@ syntax ConstructorBody
     ;
 
 syntax ExplicitConstructorInvocation
-    = constructorInvocation: NonWildTypeArguments? "this" Arguments ";"
+    = constructorInvocation:      NonWildTypeArguments? "this" Arguments ";"
     | superConstructorInvocation: (Primary ".")? NonWildTypeArguments? "super" Arguments ";"
     ;     
      
@@ -510,7 +510,7 @@ syntax Expression
 
 syntax Primary
 	 = literalPrimary: Literal
-     | thisPrimary: "this"
+     | thisPrimary: (QualifiedIdentifier ".")? "this"
      | superPrimary: "super" SuperSuffix
      | idPrimary: Identifier
      | typeLiteralPrimary: (Type | "void") "." "class"
@@ -518,15 +518,13 @@ syntax Primary
      ;
      
 syntax SuperSuffix
-     = Arguments
-     | "." NonWildTypeArguments? Identifier Arguments?
+     = "." NonWildTypeArguments? Identifier Arguments?
      ;  
      
 syntax Selector
 	= idSelector:      Identifier
 	| methodSelector:  NonWildTypeArguments? MethodInvocation
- 	| thisSelector:    "this"
- 	| superSelector:   "super" SuperSuffix
+ 	| superSelector:   "super" SuperSuffix 
 	| newSelector:     "new" TypeArguments? Identifier TypeArgumentsOrDiamond? Arguments ClassBody?
     ;     
      
