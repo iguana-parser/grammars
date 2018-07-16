@@ -13,8 +13,8 @@ extend java::\lexical::ContextAware;
  ***********************************************************************************************************************/
 
 syntax Type 
-     = PrimitiveType ("[" "]")*
-     | ReferenceType ("[" "]")*
+     = PrimitiveType
+     | ReferenceType
      ;
 
 syntax PrimitiveType 
@@ -29,7 +29,12 @@ syntax PrimitiveType
      ;
      
 syntax ReferenceType
-     = Identifier TypeArguments? ( "." Identifier TypeArguments? )*
+     = TypeDeclSpecifier TypeArguments?
+     | ArrayType
+     ;
+     
+syntax ArrayType
+     = Type "[" "]"
      ;
      
 syntax TypeArguments 
@@ -411,7 +416,7 @@ syntax LocalVariableDeclarationStatement
 syntax Statement
      = blockStmt: Block
      | emptyStmt: ";" 
-     | expressionStmt: Expression ";"
+     | expressionStmt: Expression !comparisonExpr ";"
      | assertStmt: "assert" Expression (":" Expression)? ";" 
      | switchStmt: "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
      | doStmt: "do" Statement "while" "(" Expression ")" ";" 
@@ -467,7 +472,7 @@ syntax SwitchLabel
 
 syntax ForInit 
      = expressions:  {Expression ","}+
-     | variableDecl: Type {VariableDeclarator ","}+
+     | variableDecl: VariableModifier* Type {VariableDeclarator ","}+
      ;
      
 syntax ForUpdate 
@@ -479,13 +484,14 @@ syntax ForUpdate
  ***********************************************************************************************************************/
 
 syntax Expression
-     = fieldAccess: Expression "." Selector
+     = fieldAccess: Expression !instanceOfExpr "." Selector
      | methodCall: MethodInvocation     
      | arrayAccess: Expression "[" Expression "]"
      | postfix: Expression ("++" | "--")
      > prefix: ("+" !>> "+" | "-" !>> "-" | "++" | "--" | "!" | "~") Expression
      | newClass: "new" (ClassInstanceCreationExpression | ArrayCreationExpression)
-     | castExpr: "(" Type ")" Expression
+     | primitiveCastExpr: "(" PrimitiveType ")" Expression
+     | castExpr: "(" ReferenceType ("[" "]")* ")" Expression !prefix
      > left Expression ("*" | "/" | "%") Expression 
      > left Expression ("+" !>> "+" | "-" !>> "-") Expression
      > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
@@ -504,7 +510,7 @@ syntax Expression
 
 syntax Primary
 	 = literalPrimary: Literal
-     | thisPrimary: (QualifiedIdentifier ".")? "this"
+     | thisPrimary: "this"
      | superPrimary: "super" SuperSuffix
      | idPrimary: Identifier
      | typeLiteralPrimary: (Type | "void") "." "class"
@@ -512,7 +518,8 @@ syntax Primary
      ;
      
 syntax SuperSuffix
-     = "." NonWildTypeArguments? Identifier Arguments?
+     = Arguments
+     | "." NonWildTypeArguments? Identifier Arguments?
      ;  
      
 syntax Selector
