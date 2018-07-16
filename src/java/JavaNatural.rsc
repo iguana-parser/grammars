@@ -29,12 +29,12 @@ syntax PrimitiveType
      ;
      
 syntax ReferenceType
-     = TypeDeclSpecifier TypeArguments?
+     = ReferenceTypeNonArrayType
      | ArrayType
      ;
      
 syntax ArrayType
-     = Type "[" "]"
+     = (ReferenceTypeNonArrayType | PrimitiveType) ("[" "]")+ 
      ;
      
 syntax TypeArguments 
