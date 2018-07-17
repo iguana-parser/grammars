@@ -94,7 +94,7 @@ syntax PackageDeclaration
      ;  
   
 syntax ImportDeclaration 
-    = "import" "static"? {Identifier "."}+ ("." "*")? ";" 
+    = "import" "static"? QualifiedIdentifier ("." "*")? ";" 
     ;
   
 syntax TypeDeclaration
@@ -416,7 +416,7 @@ syntax LocalVariableDeclarationStatement
 syntax Statement
      = blockStmt: Block
      | emptyStmt: ";" 
-     | expressionStmt: Expression !comparisonExpr ";"
+     | expressionStmt: StatementExpression ";"
      | assertStmt: "assert" Expression (":" Expression)? ";" 
      | switchStmt: "switch" "(" Expression ")" "{" SwitchBlockStatementGroup* SwitchLabel* "}" 
      | doStmt: "do" Statement "while" "(" Expression ")" ";" 
@@ -471,7 +471,7 @@ syntax SwitchLabel
      ;
 
 syntax ForInit 
-     = expressions:  {Expression ","}+
+     = expressions:  { StatementExpression ","}+
      | variableDecl: VariableModifier* Type {VariableDeclarator ","}+
      ;
      
@@ -507,6 +507,11 @@ syntax Expression
      > right assignmentExpr: Expression !comparisonExpr AssignmentOperator Expression
      | primaryExpr: Primary
      ;
+     
+syntax StatementExpression
+     = Expression !comparisonExpr
+     ;
+     
 
 syntax Primary
 	 = literalPrimary: Literal
