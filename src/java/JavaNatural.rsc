@@ -491,7 +491,7 @@ syntax Expression
      > prefix: ("+" !>> "+" | "-" !>> "-" | "++" | "--" | "!" | "~") Expression
      | newClass: "new" (ClassInstanceCreationExpression | ArrayCreationExpression)
      | primitiveCastExpr: "(" PrimitiveType ")" Expression
-     | castExpr: "(" ReferenceType ("[" "]")* ")" Expression !prefix
+     | castExpr: "(" ReferenceType ")" Expression !prefix
      > left Expression ("*" | "/" | "%") Expression 
      > left Expression ("+" !>> "+" | "-" !>> "-") Expression
      > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
