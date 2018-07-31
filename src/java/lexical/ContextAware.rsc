@@ -139,7 +139,7 @@ keyword Keyword
 //----------------------------------------------------------------------------------------------------------------
 
 lexical Literal 
-      = integerLiteral:   IntegerLiteral
+      = integerLiteral:   IntegerLiteral !>> [.]
       | floatLiteral:     FloatingPointLiteral
       | booleanLiteral:   BooleanLiteral
       | characterLiteral: CharacterLiteral
@@ -147,37 +147,34 @@ lexical Literal
       | nullLiteral:      NullLiteral
       ; 
     
-lexical IntegerLiteral 
-      = DecimalIntegerLiteral !>> [.]
-      | HexIntegerLiteral !>> [.]
+token IntegerLiteral 
+      = DecimalIntegerLiteral
+      | HexIntegerLiteral
       | OctalIntegerLiteral
       | BinaryIntegerLiteral
       ; 
     
-lexical FloatingPointLiteral 
+token FloatingPointLiteral 
       = DecimalFloatingPointLiteral
       | HexadecimalFloatingPointLiteral
       ;     
 
-lexical DecimalIntegerLiteral 
-      = DecimalNumeral IntegerTypeSuffix?
+token DecimalIntegerLiteral 
+      = ([0] | ([1-9] (Digits? | ([_]+ Digits)))) [lL]? 
       ;
 
-lexical HexIntegerLiteral 
-      = HexNumeral IntegerTypeSuffix?
+token HexIntegerLiteral
+	  = [0] [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? [lL]?
       ;
 
-lexical OctalIntegerLiteral 
-      = OctalNumeral IntegerTypeSuffix?
+token OctalIntegerLiteral 
+      = [0] [_]* [0-7] ([0-7_]* [0-7])? [lL]?
       ;
 
-lexical BinaryIntegerLiteral 
-      = BinaryNumeral IntegerTypeSuffix?
+token BinaryIntegerLiteral 
+      = [0] [bB] [01] ([01_]* [01])? [lL]?
       ;
 
-token IntegerTypeSuffix 
-      = [l] | [L];
-    
 //----------------------------------------------------------------------------------------------------------------
     
 token DecimalNumeral 
@@ -187,23 +184,8 @@ token DecimalNumeral
     ; 
 
 token Digits 
-    = Digit
-    | Digit DigitOrUnderscore* Digit
-    ; 
-
-token Digit 
-     = [0]
-     | NonZeroDigit
-     ;
-
-token NonZeroDigit
-    = [1-9]
-    ;
-
-token DigitOrUnderscore 
-    = Digit
-    | [_]
-    ;
+	= [0-9] ([0-9_]* [0-9])?
+	;
 
 //----------------------------------------------------------------------------------------------------------------
 
@@ -269,13 +251,10 @@ token BinaryDigitOrUnderscore
 
 
 token DecimalFloatingPointLiteral 
-    = Digits [.] Digits? ExponentPart? FloatTypeSuffix?
-    | [.] Digits ExponentPart? FloatTypeSuffix?
-    | Digits ExponentPart
-    | Digits FloatTypeSuffix
-    | Digits ExponentPart FloatTypeSuffix
+    = ((Digits '.' Digits?) | ('.' Digits)) ExponentPart? FloatTypeSuffix?
+    | Digits ((ExponentPart FloatTypeSuffix?) | FloatTypeSuffix)
     ;
-
+    
 token ExponentPart 
     = ExponentIndicator SignedInteger
     ;
@@ -298,23 +277,8 @@ token FloatTypeSuffix
     
 //----------------------------------------------------------------------------------------------------------------
 
-token HexadecimalFloatingPointLiteral 
-    =  HexSignificand BinaryExponent FloatTypeSuffix?
-    ;
-
-token HexSignificand 
-    = HexNumeral
-    | HexNumeral [.]
-    | [0] [x] HexDigits? [.] HexDigits
-    | [0] [X] HexDigits? [.] HexDigits
-    ;
-
-token BinaryExponent 
-    = BinaryExponentIndicator SignedInteger
-    ;
-
-token BinaryExponentIndicator 
-    = [p P]
+token HexadecimalFloatingPointLiteral
+	= [0] [xX] ((HexDigits [.]?) | (HexDigits? [.] HexDigits)) [pP] Sign? Digits FloatTypeSuffix? 
     ;
 
 //----------------------------------------------------------------------------------------------------------------
