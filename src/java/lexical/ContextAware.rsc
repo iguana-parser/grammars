@@ -1,34 +1,9 @@
 module java::\lexical::ContextAware
 
-//----------------------------------------------------------------------------------------------------------------
-// Lexical Definititions
-//----------------------------------------------------------------------------------------------------------------
-
-token UnicodeInputCharacter 
-    = UnicodeEscape
-    | RawInputCharacter
-    ;
-
 token UnicodeEscape 
     = [\\] [u]+ HexDigit HexDigit HexDigit HexDigit
     ;
  
-token RawInputCharacter 
-    = ![\\]
-    | [\\] !>> [\\ u]
-    | [\\][\\]   // Java Language Specification §3.3  
-    ;
-
-token InputCharacter 
-	  = ![\\ \n \r]      // UnicodeInputCharacter but not CR or LF 
-    | [\\] !>> [\\ u]
-    | [\\] [\\]
-    | UnicodeEscape
-	  | [\a00]           // to match zero        
-    ;
-
-//----------------------------------------------------------------------------------------------------------------
-
 token Layout 
     = (WhiteSpace | Comment)*
     ;
@@ -38,12 +13,6 @@ token WhiteSpace
                               // suuport for layout
     ;
       
-token LineTerminator
-    = [\r \n]
-    ;
-     
-//----------------------------------------------------------------------------------------------------------------
-    
 token Comment 
     = TraditionalComment
     | EndOfLineComment
@@ -175,46 +144,30 @@ token BinaryIntegerLiteral
       = [0] [bB] [01] ([01_]* [01])? [lL]?
       ;
 
-//----------------------------------------------------------------------------------------------------------------
-    
-token DecimalNumeral 
-    = [0]
-    | NonZeroDigit Digits?
-    | NonZeroDigit [_]+ Digits
-    ; 
-
 token Digits 
 	= [0-9] ([0-9_]* [0-9])?
 	;
 
-//----------------------------------------------------------------------------------------------------------------
-
 token HexNumeral 
-    = [0] [x] HexDigits
-    | [0] [X] HexDigits
+    = [0] [xX] HexDigits
     ;
 
 token HexDigits 
-    = HexDigit
-    | HexDigit HexDigitOrUnderscore* HexDigit; 
+    = HexDigit (HexDigitOrUnderscore* HexDigit)?
+    ; 
 
 token HexDigit = [0-9 a-f A-F];
 
 token HexDigitOrUnderscore 
-    = HexDigit
-    | [_]
+    = [0-9 a-f A-F _]
     ;
     
-//----------------------------------------------------------------------------------------------------------------    
-    
 token OctalNumeral 
-    = [0] OctalDigits
-    | [0] [_]+ OctalDigits
+    = [0] [_]* OctalDigits
     ;
 
 token OctalDigits 
-    = OctalDigit
-    | OctalDigit OctalDigitOrUnderscore* OctalDigit 
+    = OctalDigit (OctalDigitOrUnderscore* OctalDigit)?
     ;
 
 token OctalDigit 
@@ -222,20 +175,17 @@ token OctalDigit
     ;
 
 token OctalDigitOrUnderscore 
-    = OctalDigit
-    | [_]
+    = [0-7_]
     ;
     
 //----------------------------------------------------------------------------------------------------------------        
     
 token BinaryNumeral 
-    = [0] [b] BinaryDigits 
-    | [0] [B] BinaryDigits
+    = [0] [bB] BinaryDigits 
     ;
 
 token BinaryDigits 
-    = BinaryDigit 
-    | BinaryDigit BinaryDigitOrUnderscore* BinaryDigit
+    = BinaryDigit (BinaryDigitOrUnderscore* BinaryDigit)? 
     ;
 
 token BinaryDigit 
@@ -243,8 +193,7 @@ token BinaryDigit
     ; 
 
 token BinaryDigitOrUnderscore
-    = BinaryDigit
-    | [_]
+    = [0-1_]
     ;
     
 //----------------------------------------------------------------------------------------------------------------        
@@ -289,8 +238,7 @@ token BooleanLiteral
      ;
 
 token CharacterLiteral 
-    = [\'] SingleCharacter [\']
-    | [\'] EscapeSequence [\']
+    = [\'] (SingleCharacter | EscapeSequence) [\']
     ;
 
 token SingleCharacter 
