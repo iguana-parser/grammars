@@ -243,7 +243,6 @@ token CharacterLiteral
 
 token SingleCharacter 
     = ![\\ \n \r \'] 
-    | [\\] !>> [\\ u]
     | [\\] [\\]
     | UnicodeEscape
     | [\a00]  
@@ -255,7 +254,6 @@ token StringLiteral
 
 token StringCharacter 
     = ![\\ \n \r \"] 
-    | [\\] !>> [\\ u]
     | [\\] [\\]
     | UnicodeEscape
     | [\a00] 
