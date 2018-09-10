@@ -34,7 +34,7 @@ token EndOfLineComment
     
 //----------------------------------------------------------------------------------------------------------------      
 
-lexical Identifier 
+token Identifier 
       = [$ A-Z _ a-z] !<< IdentifierChars \Keyword \BooleanLiteral \NullLiteral
       ;
 
