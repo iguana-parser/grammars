@@ -488,14 +488,14 @@ syntax Expression
      | methodCall: MethodInvocation     
      | arrayAccess: Expression "[" Expression "]"
      | postfix: Expression ("++" | "--")
-     > prefix: ("+" !>> "+" | "-" !>> "-" | "++" | "--" | "!" | "~") Expression
+     > prefix: ("+" | "-" | "++" | "--" | "!" | "~") Expression
      | newClass: "new" (ClassInstanceCreationExpression | ArrayCreationExpression)
      | primitiveCastExpr: "(" PrimitiveType ")" Expression
      | castExpr: "(" ReferenceType ")" Expression !prefix
      > left Expression ("*" | "/" | "%") Expression 
-     > left Expression ("+" !>> "+" | "-" !>> "-") Expression
-     > left Expression ("\<\<" | "\>\>" !>> "\>" | "\>\>\>") Expression 
-     > left comparisonExpr: Expression ("\<" !>> "=" !>> "\<" | "\>" !>> "=" !>> "\>" | "\<=" | "\>=")  Expression
+     > left Expression ("+" | "-") !>> "+" !>> "-" Expression
+     > left Expression ("\<\<" | "\>\>" | "\>\>\>") Expression 
+     > left comparisonExpr: Expression ("\<" !>> "\<" | "\>" !>> "\>" | "\<=" | "\>=")  Expression
      > instanceOfExpr:   Expression "instanceof" Type
      > left  Expression ("==" | "!=") Expression
      > left  Expression "&" !>> "&" Expression
