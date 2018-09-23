@@ -243,7 +243,6 @@ token CharacterLiteral
 
 token SingleCharacter 
     = ![\\ \n \r \'] 
-    | [\\] [\\]
     | UnicodeEscape
     | [\a00]  
     ;
@@ -254,35 +253,16 @@ token StringLiteral
 
 token StringCharacter 
     = ![\\ \n \r \"] 
-    | [\\] [\\]
     | UnicodeEscape
     | [\a00] 
     | EscapeSequence
     ;
         
 token EscapeSequence 
-    = Backslash [b]                 /* \u0008: backspace BS */
-    | Backslash [t]                 /* \u0009: horizontal tab HT */
-    | Backslash [n]                 /* \u000a: linefeed LF */
-    | Backslash [f]                 /* \u000c: form feed FF */
-    | Backslash [r]                 /* \u000d: carriage return CR */
-    | Backslash [\"]                /* \u0022: double quote " */
-    | Backslash [\']                /* \u0027: single quote ' */
-    | [\\] [u]+ "005" [cC] [\\] [u]+ "005" [cC]   // Todo: merge it with [\\][\\]
-    | OctalEscape                   /* \u0000 to \u00ff: from octal value */
+    = [\\] [btnfr\"\'\\]
+    | [\\] (ZeroToThree? OctalDigit)? OctalDigit
     ;
      
-token Backslash
-    = [\\] [u]+ "005" [cC]
-    | [\\]
-    ;    
-
-token OctalEscape 
-    = [\\] OctalDigit
-    | [\\] OctalDigit OctalDigit
-    | [\\] ZeroToThree OctalDigit OctalDigit
-    ;
-
 token ZeroToThree 
     = [0-3]
     ;
