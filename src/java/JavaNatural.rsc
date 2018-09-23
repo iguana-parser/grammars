@@ -495,12 +495,12 @@ syntax Expression
      > left Expression ("*" | "/" | "%") Expression 
      > left Expression ("+" | "-") !>> "+" !>> "-" Expression
      > left Expression ("\<\<" | "\>\>" | "\>\>\>") Expression 
-     > left comparisonExpr: Expression ("\<" !>> "\<" | "\>" !>> "\>" | "\<=" | "\>=")  Expression
+     > left comparisonExpr: Expression ("\<" | "\>" | "\<=" | "\>=")  Expression
      > instanceOfExpr:   Expression "instanceof" Type
      > left  Expression ("==" | "!=") Expression
-     > left  Expression "&" !>> "&" Expression
+     > left  Expression "&" Expression
      > left  Expression "^" Expression
-     > left  Expression "|" !>> "|" Expression 
+     > left  Expression "|" Expression 
      > left  Expression "&&" Expression
      > left  Expression "||" Expression
      > right conditionalExpr: Expression "?" Expression ":" Expression 
